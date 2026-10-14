@@ -148,6 +148,7 @@ const CaseManager = () => {
                 <TableHead>Mode</TableHead>
                 <TableHead>Time (s)</TableHead>
                 <TableHead>Rubric Items</TableHead>
+                <TableHead>Properti</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -184,6 +185,13 @@ const CaseManager = () => {
                   <TableCell>{c.exam_mode === "oral_board" ? "Oral Board" : "Panel Exam"}</TableCell>
                   <TableCell>{c.time_limit_seconds}</TableCell>
                   <TableCell>{Array.isArray(c.checklist_rubric) ? c.checklist_rubric.length : (Array.isArray(c.checklist_rubric?.items) ? c.checklist_rubric.items.length : 0)}</TableCell>
+                  <TableCell>
+                    {Array.isArray(c.checklist_rubric?.properties) && c.checklist_rubric.properties.length > 0 ? (
+                      <Badge variant="secondary" className="text-xs">{c.checklist_rubric.properties.length} properti</Badge>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">—</span>
+                    )}
+                  </TableCell>
                   <TableCell className="text-right space-x-2">
                     {/* Every admin can open the detail preview */}
                     <Link to={`/admin/case/preview/${c.id}`}>
