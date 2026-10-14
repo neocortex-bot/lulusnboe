@@ -601,6 +601,28 @@ const CasePreview = () => {
 
             <Card>
               <CardHeader>
+                <CardTitle>Properti Soal</CardTitle>
+                <CardDescription>
+                  Alat/media yang wajib disiapkan penguji. Tidak ditampilkan ke peserta.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {isEditing ? (
+                  <PropertiesEditor properties={properties} onChange={setProperties} />
+                ) : properties.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">Belum ada properti untuk soal ini.</p>
+                ) : (
+                  <ol className="space-y-1.5 text-sm text-foreground list-decimal list-inside">
+                    {properties.map((p, i) => (
+                      <li key={i}>{p}</li>
+                    ))}
+                  </ol>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
                 <CardTitle>Daftar Tilik (Rubrik Penilaian)</CardTitle>
                 <CardDescription>
                   Mode: <strong>{rubricMode === "checklist" ? "pakai daftar tilik" : "tanpa daftar tilik"}</strong>.
