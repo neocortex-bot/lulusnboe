@@ -8,7 +8,8 @@ const corsHeaders = {
 };
 
 const RubricItem = z.object({
-  text: z.string().min(10).max(500),
+  text: z.string().min(5).max(500),
+  answer: z.string().max(1500).optional(), // word-by-word ucapan peserta untuk butir ini
   points: z.number().int().min(1).max(5),
   isCritical: z.boolean(),
 });
@@ -20,22 +21,22 @@ const MediaNote = z.object({
 });
 
 const BodySchema = z.object({
-  title: z.string().min(15).max(200),
+  title: z.string().min(10).max(200),
   exam_mode: z.enum(["oral_board", "osce", "panel_exam"]).default("oral_board"),
+  // "prereview" (default) = masuk /prereview untuk diedit admin; "draft" = alur lama (gerbang ketat)
+  status: z.enum(["prereview", "draft"]).default("prereview"),
   reading_time_minutes: z.number().min(0.25).max(15).optional(),
   time_limit_minutes: z.number().min(0.5).max(30).optional(),
   reading_time_seconds: z.number().int().min(5).max(900).optional(),
   time_limit_seconds: z.number().int().min(30).max(1800).optional(),
   show_results_to_candidate: z.boolean().default(false),
-  initial_prompt: z.string().min(400),
-  questions_text: z.string().min(300),
-  answer_key_text: z.string().min(800),
-  // Rubrik bersifat opsional: bila dikirim harus ≥15 butir utuh (checklist);
-  // bila tidak dikirim / items kosong → soal "tanpa daftar tilik" (rubric_mode=none),
-  // penilaian murni berdasarkan answer key. Kiriman parsial (1–14 butir) ditolak.
+  initial_prompt: z.string().min(50),
+  questions_text: z.string().min(20),
+  answer_key_text: z.string().min(100),
   checklist_rubric: z
     .object({ items: z.array(RubricItem).min(0).max(100) })
     .optional(),
+  properties: z.array(z.string().min(1).max(300)).max(50).default([]), // admin-only, tidak tampil ke peserta
   media_notes: z.array(MediaNote).default([]),
   created_by_email: z.string().email().optional(),
 });
@@ -105,19 +106,25 @@ Deno.serve(async (req) => {
   const limitSeconds = data.time_limit_seconds ??
     (data.time_limit_minutes ? Math.round(data.time_limit_minutes * 60) : 600);
 
-  // Quality gates
+  // Quality gates — gerbang ketat hanya untuk status "draft" (alur lama).
+  // Status "prereview" memakai standar soal ringkas + daftar tilik atomik (0–2 poin),
+  // karena admin akan mereview & mengedit di /prereview sebelum publish.
+  const strict = data.status === "draft";
   const promptUpper = data.initial_prompt.toUpperCase();
   const markers = ["RIWAYAT", "PEMERIKSAAN", "TUGAS", "EKG", "LAB"];
   const hits = markers.filter((m) => promptUpper.includes(m)).length;
-  if (hits < 3) {
+  if (strict && hits < 3) {
     return json(400, {
       error: "initial_prompt must include at least 3 of: RIWAYAT, PEMERIKSAAN, TUGAS, EKG, Lab",
     });
   }
 
   const numberedTasks = (data.questions_text.match(/(^|\n)\s*\d+\./g) || []).length;
-  if (numberedTasks < 5) {
+  if (strict && numberedTasks < 5) {
     return json(400, { error: "questions_text must contain at least 5 numbered tasks (1., 2., ...)" });
+  }
+  if (!strict && numberedTasks < 1) {
+    return json(400, { error: "questions_text harus berisi pertanyaan bernomor (1., 2., ...)" });
   }
 
   const items = data.checklist_rubric?.items ?? [];
@@ -140,7 +147,7 @@ Deno.serve(async (req) => {
   // mengucapkan 15+ butir rinci dalam batas waktu, sehingga rubrik panjang
   // membuat hampir semua butir gagal dan peserta kehilangan poin meski
   // jawabannya wajar. Batasi ke 5-7 butir yang luas namun tetap terukur.
-  if (items.length > 0) {
+  if (strict && items.length > 0) {
     if (items.length < 5 || items.length > 7) {
       return json(400, {
         error: `Rubrik harus 5-7 butir luas (got ${items.length}). Gabungkan butir rinci menjadi poin-poin utama; atau kosongkan untuk penilaian tanpa daftar tilik (rubric_mode=none).`,
@@ -194,8 +201,8 @@ Deno.serve(async (req) => {
       answer_key_text: data.answer_key_text,
       checklist_rubric: rubric,
       created_by: createdBy,
-      // Workflow: kiriman agent selalu DRAFT sampai di-review admin
-      status: "draft",
+      // prereview = muncul di /prereview untuk diedit admin; draft = alur lama
+      status: data.status,
       source: "agent_api",
       rubric_mode: rubricMode,
     })
@@ -208,7 +215,7 @@ Deno.serve(async (req) => {
   const { error: akErr } = await supabase.from("case_answer_keys").insert({
     case_id: inserted.id,
     answer_key_text: data.answer_key_text,
-    checklist_rubric: rubric,
+    checklist_rubric: { ...rubric, properties: data.properties },
   });
   if (akErr) console.error(`[ingest-case] answer key sync failed: ${akErr.message}`);
 
@@ -222,7 +229,8 @@ Deno.serve(async (req) => {
     exam_mode: data.exam_mode,
     reading_time_seconds: readingSeconds,
     time_limit_seconds: limitSeconds,
-    status: "draft", // menunggu review admin di halaman admin
+    status: data.status,
+    properties: data.properties.length,
     source: "agent_api",
     rubric_mode: rubricMode,
     rubric_items: items.length,
