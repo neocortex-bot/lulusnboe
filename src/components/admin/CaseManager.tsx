@@ -209,7 +209,7 @@ const CaseManager = () => {
                         <Button variant="ghost" size="icon" title="Edit soal" onClick={() => handleEdit(c)}>
                           <Pencil className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" title="Hapus soal" onClick={() => deleteMutation.mutate(c.id)}>
+                        <Button variant="ghost" size="icon" title="Hapus soal" onClick={() => setCaseToDelete(c)}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </>
