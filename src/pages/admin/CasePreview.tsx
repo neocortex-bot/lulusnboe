@@ -31,6 +31,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import RubricBuilder, { type RubricData } from "@/components/admin/RubricBuilder";
 import AssetUploader from "@/components/admin/AssetUploader";
+import PropertiesEditor from "@/components/admin/PropertiesEditor";
 import parseRubricData from "@/lib/rubricParser";
 import { canEditCase, isRubricEditable } from "@/lib/casePermissions";
 import { useAuth } from "@/contexts/AuthContext";
@@ -86,6 +87,8 @@ const CasePreview = () => {
   const [answerKeyText, setAnswerKeyText] = useState("");
   const [showResultsToCandidate, setShowResultsToCandidate] = useState(false);
   const [rubricData, setRubricData] = useState<RubricData>({ enabled: false, items: [] });
+  // Properti soal: admin-only, disimpan di case_answer_keys (tidak pernah ke peserta)
+  const [properties, setProperties] = useState<string[]>([]);
   const [isEditing, setIsEditing] = useState(false);
 
   // ---- Fetch case + answer key ----
