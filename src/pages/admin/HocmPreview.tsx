@@ -1,6 +1,9 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { ArrowLeft, Eye, EyeOff, ClipboardList, Stethoscope, Calculator, Pill, ShieldAlert, Target } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { ArrowLeft, Eye, EyeOff, ClipboardList, Stethoscope, Calculator, Pill, ShieldAlert, Target, Send } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
