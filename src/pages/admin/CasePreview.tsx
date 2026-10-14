@@ -31,6 +31,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import RubricBuilder, { type RubricData } from "@/components/admin/RubricBuilder";
 import AssetUploader from "@/components/admin/AssetUploader";
+import PropertiesEditor from "@/components/admin/PropertiesEditor";
 import parseRubricData from "@/lib/rubricParser";
 import { canEditCase, isRubricEditable } from "@/lib/casePermissions";
 import { useAuth } from "@/contexts/AuthContext";
@@ -86,6 +87,8 @@ const CasePreview = () => {
   const [answerKeyText, setAnswerKeyText] = useState("");
   const [showResultsToCandidate, setShowResultsToCandidate] = useState(false);
   const [rubricData, setRubricData] = useState<RubricData>({ enabled: false, items: [] });
+  // Properti soal: admin-only, disimpan di case_answer_keys (tidak pernah ke peserta)
+  const [properties, setProperties] = useState<string[]>([]);
   const [isEditing, setIsEditing] = useState(false);
 
   // ---- Fetch case + answer key ----
@@ -137,6 +140,11 @@ const CasePreview = () => {
     setAnswerKeyText(caseRow.answer_key_text ?? "");
     setShowResultsToCandidate(caseRow.show_results_to_candidate ?? false);
     setRubricData(parseRubricData(caseRow.checklist_rubric));
+    setProperties(
+      Array.isArray((caseRow.checklist_rubric as any)?.properties)
+        ? (caseRow.checklist_rubric as any).properties.map((p: any) => String(p))
+        : []
+    );
   }, [caseRow]);
 
   const rubricMode = useMemo(
@@ -235,7 +243,11 @@ const CasePreview = () => {
       const answerKeyPayload: Database["public"]["Tables"]["case_answer_keys"]["Insert"] = {
         case_id: id,
         answer_key_text: answerKeyText,
-        checklist_rubric: { enabled: rubricData.enabled, items: rubricData.items } as unknown as Json,
+        checklist_rubric: {
+          enabled: rubricData.enabled,
+          items: rubricData.items,
+          properties: properties.map((p) => p.trim()).filter(Boolean),
+        } as unknown as Json,
       };
       const { error: akErr } = await supabase
         .from("case_answer_keys")
@@ -292,6 +304,11 @@ const CasePreview = () => {
     setAnswerKeyText(caseRow.answer_key_text ?? "");
     setShowResultsToCandidate(caseRow.show_results_to_candidate ?? false);
     setRubricData(parseRubricData(caseRow.checklist_rubric));
+    setProperties(
+      Array.isArray((caseRow.checklist_rubric as any)?.properties)
+        ? (caseRow.checklist_rubric as any).properties.map((p: any) => String(p))
+        : []
+    );
     setIsEditing(false);
   };
 
@@ -579,6 +596,28 @@ const CasePreview = () => {
                   rows={10}
                   disabled={!isEditing}
                 />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Properti Soal</CardTitle>
+                <CardDescription>
+                  Alat/media yang wajib disiapkan penguji. Tidak ditampilkan ke peserta.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {isEditing ? (
+                  <PropertiesEditor properties={properties} onChange={setProperties} />
+                ) : properties.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">Belum ada properti untuk soal ini.</p>
+                ) : (
+                  <ol className="space-y-1.5 text-sm text-foreground list-decimal list-inside">
+                    {properties.map((p, i) => (
+                      <li key={i}>{p}</li>
+                    ))}
+                  </ol>
+                )}
               </CardContent>
             </Card>
 
