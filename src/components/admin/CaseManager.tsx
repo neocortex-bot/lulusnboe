@@ -115,6 +115,9 @@ const CaseManager = () => {
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Clinical Cases</CardTitle>
         <div className="flex gap-2">
+          <Link to="/prereview">
+            <Button variant="outline" size="sm">Pre-review Soal</Button>
+          </Link>
           <Button onClick={() => setShowImporter(true)} variant="outline" size="sm">
             <FileSpreadsheet className="h-4 w-4 mr-2" /> Import Excel
           </Button>
