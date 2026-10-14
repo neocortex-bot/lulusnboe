@@ -14,73 +14,62 @@ import { Separator } from "@/components/ui/separator";
  * Menampilkan tampilan peserta + panel admin (kunci jawaban, daftar tilik, properti).
  */
 
-const SCENARIO = `Pasien laki-laki 40 thn datang dengan keluhan rasa tidak nyaman di dada. Riwayat syncope (+), ada kerabat yang meninggal usia 40an. Riwayat sesak nafas (+). Tidak ada riwayat HT.
+const SCENARIO = `Ny. S, 27 thn, dikonsulkan dari Departemen Onkologi dengan sesak nafas dan bengkak kedua tungkai sejak 3 bulan. Riwayat kanker payudara kiri, telah selesai radioterapi 2 tahun lalu.
 
-Pemfis: murmur di LSB`;
+Anda adalah dokter jaga kardiologi yang menerima konsul.`;
 
 const INSTRUCTIONS = [
-  "Interpretasikan hasil echo (hitung kalau perlu, ada kalkulator?)",
-  "Sebutkan 2 diagnosa berdasarkan hasil echo",
-  "Pilih tatalaksana berdasarkan diagnosis → pilih dari obat di meja (ada biso, verapamil, ramipril, isdn, furosemide)",
-  "Apa saja pemeriksaan untuk stratifikasi risiko?",
-  "Apa tujuan stratifikasi risiko pada HOCM",
+  "Interpretasikan hasil pemeriksaan",
+  "Sebutkan diagnosis dan diagnosis bandingnya",
+  "Bagaimana membedakan keduanya?",
+  "Sebutkan tatalaksana",
+  "Sampaikan jawaban konsul ke departemen pengirim",
 ];
 
-const ECHO_DATA = [
-  "LVH (IVSd 5.0 + PWd 1.9)",
-  "EF 77%",
-  "SAM (+)",
-  "LV gradient ±35 mmHg (hitung sendiri)",
-  "Dagger shaped (+) LVOTO, VTI Vel 4.6",
-  "Ada jet Severe AR",
-];
+// Tidak ada data tambahan yang ditulis di soal: peserta harus melihat laptop / meminta ke penguji.
+const ECHO_DATA: string[] = ["Hasil pemeriksaan tersedia di laptop / dapat diminta ke penguji."];
 
 const CALC_PARAMS = [
-  { label: "Peak MR velocity", value: "6.6 m/s" },
-  { label: "Peak LVSP", value: "4(6.6²) + LAP (10 mmHg) = 184.24 mmHg" },
-  { label: "SBP", value: "113 mmHg (ada data di penguji)" },
-  { label: "LVOT gradient", value: "LVSP − SBP = 184.24 − 113 = 71.24 mmHg" },
+  { label: "EKG", value: "Low voltage QRS, sinus takikardia, T inversi difus" },
+  { label: "Foto toraks", value: "Kalsifikasi perikard, efusi pleura bilateral, CTR normal" },
+  { label: "Echo 2D/M-mode", value: "Septal bounce, perikard menebal/hiperekoik, LV ukuran & EF normal, biatrial ringan" },
+  { label: "Doppler", value: "Variasi respirasi mitral inflow E >25%, annulus reversus (e' medial > lateral, e' medial ≥8 cm/s), hepatic vein expiratory diastolic flow reversal" },
+  { label: "IVC", value: "Dilatasi, kolaps <50% (plethora)" },
 ];
 
-// Kunci jawaban lengkap: script utuh yang seharusnya diucapkan peserta,
-// dari awal sampai selesai, mengcover semua daftar tilik secara berurutan.
 const FULL_ANSWER: { heading: string; text: string }[] = [
   {
-    heading: "Pembukaan & interpretasi echo",
-    text: "Terdapat hipertrofi ventrikel kiri yang masif, IVSd 5.0 dan PWd 1.9. Ejection fraction 77 persen, fungsi sistolik baik bahkan hiperdinamis. Terlihat SAM atau systolic anterior motion dari katup mitral. Ada obstruksi jalur keluar ventrikel kiri atau LVOTO dengan gradien sekitar 35 mmHg, terlihat bentuk dagger-shaped pada continuous wave Doppler, dengan VTI velocity 4.6. Selain itu terlihat jet severe AR atau regurgitasi aorta berat.",
+    heading: "Interpretasi pemeriksaan",
+    text: "Dari EKG didapatkan low voltage QRS. Foto toraks menunjukkan kalsifikasi perikard dengan efusi pleura. Pada echo terdapat perikard yang menebal, septal bounce, variasi respirasi aliran mitral lebih dari 25 persen, annulus reversus yaitu e' medial lebih tinggi dari lateral, aliran balik diastolik vena hepatika saat ekspirasi, serta IVC yang melebar tanpa kolaps. Fungsi sistolik ventrikel kiri normal.",
   },
   {
-    heading: "Perhitungan gradien LVOT",
-    text: "Bila saya hitung gradien LVOT-nya: peak MR velocity 6.6 meter per detik, sehingga LVSP sama dengan 4 kali 6.6 kuadrat tambah LAP 10 mmHg, sekitar 184 mmHg. Dikurangi SBP 113 mmHg, gradien LVOT sekitar 71 mmHg.",
+    heading: "Diagnosis & diagnosis banding",
+    text: "Diagnosis saya adalah perikarditis konstriktif akibat radiasi. Diagnosis bandingnya kardiomiopati restriktif.",
   },
   {
-    heading: "Diagnosa",
-    text: "Diagnosa pertama adalah HOCM atau hypertrophic obstructive cardiomyopathy. Diagnosa kedua adalah severe aortic regurgitation atau regurgitasi aorta berat.",
+    heading: "Membedakan konstriktif vs restriktif",
+    text: "Pada konstriktif ada variasi respirasi dan septal bounce, e' medial normal atau meningkat dengan annulus reversus, dan perikard menebal. Pada restriktif tidak ada variasi respirasi, e' menurun, perikard normal. Bila ragu bisa dilakukan CT atau MRI jantung dan kateterisasi untuk melihat ventricular interdependence.",
   },
   {
     heading: "Tatalaksana",
-    text: "Untuk tatalaksana HOCM saya pilih beta blocker yaitu bisoprolol, atau verapamil bila beta blocker tidak toleran. Ramipril, ISDN, dan furosemide tidak saya berikan karena vasodilator dan diuretik dapat memperberat obstruksi LVOT.",
+    text: "Untuk gejala kongesti diberikan diuretik dengan hati-hati dan restriksi garam. Terapi definitifnya adalah perikardiektomi.",
   },
   {
-    heading: "Pemeriksaan stratifikasi risiko",
-    text: "Pemeriksaan stratifikasi risiko meliputi Holter monitor untuk mendeteksi NSVT, cardiac MRI untuk menilai late gadolinium enhancement atau fibrosis serta ketebalan dinding maksimal, juga exercise test untuk gradien provokasi, serta genotyping bila tersedia.",
-  },
-  {
-    heading: "Tujuan stratifikasi risiko",
-    text: "Tujuan stratifikasi risiko adalah untuk pertimbangan pemasangan ICD guna mencegah sudden cardiac death.",
+    heading: "Jawaban konsul",
+    text: "Terima kasih atas konsulnya. Pasien kami diagnosis perikarditis konstriktif pasca radiasi. Kami rawat bersama, kami berikan diuretik dan akan kami rujuk ke bedah toraks kardiovaskular untuk perikardiektomi. Terapi onkologi dapat dilanjutkan sesuai indikasi.",
   },
 ];
 
 const estimateSpeakSeconds = (text: string) => {
   const words = text.trim().split(/\s+/).length;
-  return Math.max(1, Math.round((words / 130) * 60)); // ~130 kata/menit
+  return Math.max(1, Math.round((words / 130) * 60));
 };
 
 const PROPERTIES = [
-  "Kalkulator",
-  "Obat di meja: bisoprolol, verapamil, ramipril, ISDN, furosemide",
-  "Gambar echo: PLAX (SAM), M-mode, CW Doppler LVOT (dagger-shaped), jet AR",
-  "Data penguji: SBP 113 mmHg",
+  "Laptop berisi EKG (low voltage), foto toraks (kalsifikasi perikard), video/gambar echo (septal bounce, M-mode, Doppler mitral inflow, TDI medial & lateral, vena hepatika, IVC)",
+  "Lembar konsul dari Departemen Onkologi",
+  "Penguji berperan sebagai dokter departemen pengirim (onkologi)",
+  "Data vital tersedia di penguji bila diminta",
 ];
 
 interface Tilik {
@@ -91,45 +80,35 @@ interface Tilik {
 }
 
 const TILIK: Tilik[] = [
-  // 1. Interpretasi echo
-  { dt: "Menyebutkan LVH / penebalan dinding LV (IVSd 5.0, PWd 1.9)", wbw: "Terdapat hipertrofi ventrikel kiri yang masif, IVSd 5.0 dan PWd 1.9.", poin: 2 },
-  { dt: "Menyebutkan EF 77% (fungsi sistolik baik/hiperdinamis)", wbw: "Ejection fraction 77 persen, fungsi sistolik baik bahkan hiperdinamis.", poin: 2 },
-  { dt: "Menyebutkan SAM (systolic anterior motion) katup mitral", wbw: "Terlihat SAM atau systolic anterior motion dari katup mitral.", poin: 2 },
-  { dt: "Menyebutkan LVOTO dengan gradien ±35 mmHg / dagger-shaped CW Doppler", wbw: "Ada obstruksi jalur keluar LV dengan gradien sekitar 35 mmHg, bentuk dagger-shaped pada continuous wave Doppler, VTI velocity 4.6.", poin: 2 },
-  { dt: "Menyebutkan adanya severe AR (aortic regurgitation)", wbw: "Selain itu terlihat jet severe AR atau regurgitasi aorta berat.", poin: 2 },
-  { dt: "Menghitung LVOT gradient dari peak MR velocity (LVSP − SBP = 71 mmHg)", wbw: "Peak MR velocity 6.6 meter per detik, LVSP sama dengan 4 kali 6.6 kuadrat tambah LAP 10, sekitar 184 mmHg. Dikurangi SBP 113, gradien LVOT sekitar 71 mmHg.", poin: 2 },
-  // 2. Diagnosa
-  { dt: "Diagnosa 1: HOCM (hypertrophic obstructive cardiomyopathy)", wbw: "Diagnosa pertama adalah HOCM atau hypertrophic obstructive cardiomyopathy.", poin: 2, kritis: true },
-  { dt: "Diagnosa 2: Severe AR / regurgitasi aorta berat", wbw: "Diagnosa kedua adalah severe aortic regurgitation.", poin: 2 },
-  // 3. Tatalaksana
-  { dt: "Memilih beta blocker (bisoprolol) atau verapamil sebagai terapi utama HOCM", wbw: "Untuk HOCM saya pilih beta blocker yaitu bisoprolol, atau verapamil bila beta blocker tidak toleran.", poin: 2, kritis: true },
-  { dt: "Menghindari/menyebut kontraindikasi: ACE inhibitor (ramipril), ISDN, diuretik berlebih (furosemide) karena memperberat obstruksi", wbw: "Ramipril, ISDN, dan furosemide tidak saya berikan karena vasodilator dan diuretik dapat memperberat obstruksi LVOT.", poin: 2 },
-  // 4. Pemeriksaan stratifikasi risiko
-  { dt: "Menyebutkan Holter / ambulatory monitor (deteksi NSVT)", wbw: "Pemeriksaan stratifikasi risiko meliputi Holter monitor untuk mendeteksi NSVT.", poin: 2 },
-  { dt: "Menyebutkan CMR (cardiac MRI) untuk LGE / fibrosis dan ketebalan dinding", wbw: "Cardiac MRI untuk menilai late gadolinium enhancement atau fibrosis dan ketebalan dinding maksimal.", poin: 2 },
-  { dt: "Menyebutkan exercise test / TEE provokasi gradien dan genotyping", wbw: "Juga exercise test untuk gradien provokasi, serta genotyping bila tersedia.", poin: 2 },
-  // 5. Tujuan stratifikasi risiko
-  { dt: "Menyebutkan tujuan: pertimbangan pemasangan ICD (pencegahan sudden cardiac death)", wbw: "Tujuan stratifikasi risiko adalah untuk pertimbangan pemasangan ICD guna mencegah sudden cardiac death.", poin: 2, kritis: true },
+  { dt: "Menyebutkan EKG low voltage", wbw: "Dari EKG didapatkan low voltage QRS.", poin: 2 },
+  { dt: "Menyebutkan kalsifikasi perikard pada foto toraks", wbw: "Foto toraks menunjukkan kalsifikasi perikard dengan efusi pleura.", poin: 2 },
+  { dt: "Menyebutkan perikard menebal dan septal bounce", wbw: "Pada echo terdapat perikard yang menebal dan septal bounce.", poin: 2 },
+  { dt: "Menyebutkan variasi respirasi mitral inflow >25%", wbw: "Variasi respirasi aliran mitral lebih dari 25 persen.", poin: 2 },
+  { dt: "Menyebutkan annulus reversus (e' medial > lateral)", wbw: "Annulus reversus yaitu e' medial lebih tinggi dari lateral.", poin: 2 },
+  { dt: "Menyebutkan hepatic vein expiratory flow reversal / IVC plethora", wbw: "Aliran balik diastolik vena hepatika saat ekspirasi, serta IVC melebar tanpa kolaps.", poin: 2 },
+  { dt: "Diagnosis: perikarditis konstriktif (pasca radiasi)", wbw: "Diagnosis saya adalah perikarditis konstriktif akibat radiasi.", poin: 2, kritis: true },
+  { dt: "Diagnosis banding: kardiomiopati restriktif", wbw: "Diagnosis bandingnya kardiomiopati restriktif.", poin: 2 },
+  { dt: "Pembeda: variasi respirasi & septal bounce hanya pada konstriktif", wbw: "Pada konstriktif ada variasi respirasi dan septal bounce, pada restriktif tidak ada.", poin: 2 },
+  { dt: "Pembeda: e' normal/annulus reversus vs e' menurun pada restriktif", wbw: "E' medial normal dengan annulus reversus, sedangkan restriktif e' menurun.", poin: 2 },
+  { dt: "Menyebut pemeriksaan lanjutan: CT/MRI jantung atau kateterisasi", wbw: "Bila ragu bisa dilakukan CT atau MRI jantung dan kateterisasi.", poin: 2 },
+  { dt: "Terapi simptomatik: diuretik hati-hati + restriksi garam", wbw: "Untuk kongesti diberikan diuretik dengan hati-hati dan restriksi garam.", poin: 2 },
+  { dt: "Terapi definitif: perikardiektomi", wbw: "Terapi definitifnya adalah perikardiektomi.", poin: 2, kritis: true },
+  { dt: "Jawaban konsul: menyampaikan diagnosis & rawat bersama", wbw: "Terima kasih atas konsulnya, pasien kami diagnosis perikarditis konstriktif pasca radiasi, kami rawat bersama.", poin: 2 },
+  { dt: "Jawaban konsul: rujuk bedah toraks kardiovaskular", wbw: "Akan kami rujuk ke bedah toraks kardiovaskular untuk perikardiektomi.", poin: 2 },
 ];
 
 const RISK_FACTORS = [
-  "Riwayat keluarga sudden death dari HCM (≤50 th, kerabat dekat)",
-  "Massive LVH (ketebalan dinding ≥30 mm)",
-  "Syncope yang tidak terjelaskan",
-  "HCM dengan disfungsi sistolik LV (EF <50%)",
-  "Aneurisma apikal LV",
-  "LGE luas pada CMR (≥15% massa LV)",
-  "NSVT pada ambulatory monitor",
-  "Status genotipe positif",
+  "Konstriktif: septal bounce (+), variasi respirasi >25%, e' medial normal/↑ (annulus reversus), perikard menebal/kalsifikasi",
+  "Restriktif: tidak ada variasi respirasi, e' ↓ (<7 cm/s), perikard normal, LV dinding bisa menebal, atrium sangat dilatasi",
+  "Kateterisasi: konstriktif → discordance LV-RV (interdependence); restriktif → concordance",
 ];
 
-// Draft yang dimasukkan ke /prereview saat tombol "Masukkan ke Pre-review" diklik.
 const DRAFT = {
-  title: "Echo — HOCM (Tn. 40 th)",
+  title: "Konsul Antar Departemen — Constrictive Pericarditis Post Radioterapi (Ny. S, 27 th)",
   exam_mode: "oral_board",
   reading_time_seconds: 120,
-  time_limit_seconds: 360,
-  initial_prompt: `${SCENARIO}\n\nInformasi tambahan (ditampilkan ke peserta):\n${ECHO_DATA.map((d) => `- ${d}`).join("\n")}`,
+  time_limit_seconds: 420,
+  initial_prompt: SCENARIO,
   questions_text: INSTRUCTIONS.map((q, i) => `${i + 1}. ${q}`).join("\n"),
   answer_key_text: FULL_ANSWER.map((a) => a.text).join("\n"),
   properties: PROPERTIES,

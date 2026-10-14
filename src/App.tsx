@@ -12,6 +12,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import CasePreview from "./pages/admin/CasePreview"; // NEW: Preview page
 import PreReview from "./pages/admin/PreReview";
 import HocmPreview from "./pages/admin/HocmPreview";
+import ConstrictivePreview from "./pages/admin/ConstrictivePreview";
 import StationDisplay from "./pages/StationDisplay";
 import ExamEntry from "./pages/ExamEntry";
 import ExamMobile from "./pages/ExamMobile";
@@ -59,6 +60,14 @@ const App = () => (
               element={
                 <ProtectedRoute requireAdmin>
                   <HocmPreview />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/preview-soal/constrictive"
+              element={
+                <ProtectedRoute requireAdmin>
+                  <ConstrictivePreview />
                 </ProtectedRoute>
               }
             />
