@@ -39,6 +39,40 @@ const CALC_PARAMS = [
   { label: "LVOT gradient", value: "LVSP − SBP = 184.24 − 113 = 71.24 mmHg" },
 ];
 
+// Kunci jawaban lengkap: script utuh yang seharusnya diucapkan peserta,
+// dari awal sampai selesai, mengcover semua daftar tilik secara berurutan.
+const FULL_ANSWER: { heading: string; text: string }[] = [
+  {
+    heading: "Pembukaan & interpretasi echo",
+    text: "Terdapat hipertrofi ventrikel kiri yang masif, IVSd 5.0 dan PWd 1.9. Ejection fraction 77 persen, fungsi sistolik baik bahkan hiperdinamis. Terlihat SAM atau systolic anterior motion dari katup mitral. Ada obstruksi jalur keluar ventrikel kiri atau LVOTO dengan gradien sekitar 35 mmHg, terlihat bentuk dagger-shaped pada continuous wave Doppler, dengan VTI velocity 4.6. Selain itu terlihat jet severe AR atau regurgitasi aorta berat.",
+  },
+  {
+    heading: "Perhitungan gradien LVOT",
+    text: "Bila saya hitung gradien LVOT-nya: peak MR velocity 6.6 meter per detik, sehingga LVSP sama dengan 4 kali 6.6 kuadrat tambah LAP 10 mmHg, sekitar 184 mmHg. Dikurangi SBP 113 mmHg, gradien LVOT sekitar 71 mmHg.",
+  },
+  {
+    heading: "Diagnosa",
+    text: "Diagnosa pertama adalah HOCM atau hypertrophic obstructive cardiomyopathy. Diagnosa kedua adalah severe aortic regurgitation atau regurgitasi aorta berat.",
+  },
+  {
+    heading: "Tatalaksana",
+    text: "Untuk tatalaksana HOCM saya pilih beta blocker yaitu bisoprolol, atau verapamil bila beta blocker tidak toleran. Ramipril, ISDN, dan furosemide tidak saya berikan karena vasodilator dan diuretik dapat memperberat obstruksi LVOT.",
+  },
+  {
+    heading: "Pemeriksaan stratifikasi risiko",
+    text: "Pemeriksaan stratifikasi risiko meliputi Holter monitor untuk mendeteksi NSVT, cardiac MRI untuk menilai late gadolinium enhancement atau fibrosis serta ketebalan dinding maksimal, juga exercise test untuk gradien provokasi, serta genotyping bila tersedia.",
+  },
+  {
+    heading: "Tujuan stratifikasi risiko",
+    text: "Tujuan stratifikasi risiko adalah untuk pertimbangan pemasangan ICD guna mencegah sudden cardiac death.",
+  },
+];
+
+const estimateSpeakSeconds = (text: string) => {
+  const words = text.trim().split(/\s+/).length;
+  return Math.max(1, Math.round((words / 130) * 60)); // ~130 kata/menit
+};
+
 const PROPERTIES = [
   "Kalkulator",
   "Obat di meja: bisoprolol, verapamil, ramipril, ISDN, furosemide",
