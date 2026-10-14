@@ -246,6 +246,7 @@ const PreReview = () => {
                     <TableHead>Judul</TableHead>
                     <TableHead>Mode</TableHead>
                     <TableHead>Butir Tilik</TableHead>
+                    <TableHead>Properti</TableHead>
                     <TableHead>Total Poin</TableHead>
                     <TableHead>Kelengkapan</TableHead>
                     <TableHead className="text-right">Aksi</TableHead>
@@ -259,6 +260,13 @@ const PreReview = () => {
                         <TableCell className="font-medium">{d.title}</TableCell>
                         <TableCell>{d.exam_mode === "panel_exam" ? "Panel" : "Oral Board"}</TableCell>
                         <TableCell>{d.items.length}</TableCell>
+                        <TableCell>
+                          {d.properties.length > 0 ? (
+                            <Badge variant="secondary">{d.properties.length} properti</Badge>
+                          ) : (
+                            <span className="text-muted-foreground text-xs">—</span>
+                          )}
+                        </TableCell>
                         <TableCell>{totalPoints(d)}</TableCell>
                         <TableCell>
                           {errs.length === 0 ? (
@@ -382,6 +390,7 @@ const DraftEditor = ({ initial, busy, onSave, onIngest }: EditorProps) => {
             <Label>Pertanyaan (singkat & padat, bernomor)</Label>
             <Textarea rows={6} value={d.questions_text} onChange={(e) => set("questions_text", e.target.value)} placeholder={"1. ...\n2. ..."} />
           </div>
+          <PropertiesEditor properties={d.properties} onChange={(v) => set("properties", v)} />
         </TabsContent>
 
         <TabsContent value="jawaban" className="space-y-3 pt-2">
