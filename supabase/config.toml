@@ -1,1 +1,23 @@
-project_id = "dqhnbxnopuwaarlyncbs"
+project_id = "nowebjmwrtkspvdwgevj"
+
+[functions.evaluate-exam]
+verify_jwt = false
+
+[functions.register-candidate]
+verify_jwt = false
+
+[functions.exam-chat]
+verify_jwt = false
+
+[functions.keep-alive]
+verify_jwt = false
+
+[functions.ingest-case]
+verify_jwt = false
+
+
+[functions.case-admin]
+verify_jwt = false
+
+[functions.generate-model-answer]
+verify_jwt = false
