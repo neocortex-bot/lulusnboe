@@ -87,7 +87,7 @@ const PreReview = () => {
         .from("clinical_cases")
         .select("*")
         .eq("status", PREREVIEW_STATUS)
-        .order("updated_at", { ascending: false });
+        .order("created_at", { ascending: false });
       if (error) throw error;
       return (data || []).map((c: any): DraftCase => {
         const raw = c.checklist_rubric;
