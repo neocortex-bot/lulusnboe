@@ -160,7 +160,7 @@ const PreReview = () => {
     }
     const { error: akErr } = await supabase
       .from("case_answer_keys")
-      .upsert({ case_id: id, answer_key_text: d.answer_key_text, checklist_rubric: rubric as any }, { onConflict: "case_id" });
+      .upsert({ case_id: id, answer_key_text: d.answer_key_text, checklist_rubric: { ...rubric, properties } as any }, { onConflict: "case_id" });
     if (akErr) throw akErr;
     return id!;
   };
