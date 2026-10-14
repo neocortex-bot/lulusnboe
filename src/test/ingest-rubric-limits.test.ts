@@ -17,7 +17,7 @@ describe("ingest-case keeps rubrics flexible", () => {
 
   it("rejects duplicated rubric lines", () => {
     expect(ingest).toContain("butir duplikat");
-    expect(ingest).toContain(/normalizedTexts\.indexOf\(t\) !== idx/);
+    expect(ingest).toMatch(/normalizedTexts\.indexOf\(t\) !== idx/);
   });
 
   it("documents the flexible rubric contract to callers", () => {
