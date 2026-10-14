@@ -15,6 +15,13 @@
       "when": 1791972662565,
       "tag": "0001_bootstrap_cloud_schema_functions",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791972688972,
+      "tag": "0002_bootstrap_cloud_schema_policies",
+      "breakpoints": true
     }
   ]
 }
