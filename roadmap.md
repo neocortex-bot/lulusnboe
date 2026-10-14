@@ -1,22 +1,14 @@
 # Roadmap
 
-## Now
-- [ ] Deploy edge functions (ingest-case, case-admin, dll) ke backend Lovable Cloud baru
-- [ ] Bangun ulang tabel database di backend Cloud baru (dari supabase/migrations)
-- [ ] Salin data soal lama (108 clinical_cases, 220 exam_sequence_items) dari backend lama
-- [ ] Pasang kembali secret: OPENAI_API_KEY, CASE_INGEST_API_KEY di backend Cloud
+## Selesai (14 Okt 2026)
+- [x] Deploy edge functions (ingest-case, case-admin, dll) ke backend Lovable Cloud baru
+- [x] Bangun ulang tabel database di backend Cloud baru (11 tabel dari supabase/migrations)
+- [x] Salin data soal lama (108 clinical_cases, 220 exam_sequence_items) dari backend lama — rujukan created_by/reviewed_by/session_id dikosongkan karena pengguna lama tidak ada di backend baru
+- [x] Secret tersedia di Cloud: OPENAI_API_KEY, CASE_INGEST_API_KEY
 
-## Berikutnya
-- [ ] Uji ingest-case menerima daftar tilik fleksibel (11 butir & 53 butir) tanpa ditolak 400
-- [ ] Pulihkan soal yang terhapus (salinan Athlete's Heart tersedia)
-- [ ] Perbarui memori alur pembuatan soal dengan aturan rubrik fleksibel
-
-## Perlu verifikasi ulang
-- [ ] exam_access + filter master admin (izzan.rijal@gmail.com)
-- [ ] Panel jawaban ideal di riwayat ujian
-- [ ] Perekaman audio di iPhone
-- [ ] Highlight jawaban partisipan pada rubrik yang lulus
-
-## Sinkronisasi backend (14 Okt 2026)
-- [ ] Salin 108 clinical_cases + 220 exam_sequence_items dari backend lama (nowebjmwrtkspvdwgevj) ke Cloud baru (dqhnbxnopuwaarlyncbs) — fix 409 saat insert
-- [ ] Jelaskan ke user: aplikasi kini memakai Cloud baru; ingest-case/case-admin harus ke URL Cloud, bukan URL lama
+## Tertahan menunggu keputusan user
+- [ ] Keputusan: pakai backend Cloud (dqhnbxnopuwaarlyncbs) sebagai satu-satunya — aplikasi + ingest-case + case-admin; backend lama (nowebjmwrtkspvdwgevj) tidak terhubung ke Lovable dan tidak bisa diupdate dari sini
+- [ ] Restore soal terhapus — tunggu jawaban soal mana
+- [ ] Rubrik 53 butir athletes heart ke soal aktif — butuh CASE_ADMIN_API_KEY dikenali case-admin
+- [ ] Aset gambar athletes heart (5 gambar) belum terpasang ke soal
+- [ ] Deploy edge function baru ke backend lama via Supabase CLI jika user masih ingin rubrik fleksibel di sana
