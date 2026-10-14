@@ -92,9 +92,16 @@ const PreReview = () => {
         .eq("status", PREREVIEW_STATUS)
         .order("created_at", { ascending: false });
       if (error) throw error;
+      // Properti soal disimpan di case_answer_keys (tabel khusus admin)
+      const { data: answerKeys } = await supabase
+        .from("case_answer_keys")
+        .select("case_id, checklist_rubric");
+      const akMap = new Map((answerKeys || []).map((ak: any) => [ak.case_id, ak]));
       return (data || []).map((c: any): DraftCase => {
+        const akRaw = akMap.get(c.id)?.checklist_rubric;
         const raw = c.checklist_rubric;
         const items = Array.isArray(raw?.items) ? raw.items : Array.isArray(raw) ? raw : [];
+        const props = Array.isArray(akRaw?.properties) ? akRaw.properties : [];
         return {
           id: c.id,
           title: c.title,
@@ -105,6 +112,7 @@ const PreReview = () => {
           questions_text: c.questions_text ?? "",
           answer_key_text: c.answer_key_text ?? "",
           updated_at: c.updated_at,
+          properties: props.map((p: any) => String(p)),
           items: items.map((it: any) => ({
             answer: it.answer ?? "",
             text: it.text ?? "",
