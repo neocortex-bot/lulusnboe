@@ -8,6 +8,13 @@
       "when": 1791972613897,
       "tag": "0000_bootstrap_cloud_schema_tables",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791972662565,
+      "tag": "0001_bootstrap_cloud_schema_functions",
+      "breakpoints": true
     }
   ]
 }

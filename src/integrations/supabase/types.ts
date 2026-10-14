@@ -428,7 +428,91 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      advance_station_sequence: {
+        Args: { _completed_sequence_order: number; _station_token: string }
+        Returns: {
+          next_case_id: string
+          next_id: string
+          next_is_last: boolean
+          next_sequence_order: number
+          next_session_start_time: string
+          next_station_token: string
+          next_status: string
+          outcome: string
+        }[]
+      }
+      claim_exam_session: {
+        Args: { _candidate_id: string; _session_id: string }
+        Returns: Json
+      }
+      get_case_assets_for_display: {
+        Args: { _case_id: string }
+        Returns: {
+          answer_text: string
+          asset_type: string
+          asset_url: string
+          category: string
+          id: string
+          trigger_keywords: string[]
+        }[]
+      }
+      get_case_display: {
+        Args: { _case_id: string }
+        Returns: {
+          exam_mode: string
+          initial_prompt: string
+          questions_text: string
+          reading_time_seconds: number
+          show_results_to_candidate: boolean
+          time_limit_seconds: number
+          title: string
+        }[]
+      }
+      get_session_by_token: {
+        Args: { _token: string }
+        Returns: {
+          case_id: string
+          deployment_id: string
+          id: string
+          sequence_order: number
+          sequence_total: number
+          session_start_time: string
+          status: string
+        }[]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_master_admin: { Args: { _user_id: string }; Returns: boolean }
+      owns_case: {
+        Args: { _case_id: string; _user_id: string }
+        Returns: boolean
+      }
+      regenerate_station_session: {
+        Args: { _case_id: string; _new_token: string }
+        Returns: {
+          case_id: string
+          id: string
+          session_start_time: string
+          status: string
+        }[]
+      }
+      reset_completed_station_sequence: {
+        Args: { _new_tokens: string[]; _station_token: string }
+        Returns: {
+          case_id: string
+          deployment_id: string
+          id: string
+          session_start_time: string
+          station_token: string
+          status: string
+        }[]
+      }
+      start_exam_timer: { Args: { _session_id: string }; Returns: string }
     }
     Enums: {
       app_role: "admin" | "candidate"
