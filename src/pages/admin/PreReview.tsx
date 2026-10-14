@@ -125,7 +125,9 @@ const PreReview = () => {
   });
 
   const save = async (d: DraftCase, publish: boolean) => {
+    // Rubrik untuk clinical_cases TIDAK boleh memuat properti soal (bisa dibaca peserta).
     const rubric = { enabled: true, items: d.items };
+    const properties = d.properties.map((p) => p.trim()).filter(Boolean);
     const payload: any = {
       title: d.title.trim(),
       exam_mode: d.exam_mode,
