@@ -1,3 +1,4 @@
 - [ ] Perbaiki akses AI peserta berizin dan tampilkan penyebab kegagalan evaluasi.
 - [ ] Highlight kutipan jawaban yang memenuhi rubrik; bold-italic hanya butir yang belum disebut.
 - [ ] Uji evaluasi, jawaban ideal, dan perubahan tampilan.
+- [ ] Kirim soal Athlete’s Heart beserta aset ke Pre-review; terblokir endpoint aktif masih memakai aturan lama (minimal 5 tugas, rubrik 5–7 butir), belum mendukung standar prereview atomik atau pemasangan aset langsung.
