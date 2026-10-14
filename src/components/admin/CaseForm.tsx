@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import RubricBuilder, { type RubricData } from "./RubricBuilder";
 import AssetUploader from "./AssetUploader";
+import PropertiesEditor from "./PropertiesEditor";
 
 interface CaseFormProps {
   existingCase?: {
@@ -65,6 +66,12 @@ const CaseForm = ({ existingCase, onClose }: CaseFormProps) => {
   );
   const [rubricData, setRubricData] = useState<RubricData>(
     parseRubricData(existingCase?.checklist_rubric)
+  );
+  // Properti soal: admin-only, disimpan di case_answer_keys (tidak pernah ke peserta)
+  const [properties, setProperties] = useState<string[]>(
+    Array.isArray((existingCase?.checklist_rubric as any)?.properties)
+      ? (existingCase!.checklist_rubric as any).properties.map((p: any) => String(p))
+      : []
   );
 
   const queryClient = useQueryClient();
