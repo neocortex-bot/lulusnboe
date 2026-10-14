@@ -236,7 +236,8 @@ const CasePreview = () => {
         payload.reviewed_at = new Date().toISOString();
       }
 
-      const { error } = await supabase.from("clinical_cases").update(payload).eq("id", id);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await supabase.from("clinical_cases").update(payload as any).eq("id", id);
       if (error) throw error;
 
       // Sinkron ke tabel kunci jawaban

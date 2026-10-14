@@ -12,7 +12,10 @@ const RubricItem = z.object({
   text: z.string().min(10).max(500),
   points: z.number().int().min(1).max(5),
   isCritical: z.boolean(),
+  // Word by word (agar mendapatkan poin ini) — admin-only, disimpan di case_answer_keys
+  answer: z.string().max(4000).optional(),
 });
+type RubricItemT = z.infer<typeof RubricItem>;
 
 const MediaNote = z.object({
   description: z.string().min(3).max(300),
@@ -20,49 +23,48 @@ const MediaNote = z.object({
   trigger_keywords: z.array(z.string().min(2)).default([]),
 });
 
-// Field yang boleh di-edit. Semua opsional — hanya field yang dikirim yang diubah.
+// Operasi rubrik granular, seperti admin mengedit satu baris di tabel.
+const RubricOp = z.discriminatedUnion("op", [
+  z.object({ op: z.literal("add"), item: RubricItem, index: z.number().int().min(0).optional() }),
+  z.object({ op: z.literal("update"), index: z.number().int().min(0), item: RubricItem.partial() }),
+  z.object({ op: z.literal("remove"), index: z.number().int().min(0) }),
+  z.object({ op: z.literal("move"), from: z.number().int().min(0), to: z.number().int().min(0) }),
+]);
+
 const UpdateSchema = z.object({
-  title: z.string().min(15).max(200).optional(),
+  title: z.string().min(10).max(200).optional(),
+  status: z.enum(["prereview", "draft", "published", "archived"]).optional(),
   exam_mode: z.enum(["oral_board", "osce", "panel_exam"]).optional(),
   reading_time_minutes: z.number().min(0.25).max(15).optional(),
   time_limit_minutes: z.number().min(0.5).max(30).optional(),
   reading_time_seconds: z.number().int().min(5).max(900).optional(),
   time_limit_seconds: z.number().int().min(30).max(1800).optional(),
   show_results_to_candidate: z.boolean().optional(),
-  // Panel murni tanya-jawab tidak punya vignette -> string kosong harus diterima.
   initial_prompt: z.string().max(20000).optional(),
-  // Panel memakai satu pertanyaan inti -> boleh jauh lebih pendek dari mode kasus.
-  questions_text: z.string().min(20).optional(),
-  answer_key_text: z.string().min(800).optional(),
-  checklist_rubric: z
-    .object({ items: z.array(RubricItem).min(0).max(100) })
-    .optional(),
+  questions_text: z.string().min(20).max(20000).optional(),
+  answer_key_text: z.string().min(100).max(50000).optional(),
+  checklist_rubric: z.object({ items: z.array(RubricItem).max(100) }).optional(),
+  rubric_ops: z.array(RubricOp).max(100).optional(),
+  properties: z.array(z.string().min(1).max(500)).max(50).optional(),
   media_notes: z.array(MediaNote).optional(),
   created_by_email: z.string().email().optional(),
+  dry_run: z.boolean().optional(),
 });
 
 const SCHEMA_DOC = {
-  endpoint: "POST /functions/v1/case-admin",
   auth_header: "X-Agent-Api-Key: <CASE_ADMIN_API_KEY>",
-  usage: {
-    GET: "/functions/v1/case-admin?id=<case_id> — ambil satu case (semua field, termasuk checklist_rubric).",
-    PATCH: "/functions/v1/case-admin?id=<case_id> — update sebagian field case. Hanya field yang dikirim yang diubah.",
-    GET_no_id: "/functions/v1/case-admin — daftar ringkas case (id, title, status, rubric_mode).",
-  },
+  GET_list: "/functions/v1/case-admin?status=&q=<judul>&limit=100",
+  GET_one: "/functions/v1/case-admin?id=<case_id> — semua field + rubrik lengkap (dengan answer) + properties",
+  PATCH: "/functions/v1/case-admin?id=<case_id> — kirim hanya field yang diubah",
   patch_fields: {
-    title: "string 15-200 chars",
-    exam_mode: "'oral_board' | 'osce' | 'panel_exam'",
-    reading_time_seconds: "int 5-900 (atau reading_time_minutes 0.25-15)",
-    time_limit_seconds: "int 30-1800 (atau time_limit_minutes 0.5-30)",
-    show_results_to_candidate: "boolean",
-    initial_prompt: "string (boleh kosong utk panel_exam murni tanya-jawab; >=400 disarankan utk mode kasus)",
-    questions_text: "string >=20 chars (panel_exam cukup 1 pertanyaan inti; mode kasus sebaiknya >=300 & >=5 nomor)",
-    answer_key_text: "string >=800 chars",
-    checklist_rubric: "{ items: [{ text 10-500 chars, points 1-5, isCritical }] } — rubrik aktif harus 3-100 items, >=1 critical, total >=6 poin; gunakan hanya fakta substantif yang spesifik pada jawaban, tanpa boilerplate generik; kosongkan items utk nonaktif",
-    media_notes: "array",
-    created_by_email: "string email",
+    title: "10-200 char, unik", status: "prereview|draft|published|archived",
+    exam_mode: "oral_board|osce|panel_exam", reading_time_seconds: "5-900", time_limit_seconds: "30-1800",
+    initial_prompt: "skenario", questions_text: ">=20 char", answer_key_text: ">=100 char",
+    checklist_rubric: "{items:[{text,points 1-5,isCritical,answer?}]} — ganti seluruh rubrik",
+    rubric_ops: "[{op:'add',item,index?}|{op:'update',index,item:{...sebagian}}|{op:'remove',index}|{op:'move',from,to}] — index 0-based",
+    properties: "string[] admin-only", media_notes: "array", dry_run: "true = validasi & preview tanpa simpan",
   },
-  note: "Menggunakan service role — update tidak tunduk RLS. Hanya untuk penggunaan admin/agent tepercaya.",
+  rubric_rules: "3-100 butir, >=1 kritis, total >=6 poin, tanpa duplikat (atau 0 butir = nonaktif)",
 };
 
 function json(status: number, body: unknown) {
@@ -72,169 +74,175 @@ function json(status: number, body: unknown) {
   });
 }
 
+function applyOps(items: RubricItemT[], ops: z.infer<typeof RubricOp>[]): RubricItemT[] | string {
+  const out = items.map((i) => ({ ...i }));
+  for (const [n, o] of ops.entries()) {
+    if (o.op === "add") {
+      const at = o.index ?? out.length;
+      if (at > out.length) return `rubric_ops[${n}]: index ${at} di luar rentang`;
+      out.splice(at, 0, o.item);
+    } else if (o.op === "update") {
+      if (!out[o.index]) return `rubric_ops[${n}]: index ${o.index} tidak ada`;
+      out[o.index] = { ...out[o.index], ...o.item };
+    } else if (o.op === "remove") {
+      if (!out[o.index]) return `rubric_ops[${n}]: index ${o.index} tidak ada`;
+      out.splice(o.index, 1);
+    } else {
+      if (!out[o.from] || o.to >= out.length) return `rubric_ops[${n}]: from/to di luar rentang`;
+      const [m] = out.splice(o.from, 1);
+      out.splice(o.to, 0, m);
+    }
+  }
+  return out;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
-  // Auth: wajib X-Agent-Api-Key sama dengan env CASE_ADMIN_API_KEY
-  const expected = Deno.env.get("CASE_ADMIN_API_KEY");
+  const expected = Deno.env.get("CASE_ADMIN_API_KEY") || Deno.env.get("CASE_INGEST_API_KEY");
   if (!expected) return json(500, { error: "Server missing CASE_ADMIN_API_KEY" });
   const provided = req.headers.get("x-agent-api-key");
-  if (!provided || provided !== expected) {
-    return json(401, { error: "Invalid or missing X-Agent-Api-Key" });
-  }
+  if (!provided || provided !== expected) return json(401, { error: "Invalid or missing X-Agent-Api-Key" });
 
-  const supabase = createClient(
-    Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    { auth: { persistSession: false, autoRefreshToken: false } },
-  );
+  const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
 
   const url = new URL(req.url);
   const id = url.searchParams.get("id");
+  if (id && !/^[0-9a-f-]{36}$/i.test(id)) return json(400, { error: "id harus UUID" });
 
-  // ---- GET: ambil case ----
-  if (req.method === "GET") {
-    if (!id) {
-      // daftar ringkas (opsional query status)
-      const status = url.searchParams.get("status");
-      let q = supabase
-        .from("clinical_cases")
-        .select("id, title, exam_mode, status, source, rubric_mode, created_at");
-      if (status) q = q.eq("status", status);
-      const { data, error } = await q.order("created_at", { ascending: false }).limit(100);
-      if (error) return json(500, { error: "List failed", detail: error.message });
-      return json(200, { cases: data });
-    }
-
-    const { data, error } = await supabase
-      .from("clinical_cases")
-      .select("*")
-      .eq("id", id)
-      .maybeSingle();
-    if (error) return json(500, { error: "Fetch failed", detail: error.message });
-    if (!data) return json(404, { error: "Case not found", id });
-
-    // sertakan answer key dari tabel terpisah bila ada
+  async function loadFull(caseId: string) {
+    const { data, error } = await supabase.from("clinical_cases").select("*").eq("id", caseId).maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!data) return null;
     const { data: ak } = await supabase
-      .from("case_answer_keys")
-      .select("answer_key_text, checklist_rubric")
-      .eq("case_id", id)
-      .maybeSingle();
-
-    return json(200, { case: { ...data, answer_key: ak ?? null } });
+      .from("case_answer_keys").select("answer_key_text, checklist_rubric").eq("case_id", caseId).maybeSingle();
+    const akR = (ak?.checklist_rubric ?? {}) as { items?: RubricItemT[]; properties?: string[] };
+    const ccR = (data.checklist_rubric ?? {}) as { items?: RubricItemT[] };
+    const items = (akR.items?.length ? akR.items : ccR.items) ?? [];
+    return {
+      ...data,
+      answer_key_text: ak?.answer_key_text ?? data.answer_key_text ?? null,
+      rubric_items: items.map((it, index) => ({ index, ...it })),
+      properties: akR.properties ?? [],
+    };
   }
 
-  // ---- PATCH: edit case ----
+  if (req.method === "GET") {
+    if (!id) {
+      const status = url.searchParams.get("status");
+      const q = url.searchParams.get("q");
+      const limit = Math.min(Number(url.searchParams.get("limit")) || 100, 500);
+      let query = supabase.from("clinical_cases")
+        .select("id, title, exam_mode, status, source, rubric_mode, created_at");
+      if (status) query = query.eq("status", status);
+      if (q) query = query.ilike("title", `%${q.slice(0, 100)}%`);
+      const { data, error } = await query.order("created_at", { ascending: false }).limit(limit);
+      if (error) return json(500, { error: "List failed", detail: error.message });
+      return json(200, { count: data.length, cases: data, schema: SCHEMA_DOC });
+    }
+    try {
+      const full = await loadFull(id);
+      if (!full) return json(404, { error: "Case not found", id });
+      return json(200, { case: full });
+    } catch (e) {
+      return json(500, { error: "Fetch failed", detail: (e as Error).message });
+    }
+  }
+
   if (req.method === "PATCH") {
     if (!id) return json(400, { error: "Missing ?id=<case_id>" });
-
     let raw: unknown;
-    try {
-      raw = await req.json();
-    } catch {
-      return json(400, { error: "Invalid JSON body" });
-    }
-
+    try { raw = await req.json(); } catch { return json(400, { error: "Invalid JSON body" }); }
     const parsed = UpdateSchema.safeParse(raw);
-    if (!parsed.success) {
-      return json(400, { error: "Validation failed", details: parsed.error.flatten(), schema: SCHEMA_DOC });
-    }
+    if (!parsed.success) return json(400, { error: "Validation failed", details: parsed.error.flatten(), schema: SCHEMA_DOC });
     const data = parsed.data;
+    if (data.checklist_rubric && data.rubric_ops) return json(400, { error: "Pilih salah satu: checklist_rubric atau rubric_ops" });
+
+    let current;
+    try { current = await loadFull(id); } catch (e) { return json(500, { error: "Fetch failed", detail: (e as Error).message }); }
+    if (!current) return json(404, { error: "Case not found", id });
 
     const patch: Record<string, unknown> = {};
-
-    if (data.title !== undefined) patch.title = data.title;
-    if (data.exam_mode !== undefined) patch.exam_mode = data.exam_mode;
-    if (data.show_results_to_candidate !== undefined) patch.show_results_to_candidate = data.show_results_to_candidate;
-    if (data.initial_prompt !== undefined) patch.initial_prompt = data.initial_prompt;
-    if (data.questions_text !== undefined) patch.questions_text = data.questions_text;
-    if (data.answer_key_text !== undefined) patch.answer_key_text = data.answer_key_text;
-    if (data.media_notes !== undefined) patch.media_notes = data.media_notes;
-
+    for (const k of ["title", "status", "exam_mode", "show_results_to_candidate", "initial_prompt", "questions_text", "answer_key_text", "media_notes"] as const) {
+      if (data[k] !== undefined) patch[k] = data[k];
+    }
     if (data.reading_time_seconds !== undefined) patch.reading_time_seconds = data.reading_time_seconds;
     else if (data.reading_time_minutes !== undefined) patch.reading_time_seconds = Math.round(data.reading_time_minutes * 60);
-
     if (data.time_limit_seconds !== undefined) patch.time_limit_seconds = data.time_limit_seconds;
     else if (data.time_limit_minutes !== undefined) patch.time_limit_seconds = Math.round(data.time_limit_minutes * 60);
 
-    if (data.checklist_rubric !== undefined) {
-      const items = data.checklist_rubric.items ?? [];
-      // Kosongkan items untuk menonaktifkan rubric (rubric_mode='none')
-      const mode = items.length > 0 ? "checklist" : "none";
-
-      const rubricQualityError = getRubricQualityError(items);
-      if (rubricQualityError) {
-        return json(400, { error: rubricQualityError });
-      }
-
-      patch.checklist_rubric = { enabled: items.length > 0, items };
-      patch.rubric_mode = mode;
+    if (data.title && data.title !== current.title) {
+      const { data: dup } = await supabase.from("clinical_cases").select("id").ilike("title", data.title).neq("id", id).limit(1);
+      if (dup?.length) return json(409, { error: "Judul sudah dipakai soal lain", conflict_id: dup[0].id });
     }
 
-    if (data.created_by_email !== undefined) {
-      const ownerEmail = data.created_by_email.toLowerCase();
-      const { data: owner } = await supabase
-        .from("profiles")
-        .select("id")
-        .ilike("email", ownerEmail)
-        .maybeSingle();
+    let newItems: RubricItemT[] | undefined;
+    if (data.checklist_rubric) newItems = data.checklist_rubric.items;
+    if (data.rubric_ops) {
+      const base = current.rubric_items.map(({ index: _i, ...it }: { index: number } & RubricItemT) => it);
+      const r = applyOps(base, data.rubric_ops);
+      if (typeof r === "string") return json(400, { error: r });
+      for (const [i, it] of r.entries()) {
+        const chk = RubricItem.safeParse(it);
+        if (!chk.success) return json(400, { error: `Butir ${i} tidak valid`, details: chk.error.flatten() });
+      }
+      newItems = r;
+    }
+    if (newItems) {
+      if (newItems.length > 0) {
+        const err = getRubricQualityError(newItems);
+        if (err) return json(400, { error: err });
+      }
+      // Tabel kandidat: tanpa jawaban word-by-word
+      patch.checklist_rubric = {
+        enabled: newItems.length > 0,
+        items: newItems.map(({ answer: _a, ...rest }) => rest),
+      };
+      patch.rubric_mode = newItems.length > 0 ? "checklist" : "none";
+    }
+
+    if (data.created_by_email) {
+      const { data: owner } = await supabase.from("profiles").select("id").ilike("email", data.created_by_email).maybeSingle();
       if (owner) patch.created_by = owner.id;
     }
 
-    const { data: updated, error: updErr } = await supabase
-      .from("clinical_cases")
-      .update(patch)
-      .eq("id", id)
-      .select("id, title, status, source, rubric_mode, checklist_rubric")
-      .single();
+    const summary = newItems ? {
+      rubric_items: newItems.length,
+      critical_items: newItems.filter((i) => i.isCritical).length,
+      total_points: newItems.reduce((s, i) => s + i.points, 0),
+    } : undefined;
 
-    if (updErr) return json(500, { error: "Update failed", detail: updErr.message });
-    if (!updated) return json(404, { error: "Case not found", id });
-
-    // Sinkronkan answer key & rubric ke tabel grading
-    if (data.answer_key_text !== undefined || data.checklist_rubric !== undefined) {
-      const akPayload: Record<string, unknown> = {};
-      if (data.answer_key_text !== undefined) akPayload.answer_key_text = data.answer_key_text;
-      if (data.checklist_rubric !== undefined) akPayload.checklist_rubric = { enabled: (data.checklist_rubric.items ?? []).length > 0, items: data.checklist_rubric.items ?? [] };
-
-      // Cek apakah baris sudah ada (hindari ketergantungan unique constraint)
-      const { data: existingAk } = await supabase
-        .from("case_answer_keys")
-        .select("case_id")
-        .eq("case_id", id)
-        .maybeSingle();
-
-      if (existingAk) {
-        const { error: akUpdErr } = await supabase
-          .from("case_answer_keys")
-          .update(akPayload)
-          .eq("case_id", id);
-        if (akUpdErr) console.error(`[case-admin] answer key update failed: ${akUpdErr.message}`);
-      } else {
-        const { error: akInsErr } = await supabase
-          .from("case_answer_keys")
-          .insert({ case_id: id, ...akPayload });
-        if (akInsErr) console.error(`[case-admin] answer key insert failed: ${akInsErr.message}`);
-      }
+    if (data.dry_run) {
+      return json(200, { dry_run: true, changed_fields: [...Object.keys(patch), ...(data.properties ? ["properties"] : [])], rubric: summary, preview_items: newItems });
     }
 
-    const rubric = updated.checklist_rubric as { items?: unknown[] } | null;
-    const items = rubric?.items ?? [];
-    const criticalCount = items.filter((i: { isCritical?: boolean }) => i.isCritical).length;
-    const totalPoints = items.reduce((s: number, i: { points?: number }) => s + (i.points ?? 0), 0);
+    if (Object.keys(patch).length) {
+      const { error: updErr } = await supabase.from("clinical_cases").update(patch).eq("id", id);
+      if (updErr) return json(500, { error: "Update failed", detail: updErr.message });
+    }
 
-    console.log(`[case-admin] Updated "${updated.title}" id=${updated.id} rubric_items=${items.length}`);
-    return json(200, {
-      id: updated.id,
-      title: updated.title,
-      status: updated.status,
-      source: updated.source,
-      rubric_mode: updated.rubric_mode,
-      rubric_items: items.length,
-      critical_items: criticalCount,
-      total_points: totalPoints,
-      answer_key_synced: true,
-    });
+    if (data.answer_key_text !== undefined || newItems || data.properties) {
+      const { data: ak } = await supabase.from("case_answer_keys").select("checklist_rubric").eq("case_id", id).maybeSingle();
+      const prev = (ak?.checklist_rubric ?? {}) as Record<string, unknown>;
+      const akPayload: Record<string, unknown> = {
+        checklist_rubric: {
+          ...prev,
+          ...(newItems ? { enabled: newItems.length > 0, items: newItems } : {}),
+          ...(data.properties ? { properties: data.properties } : {}),
+        },
+      };
+      if (data.answer_key_text !== undefined) akPayload.answer_key_text = data.answer_key_text;
+      const res = ak
+        ? await supabase.from("case_answer_keys").update(akPayload).eq("case_id", id)
+        : await supabase.from("case_answer_keys").insert({ case_id: id, ...akPayload });
+      if (res.error) return json(500, { error: "Answer key sync failed", detail: res.error.message });
+    }
+
+    const updated = await loadFull(id);
+    console.log(`[case-admin] Updated id=${id} fields=${Object.keys(patch).join(",")}`);
+    return json(200, { ok: true, id, changed_fields: [...Object.keys(patch), ...(data.properties ? ["properties"] : [])], rubric: summary, case: updated });
   }
 
   return json(405, { error: "Method not allowed (use GET or PATCH)" });
