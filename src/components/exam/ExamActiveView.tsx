@@ -36,7 +36,6 @@ interface ExamActiveViewProps {
   candidateId: string;
   audioStream: MediaStream;
   casePrompt?: string;
-  casePrompt?: string;
   questionsText?: string;
   onForceClose: () => void;
   onComplete: (
