@@ -107,7 +107,7 @@ const ReadingPhaseView = ({ sessionId, onReadingComplete }: ReadingPhaseViewProp
       </div>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
-        <h1 className="text-2xl font-bold text-foreground">{caseData.title}</h1>
+        <h1 className="text-2xl font-bold text-foreground">Silahkan Soal Dibaca</h1>
         <div className="prose prose-sm max-w-none text-foreground whitespace-pre-wrap">
           {caseData.initial_prompt}
         </div>
