@@ -119,7 +119,10 @@ const CaseForm = ({ existingCase, onClose }: CaseFormProps) => {
             {
               case_id: caseId,
               answer_key_text: answerKeyText,
-              checklist_rubric: rubricData as any,
+              checklist_rubric: {
+                ...rubricData,
+                properties: properties.map((p) => p.trim()).filter(Boolean),
+              } as any,
             },
             { onConflict: "case_id" }
           );
@@ -235,6 +238,8 @@ const CaseForm = ({ existingCase, onClose }: CaseFormProps) => {
       </div>
 
       <RubricBuilder data={rubricData} onChange={setRubricData} />
+
+      <PropertiesEditor properties={properties} onChange={setProperties} />
 
       {existingCase?.id && (
         <>
