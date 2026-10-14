@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
@@ -38,6 +39,7 @@ const CaseManager = () => {
   const [showForm, setShowForm] = useState(false);
   const [assetCaseId, setAssetCaseId] = useState<string | null>(null);
   const [showImporter, setShowImporter] = useState(false);
+  const [caseToDelete, setCaseToDelete] = useState<ClinicalCase | null>(null);
   const [examGroup, setExamGroup] = useState("oral_board");
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -207,7 +209,7 @@ const CaseManager = () => {
                         <Button variant="ghost" size="icon" title="Edit soal" onClick={() => handleEdit(c)}>
                           <Pencil className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" title="Hapus soal" onClick={() => deleteMutation.mutate(c.id)}>
+                        <Button variant="ghost" size="icon" title="Hapus soal" onClick={() => setCaseToDelete(c)}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </>
@@ -240,6 +242,29 @@ const CaseManager = () => {
           {assetCaseId && <AssetUploader caseId={assetCaseId} />}
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={!!caseToDelete} onOpenChange={(o) => !o && setCaseToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus soal ini?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Soal <span className="font-semibold">"{caseToDelete?.title}"</span> akan dihapus permanen beserta kunci jawaban dan hasil ujian terkait. Tindakan ini tidak bisa dibatalkan.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (caseToDelete) deleteMutation.mutate(caseToDelete.id);
+                setCaseToDelete(null);
+              }}
+            >
+              Ya, Hapus
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Dialog open={showImporter} onOpenChange={(o) => !o && setShowImporter(false)}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
