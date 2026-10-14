@@ -123,9 +123,78 @@ const RISK_FACTORS = [
   "Status genotipe positif",
 ];
 
+// Draft yang dimasukkan ke /prereview saat tombol "Masukkan ke Pre-review" diklik.
+const DRAFT = {
+  title: "Echo — HOCM (Tn. 40 th)",
+  exam_mode: "oral_board",
+  reading_time_seconds: 120,
+  time_limit_seconds: 360,
+  initial_prompt: `${SCENARIO}\n\nData echo (ditampilkan ke peserta):\n${ECHO_DATA.map((d) => `- ${d}`).join("\n")}`,
+  questions_text: INSTRUCTIONS.map((q, i) => `${i + 1}. ${q}`).join("\n"),
+  answer_key_text: FULL_ANSWER.map((a) => a.text).join("\n"),
+  properties: PROPERTIES,
+  items: TILIK.map((t) => ({ answer: t.wbw, text: t.dt, points: t.poin, isCritical: !!t.kritis })),
+};
+
 export default function HocmPreview() {
   const [showAdmin, setShowAdmin] = useState(true);
   const totalPoin = TILIK.reduce((s, t) => s + t.poin, 0);
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const [importing, setImporting] = useState(false);
+
+  const importToPrereview = async () => {
+    if (importing) return;
+    setImporting(true);
+    try {
+      // Cegah duplikat: kalau draft dengan judul sama sudah ada, langsung buka Pre-review.
+      const { data: existing } = await supabase
+        .from("clinical_cases")
+        .select("id")
+        .eq("status", "prereview")
+        .eq("title", DRAFT.title)
+        .limit(1);
+      if (existing && existing.length > 0) {
+        toast({ title: "Draft Echo — HOCM sudah ada di Pre-review" });
+        navigate("/prereview");
+        return;
+      }
+      const rubric = { enabled: true, items: DRAFT.items };
+      const { data, error } = await supabase
+        .from("clinical_cases")
+        .insert({
+          title: DRAFT.title,
+          exam_mode: DRAFT.exam_mode,
+          reading_time_seconds: DRAFT.reading_time_seconds,
+          time_limit_seconds: DRAFT.time_limit_seconds,
+          initial_prompt: DRAFT.initial_prompt,
+          questions_text: DRAFT.questions_text,
+          answer_key_text: DRAFT.answer_key_text,
+          checklist_rubric: rubric,
+          rubric_mode: "checklist",
+          status: "prereview",
+          source: "admin",
+          created_by: user?.id ?? null,
+        })
+        .select("id")
+        .single();
+      if (error) throw error;
+      const { error: akErr } = await supabase
+        .from("case_answer_keys")
+        .upsert(
+          { case_id: data.id, answer_key_text: DRAFT.answer_key_text, checklist_rubric: { ...rubric, properties: DRAFT.properties } as any },
+          { onConflict: "case_id" },
+        );
+      if (akErr) throw akErr;
+      toast({ title: "Masuk ke Pre-review", description: "Draft Echo — HOCM siap diedit di halaman Pre-review." });
+      navigate("/prereview");
+    } catch (e: any) {
+      toast({ title: "Gagal membuat draft", description: e?.message ?? "Terjadi kesalahan.", variant: "destructive" });
+    } finally {
+      setImporting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
