@@ -13,6 +13,7 @@ import CasePreview from "./pages/admin/CasePreview"; // NEW: Preview page
 import PreReview from "./pages/admin/PreReview";
 import HocmPreview from "./pages/admin/HocmPreview";
 import ConstrictivePreview from "./pages/admin/ConstrictivePreview";
+import DiastolicPreview from "./pages/admin/DiastolicPreview";
 import StationDisplay from "./pages/StationDisplay";
 import ExamEntry from "./pages/ExamEntry";
 import ExamMobile from "./pages/ExamMobile";
