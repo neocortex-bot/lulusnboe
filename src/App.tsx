@@ -72,6 +72,14 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/preview-soal/diastolik"
+              element={
+                <ProtectedRoute requireAdmin>
+                  <DiastolicPreview />
+                </ProtectedRoute>
+              }
+            />
             <Route path="/station/:token" element={<StationDisplay />} />
             <Route path="/exam" element={<ExamEntry />} />
             <Route path="/exam/:sessionId" element={<ExamMobile />} />
