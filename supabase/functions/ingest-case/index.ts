@@ -147,7 +147,7 @@ Deno.serve(async (req) => {
   // mengucapkan 15+ butir rinci dalam batas waktu, sehingga rubrik panjang
   // membuat hampir semua butir gagal dan peserta kehilangan poin meski
   // jawabannya wajar. Batasi ke 5-7 butir yang luas namun tetap terukur.
-  if (items.length > 0) {
+  if (strict && items.length > 0) {
     if (items.length < 5 || items.length > 7) {
       return json(400, {
         error: `Rubrik harus 5-7 butir luas (got ${items.length}). Gabungkan butir rinci menjadi poin-poin utama; atau kosongkan untuk penilaian tanpa daftar tilik (rubric_mode=none).`,
@@ -201,8 +201,8 @@ Deno.serve(async (req) => {
       answer_key_text: data.answer_key_text,
       checklist_rubric: rubric,
       created_by: createdBy,
-      // Workflow: kiriman agent selalu DRAFT sampai di-review admin
-      status: "draft",
+      // prereview = muncul di /prereview untuk diedit admin; draft = alur lama
+      status: data.status,
       source: "agent_api",
       rubric_mode: rubricMode,
     })
@@ -215,7 +215,7 @@ Deno.serve(async (req) => {
   const { error: akErr } = await supabase.from("case_answer_keys").insert({
     case_id: inserted.id,
     answer_key_text: data.answer_key_text,
-    checklist_rubric: rubric,
+    checklist_rubric: { ...rubric, properties: data.properties },
   });
   if (akErr) console.error(`[ingest-case] answer key sync failed: ${akErr.message}`);
 
@@ -229,7 +229,8 @@ Deno.serve(async (req) => {
     exam_mode: data.exam_mode,
     reading_time_seconds: readingSeconds,
     time_limit_seconds: limitSeconds,
-    status: "draft", // menunggu review admin di halaman admin
+    status: data.status,
+    properties: data.properties.length,
     source: "agent_api",
     rubric_mode: rubricMode,
     rubric_items: items.length,
