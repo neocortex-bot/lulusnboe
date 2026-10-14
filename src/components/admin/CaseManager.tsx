@@ -108,7 +108,7 @@ const CaseManager = () => {
     setEditingCase(null);
   };
 
-  const filteredCases = cases.filter((clinicalCase) => clinicalCase.exam_mode === examGroup);
+  const filteredCases = cases.filter((clinicalCase) => clinicalCase.exam_mode === examGroup && clinicalCase.status !== "prereview");
 
   return (
     <Card>
