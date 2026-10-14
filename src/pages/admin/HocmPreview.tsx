@@ -203,10 +203,16 @@ export default function HocmPreview() {
           <Button variant="ghost" size="sm" asChild>
             <Link to="/prereview"><ArrowLeft className="mr-1 h-4 w-4" />Pre-review</Link>
           </Button>
-          <Button variant="outline" size="sm" onClick={() => setShowAdmin((v) => !v)}>
-            {showAdmin ? <EyeOff className="mr-1 h-4 w-4" /> : <Eye className="mr-1 h-4 w-4" />}
-            {showAdmin ? "Sembunyikan panel admin" : "Tampilkan panel admin"}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button size="sm" onClick={importToPrereview} disabled={importing}>
+              <Send className="mr-1 h-4 w-4" />
+              {importing ? "Menyimpan..." : "Masukkan ke Pre-review"}
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setShowAdmin((v) => !v)}>
+              {showAdmin ? <EyeOff className="mr-1 h-4 w-4" /> : <Eye className="mr-1 h-4 w-4" />}
+              {showAdmin ? "Sembunyikan panel admin" : "Tampilkan panel admin"}
+            </Button>
+          </div>
         </div>
 
         <div>
