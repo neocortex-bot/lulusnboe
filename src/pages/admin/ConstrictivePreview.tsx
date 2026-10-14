@@ -252,7 +252,7 @@ export default function ConstrictivePreview() {
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <Calculator className="h-4 w-4" /> Kunci perhitungan (kunci jawaban)
+                  <Calculator className="h-4 w-4" /> Kunci temuan pemeriksaan (kunci jawaban)
                 </CardTitle>
               </CardHeader>
               <CardContent>
