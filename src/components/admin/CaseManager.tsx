@@ -243,6 +243,29 @@ const CaseManager = () => {
         </DialogContent>
       </Dialog>
 
+      <AlertDialog open={!!caseToDelete} onOpenChange={(o) => !o && setCaseToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus soal ini?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Soal <span className="font-semibold">"{caseToDelete?.title}"</span> akan dihapus permanen beserta kunci jawaban dan hasil ujian terkait. Tindakan ini tidak bisa dibatalkan.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (caseToDelete) deleteMutation.mutate(caseToDelete.id);
+                setCaseToDelete(null);
+              }}
+            >
+              Ya, Hapus
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <Dialog open={showImporter} onOpenChange={(o) => !o && setShowImporter(false)}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
