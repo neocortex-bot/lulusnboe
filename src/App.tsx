@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import CasePreview from "./pages/admin/CasePreview"; // NEW: Preview page
+import PreReview from "./pages/admin/PreReview";
 import StationDisplay from "./pages/StationDisplay";
 import ExamEntry from "./pages/ExamEntry";
 import ExamMobile from "./pages/ExamMobile";
@@ -41,6 +42,14 @@ const App = () => (
               element={
                 <ProtectedRoute requireAdmin>
                   <CasePreview />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/prereview"
+              element={
+                <ProtectedRoute requireAdmin>
+                  <PreReview />
                 </ProtectedRoute>
               }
             />
