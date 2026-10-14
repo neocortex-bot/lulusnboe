@@ -106,19 +106,25 @@ Deno.serve(async (req) => {
   const limitSeconds = data.time_limit_seconds ??
     (data.time_limit_minutes ? Math.round(data.time_limit_minutes * 60) : 600);
 
-  // Quality gates
+  // Quality gates — gerbang ketat hanya untuk status "draft" (alur lama).
+  // Status "prereview" memakai standar soal ringkas + daftar tilik atomik (0–2 poin),
+  // karena admin akan mereview & mengedit di /prereview sebelum publish.
+  const strict = data.status === "draft";
   const promptUpper = data.initial_prompt.toUpperCase();
   const markers = ["RIWAYAT", "PEMERIKSAAN", "TUGAS", "EKG", "LAB"];
   const hits = markers.filter((m) => promptUpper.includes(m)).length;
-  if (hits < 3) {
+  if (strict && hits < 3) {
     return json(400, {
       error: "initial_prompt must include at least 3 of: RIWAYAT, PEMERIKSAAN, TUGAS, EKG, Lab",
     });
   }
 
   const numberedTasks = (data.questions_text.match(/(^|\n)\s*\d+\./g) || []).length;
-  if (numberedTasks < 5) {
+  if (strict && numberedTasks < 5) {
     return json(400, { error: "questions_text must contain at least 5 numbered tasks (1., 2., ...)" });
+  }
+  if (!strict && numberedTasks < 1) {
+    return json(400, { error: "questions_text harus berisi pertanyaan bernomor (1., 2., ...)" });
   }
 
   const items = data.checklist_rubric?.items ?? [];
