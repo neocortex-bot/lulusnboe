@@ -16,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Plus, Trash2, Wand2, Send, Save } from "lucide-react";
+import PropertiesEditor from "@/components/admin/PropertiesEditor";
 
 // Pre-review cases live in clinical_cases with status = "prereview".
 // They are never deployable (deploy only reads status = "published").
@@ -38,6 +39,7 @@ interface DraftCase {
   questions_text: string;
   answer_key_text: string;
   items: ChecklistItem[];
+  properties: string[]; // admin-only exam props, never shown to candidates
   updated_at?: string;
 }
 
@@ -50,6 +52,7 @@ const emptyDraft = (): DraftCase => ({
   questions_text: "",
   answer_key_text: "",
   items: [],
+  properties: [],
 });
 
 const splitSentences = (text: string) =>
