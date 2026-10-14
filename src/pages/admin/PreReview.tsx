@@ -410,46 +410,69 @@ const DraftEditor = ({ initial, busy, onSave, onIngest }: EditorProps) => {
               </Button>
             </div>
           </div>
-          {d.items.length === 0 && (
+          {d.items.length === 0 ? (
             <p className="text-center text-muted-foreground py-6">Belum ada butir daftar tilik.</p>
-          )}
-          {d.items.map((it, i) => (
-            <div key={i} className="rounded-md border p-3 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold">Butir {i + 1}</span>
-                <div className="flex items-center gap-3">
-                  <Select value={String(it.points)} onValueChange={(v) => setItem(i, { points: Number(v) })}>
-                    <SelectTrigger className="w-28 h-8"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">Maks 1 poin</SelectItem>
-                      <SelectItem value="2">Maks 2 poin</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <label className="flex items-center gap-2 text-sm">
-                    <Switch checked={it.isCritical} onCheckedChange={(v) => setItem(i, { isCritical: v })} /> Kritis
-                  </label>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => set("items", d.items.filter((_, idx) => idx !== i))}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <div className="space-y-1">
-                  <Label className="text-xs">Kalimat jawaban (diucapkan peserta)</Label>
-                  <Textarea rows={2} value={it.answer} onChange={(e) => setItem(i, { answer: e.target.value })} />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-xs">Kriteria daftar tilik</Label>
-                  <Textarea rows={2} value={it.text} onChange={(e) => setItem(i, { text: e.target.value })} />
-                </div>
-              </div>
+          ) : (
+            <div className="rounded-md border overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-10">#</TableHead>
+                    <TableHead className="min-w-[240px]">Daftar Tilik</TableHead>
+                    <TableHead className="min-w-[280px]">Word by Word (agar mendapatkan poin ini)</TableHead>
+                    <TableHead className="w-28">Poin</TableHead>
+                    <TableHead className="w-20">Kritis</TableHead>
+                    <TableHead className="w-12"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {d.items.map((it, i) => (
+                    <TableRow key={i} className="align-top">
+                      <TableCell className="font-medium pt-4">{i + 1}</TableCell>
+                      <TableCell>
+                        <Textarea
+                          rows={2}
+                          value={it.text}
+                          onChange={(e) => setItem(i, { text: e.target.value })}
+                          placeholder="Peserta memperkenalkan diri, dan menyapa pasien"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Textarea
+                          rows={2}
+                          value={it.answer}
+                          onChange={(e) => setItem(i, { answer: e.target.value })}
+                          placeholder="Selamat pagi pak, Saya dr. A dokter yang bertugas di klinik ini."
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Select value={String(it.points)} onValueChange={(v) => setItem(i, { points: Number(v) })}>
+                          <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="1">Maks 1</SelectItem>
+                            <SelectItem value="2">Maks 2</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell>
+                        <Switch checked={it.isCritical} onCheckedChange={(v) => setItem(i, { isCritical: v })} />
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => set("items", d.items.filter((_, idx) => idx !== i))}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
-          ))}
+          )}
         </TabsContent>
       </Tabs>
 
