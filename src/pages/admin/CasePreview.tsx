@@ -140,6 +140,11 @@ const CasePreview = () => {
     setAnswerKeyText(caseRow.answer_key_text ?? "");
     setShowResultsToCandidate(caseRow.show_results_to_candidate ?? false);
     setRubricData(parseRubricData(caseRow.checklist_rubric));
+    setProperties(
+      Array.isArray((caseRow.checklist_rubric as any)?.properties)
+        ? (caseRow.checklist_rubric as any).properties.map((p: any) => String(p))
+        : []
+    );
   }, [caseRow]);
 
   const rubricMode = useMemo(
@@ -238,7 +243,11 @@ const CasePreview = () => {
       const answerKeyPayload: Database["public"]["Tables"]["case_answer_keys"]["Insert"] = {
         case_id: id,
         answer_key_text: answerKeyText,
-        checklist_rubric: { enabled: rubricData.enabled, items: rubricData.items } as unknown as Json,
+        checklist_rubric: {
+          enabled: rubricData.enabled,
+          items: rubricData.items,
+          properties: properties.map((p) => p.trim()).filter(Boolean),
+        } as unknown as Json,
       };
       const { error: akErr } = await supabase
         .from("case_answer_keys")
@@ -295,6 +304,11 @@ const CasePreview = () => {
     setAnswerKeyText(caseRow.answer_key_text ?? "");
     setShowResultsToCandidate(caseRow.show_results_to_candidate ?? false);
     setRubricData(parseRubricData(caseRow.checklist_rubric));
+    setProperties(
+      Array.isArray((caseRow.checklist_rubric as any)?.properties)
+        ? (caseRow.checklist_rubric as any).properties.map((p: any) => String(p))
+        : []
+    );
     setIsEditing(false);
   };
 
