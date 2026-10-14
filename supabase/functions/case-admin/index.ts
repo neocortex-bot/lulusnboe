@@ -135,7 +135,7 @@ Deno.serve(async (req) => {
       const q = url.searchParams.get("q");
       const limit = Math.min(Number(url.searchParams.get("limit")) || 100, 500);
       let query = supabase.from("clinical_cases")
-        .select("id, title, exam_mode, status, source, rubric_mode, created_at, updated_at");
+        .select("id, title, exam_mode, status, source, rubric_mode, created_at");
       if (status) query = query.eq("status", status);
       if (q) query = query.ilike("title", `%${q.slice(0, 100)}%`);
       const { data, error } = await query.order("created_at", { ascending: false }).limit(limit);
