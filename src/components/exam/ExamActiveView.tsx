@@ -35,7 +35,7 @@ interface ExamActiveViewProps {
   timeLimitSeconds: number;
   candidateId: string;
   audioStream: MediaStream;
-  caseTitle?: string;
+  casePrompt?: string;
   casePrompt?: string;
   questionsText?: string;
   onForceClose: () => void;
@@ -66,7 +66,6 @@ const ExamActiveView = ({
   timeLimitSeconds,
   candidateId,
   audioStream,
-  caseTitle,
   casePrompt,
   questionsText,
   onForceClose,

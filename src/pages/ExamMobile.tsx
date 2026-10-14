@@ -506,7 +506,6 @@ const ExamMobile = () => {
           timeLimitSeconds={sessionData.time_limit_seconds}
           candidateId={user.id}
           audioStream={audioStream}
-          caseTitle={caseInfo?.caseTitle}
           casePrompt={caseInfo?.casePrompt}
           questionsText={caseInfo?.questionsText}
           onForceClose={() => setStep("force_closed")}
