@@ -39,6 +39,7 @@ const CaseManager = () => {
   const [showForm, setShowForm] = useState(false);
   const [assetCaseId, setAssetCaseId] = useState<string | null>(null);
   const [showImporter, setShowImporter] = useState(false);
+  const [caseToDelete, setCaseToDelete] = useState<ClinicalCase | null>(null);
   const [examGroup, setExamGroup] = useState("oral_board");
   const queryClient = useQueryClient();
   const { toast } = useToast();
