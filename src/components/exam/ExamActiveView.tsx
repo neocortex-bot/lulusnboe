@@ -35,7 +35,6 @@ interface ExamActiveViewProps {
   timeLimitSeconds: number;
   candidateId: string;
   audioStream: MediaStream;
-  caseTitle?: string;
   casePrompt?: string;
   questionsText?: string;
   onForceClose: () => void;
@@ -66,7 +65,6 @@ const ExamActiveView = ({
   timeLimitSeconds,
   candidateId,
   audioStream,
-  caseTitle,
   casePrompt,
   questionsText,
   onForceClose,
@@ -480,7 +478,7 @@ const ExamActiveView = ({
             onClick={() => setShowCase(!showCase)}
             className="w-full px-4 py-2 text-left text-sm font-semibold text-foreground flex items-center justify-between"
           >
-            <span>{caseTitle || "Kasus & Soal"}</span>
+            <span>Silahkan Dijawab</span>
             <span className="text-xs text-muted-foreground">{showCase ? "Sembunyikan" : "Tampilkan"}</span>
           </button>
           {showCase && (
