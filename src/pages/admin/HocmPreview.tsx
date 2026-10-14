@@ -242,6 +242,28 @@ export default function HocmPreview() {
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="flex items-center gap-2 text-base">
+                  <Target className="h-4 w-4" /> Kunci jawaban lengkap — word by word (dari awal sampai selesai)
+                  <Badge variant="secondary" className="ml-auto">
+                    ± {Math.round(FULL_ANSWER.reduce((s, a) => s + estimateSpeakSeconds(a.text), 0) / 60)} menit
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <p className="text-xs text-muted-foreground">
+                  Script utuh yang seharusnya diucapkan peserta dari awal sampai selesai, mengcover semua daftar tilik secara berurutan (pace bicara normal ±130 kata/menit).
+                </p>
+                {FULL_ANSWER.map((a, i) => (
+                  <div key={i} className="rounded-md border p-3 text-sm">
+                    <p className="font-medium">{i + 1}. {a.heading}</p>
+                    <p className="mt-1 text-muted-foreground italic">“{a.text}”</p>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-base">
                   <Target className="h-4 w-4" /> Daftar tilik ⇄ Word by Word
                   <Badge variant="secondary" className="ml-auto">Total {totalPoin} poin</Badge>
                 </CardTitle>
