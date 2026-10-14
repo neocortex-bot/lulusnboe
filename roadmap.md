@@ -16,3 +16,7 @@
 - [ ] Panel jawaban ideal di riwayat ujian
 - [ ] Perekaman audio di iPhone
 - [ ] Highlight jawaban partisipan pada rubrik yang lulus
+
+## Sinkronisasi backend (14 Okt 2026)
+- [ ] Salin 108 clinical_cases + 220 exam_sequence_items dari backend lama (nowebjmwrtkspvdwgevj) ke Cloud baru (dqhnbxnopuwaarlyncbs) — fix 409 saat insert
+- [ ] Jelaskan ke user: aplikasi kini memakai Cloud baru; ingest-case/case-admin harus ke URL Cloud, bukan URL lama
