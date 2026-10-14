@@ -14,7 +14,415 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      case_answer_keys: {
+        Row: {
+          answer_key_text: string
+          case_id: string
+          checklist_rubric: Json
+          created_at: string
+          id: string
+        }
+        Insert: {
+          answer_key_text?: string
+          case_id: string
+          checklist_rubric?: Json
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          answer_key_text?: string
+          case_id?: string
+          checklist_rubric?: Json
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_answer_keys_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: true
+            referencedRelation: "clinical_cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      case_assets: {
+        Row: {
+          answer_text: string
+          asset_type: string
+          asset_url: string
+          case_id: string
+          category: string
+          created_at: string
+          id: string
+          trigger_keywords: string[]
+        }
+        Insert: {
+          answer_text?: string
+          asset_type?: string
+          asset_url: string
+          case_id: string
+          category?: string
+          created_at?: string
+          id?: string
+          trigger_keywords?: string[]
+        }
+        Update: {
+          answer_text?: string
+          asset_type?: string
+          asset_url?: string
+          case_id?: string
+          category?: string
+          created_at?: string
+          id?: string
+          trigger_keywords?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_assets_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "clinical_cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_messages: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          sender: string
+          session_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          sender?: string
+          session_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          sender?: string
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "exam_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clinical_cases: {
+        Row: {
+          answer_key_text: string
+          checklist_rubric: Json
+          created_at: string
+          created_by: string | null
+          exam_mode: string
+          id: string
+          initial_prompt: string
+          questions_text: string
+          reading_time_seconds: number
+          reviewed_at: string | null
+          reviewed_by: string | null
+          rubric_mode: string
+          show_results_to_candidate: boolean
+          source: string
+          status: string
+          time_limit_seconds: number
+          title: string
+        }
+        Insert: {
+          answer_key_text?: string
+          checklist_rubric?: Json
+          created_at?: string
+          created_by?: string | null
+          exam_mode?: string
+          id?: string
+          initial_prompt?: string
+          questions_text?: string
+          reading_time_seconds?: number
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          rubric_mode?: string
+          show_results_to_candidate?: boolean
+          source?: string
+          status?: string
+          time_limit_seconds?: number
+          title: string
+        }
+        Update: {
+          answer_key_text?: string
+          checklist_rubric?: Json
+          created_at?: string
+          created_by?: string | null
+          exam_mode?: string
+          id?: string
+          initial_prompt?: string
+          questions_text?: string
+          reading_time_seconds?: number
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          rubric_mode?: string
+          show_results_to_candidate?: boolean
+          source?: string
+          status?: string
+          time_limit_seconds?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clinical_cases_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exam_access: {
+        Row: {
+          allowed: boolean
+          updated_at: string
+          updated_by: string | null
+          user_id: string
+        }
+        Insert: {
+          allowed?: boolean
+          updated_at?: string
+          updated_by?: string | null
+          user_id: string
+        }
+        Update: {
+          allowed?: boolean
+          updated_at?: string
+          updated_by?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      exam_results: {
+        Row: {
+          ai_score_report: Json | null
+          audio_file_url: string | null
+          candidate_id: string
+          created_at: string
+          id: string
+          session_id: string
+          transcript: string | null
+        }
+        Insert: {
+          ai_score_report?: Json | null
+          audio_file_url?: string | null
+          candidate_id: string
+          created_at?: string
+          id?: string
+          session_id: string
+          transcript?: string | null
+        }
+        Update: {
+          ai_score_report?: Json | null
+          audio_file_url?: string | null
+          candidate_id?: string
+          created_at?: string
+          id?: string
+          session_id?: string
+          transcript?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_results_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exam_results_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "exam_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exam_sequence_items: {
+        Row: {
+          case_id: string
+          created_at: string
+          deployment_id: string
+          id: string
+          sequence_order: number
+          session_id: string | null
+          station_token: string
+        }
+        Insert: {
+          case_id: string
+          created_at?: string
+          deployment_id: string
+          id?: string
+          sequence_order: number
+          session_id?: string | null
+          station_token: string
+        }
+        Update: {
+          case_id?: string
+          created_at?: string
+          deployment_id?: string
+          id?: string
+          sequence_order?: number
+          session_id?: string | null
+          station_token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_sequence_items_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "clinical_cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exam_sequence_items_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "exam_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exam_sessions: {
+        Row: {
+          case_id: string
+          created_at: string
+          current_candidate_id: string | null
+          id: string
+          session_start_time: string | null
+          show_results_to_candidate_override: boolean
+          station_token: string
+          status: string
+        }
+        Insert: {
+          case_id: string
+          created_at?: string
+          current_candidate_id?: string | null
+          id?: string
+          session_start_time?: string | null
+          show_results_to_candidate_override?: boolean
+          station_token: string
+          status?: string
+        }
+        Update: {
+          case_id?: string
+          created_at?: string
+          current_candidate_id?: string | null
+          id?: string
+          session_start_time?: string | null
+          show_results_to_candidate_override?: boolean
+          station_token?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_sessions_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "clinical_cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exam_sessions_current_candidate_id_fkey"
+            columns: ["current_candidate_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          dob: string | null
+          email: string
+          full_name: string
+          id: string
+          nim: string | null
+        }
+        Insert: {
+          created_at?: string
+          dob?: string | null
+          email: string
+          full_name: string
+          id: string
+          nim?: string | null
+        }
+        Update: {
+          created_at?: string
+          dob?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          nim?: string | null
+        }
+        Relationships: []
+      }
+      station_deployment_resets: {
+        Row: {
+          completed_deployment_id: string
+          created_at: string
+          next_deployment_id: string
+          next_session_id: string
+          next_station_token: string
+        }
+        Insert: {
+          completed_deployment_id: string
+          created_at?: string
+          next_deployment_id: string
+          next_session_id: string
+          next_station_token: string
+        }
+        Update: {
+          completed_deployment_id?: string
+          created_at?: string
+          next_deployment_id?: string
+          next_session_id?: string
+          next_station_token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "station_deployment_resets_next_session_id_fkey"
+            columns: ["next_session_id"]
+            isOneToOne: false
+            referencedRelation: "exam_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +431,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "candidate"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +558,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "candidate"],
+    },
   },
 } as const
