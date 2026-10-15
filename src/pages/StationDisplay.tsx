@@ -43,6 +43,7 @@ interface CaseData {
   initial_prompt: string;
   time_limit_seconds: number;
   questions_text: string;
+  reading_time_seconds?: number | null;
 }
 
 interface AssetData {
@@ -724,10 +725,25 @@ const StationDisplay = () => {
   }
 
   const hasMediaContent = activeAsset || caseMedia.length > 0;
+  const isReadingPhase = !session?.session_start_time;
+  const promptHeading = isReadingPhase ? "Silahkan Soal Dibaca" : "Silahkan Dijawab";
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header: Badge + large timer */}
+      {isReadingPhase && caseData && session && (
+        <div className="flex items-center justify-center py-4 border-b border-border bg-card">
+          <div className="flex items-center gap-6">
+            {sequenceInfo && sequenceInfo.total > 1 && (
+              <Badge className="text-lg px-4 py-1" variant="secondary">
+                Ujian {sequenceInfo.currentOrder} / {sequenceInfo.total}
+              </Badge>
+            )}
+            <span className="text-xl font-semibold text-muted-foreground">Waktu Membaca</span>
+            <ReadingCountdown key={session.id} seconds={caseData.reading_time_seconds || 120} />
+          </div>
+        </div>
+      )}
       {session?.session_start_time && caseData && (
         <div className="flex items-center justify-center py-4 border-b border-border bg-card">
           <div className="flex items-center gap-6">
@@ -757,6 +773,7 @@ const StationDisplay = () => {
                   title={caseData.title}
                   prompt={caseData.initial_prompt}
                   questionsText={caseData.questions_text}
+                  heading={promptHeading}
                   compact
                 />
               )}
@@ -782,12 +799,29 @@ const StationDisplay = () => {
                 title={caseData.title}
                 prompt={caseData.initial_prompt}
                 questionsText={caseData.questions_text}
+                heading={promptHeading}
               />
             )}
           </div>
         )}
       </div>
     </div>
+  );
+};
+
+const ReadingCountdown = ({ seconds }: { seconds: number }) => {
+  const [start] = useState(() => Date.now());
+  const [left, setLeft] = useState(seconds);
+  useEffect(() => {
+    const tick = () => setLeft(Math.max(0, seconds - Math.floor((Date.now() - start) / 1000)));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [seconds, start]);
+  return (
+    <span className={`font-mono text-7xl font-bold tabular-nums ${left <= 10 ? "text-destructive animate-pulse" : "text-foreground"}`}>
+      {String(Math.floor(left / 60)).padStart(2, "0")}:{String(left % 60).padStart(2, "0")}
+    </span>
   );
 };
 

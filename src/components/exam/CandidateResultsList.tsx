@@ -130,7 +130,7 @@ const CandidateResultsList = () => {
             sessionData?.show_results_to_candidate_override,
             caseData?.show_results_to_candidate
           );
-          const caseTitle = caseData?.title ?? "—";
+          const caseTitle = "Ujian";
           const date = new Date(r.created_at).toLocaleDateString("id-ID", {
             day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit",
           });

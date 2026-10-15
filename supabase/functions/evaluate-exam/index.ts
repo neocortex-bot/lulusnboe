@@ -1,5 +1,5 @@
 import { getExamAiContext, json, corsHeaders, parseRubric, safeUpstreamError } from "../_shared/exam-ai-access.ts";
-import { examStream } from "../_shared/exam-stream.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { getOpenAIConfig, openAIChat, openAIJson } from "../_shared/openai.ts";
 import { itemCoverageShare, quoteSupportedByTranscript } from "../_shared/transcript-match.ts";
 import { scoreSchema } from "./score-schema.ts";
@@ -10,50 +10,100 @@ interface RubricData { enabled: boolean; items: RubricItem[]; }
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {
-    const { result_id } = await req.json();
+    const body = await req.json().catch(() => ({}));
+    const url = Deno.env.get("SUPABASE_URL")!;
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const bearer = req.headers.get("Authorization")?.replace(/^Bearer\s+/i, "");
+    // Internal queue tick: process the next queued result.
+    if (body?.queue_tick === true) {
+      if (bearer !== serviceKey) return json({ error: "Tidak diizinkan." }, 403);
+      const admin = createClient(url, serviceKey);
+      const { data: nextId } = await admin.rpc("claim_next_ai_evaluation");
+      if (nextId) runInBackground(admin, String(nextId));
+      return json({ ok: true, next: nextId ?? null });
+    }
+    const { result_id } = body;
     const context = await getExamAiContext(req, result_id);
     if (context.response) return context.response;
-    const { admin: supabase, result } = context;
+    const { admin } = context;
+    if (!getOpenAIConfig()) return json({ error: "Konfigurasi OpenAI belum tersedia. Setel OPENAI_API_KEY di Supabase secrets." }, 500);
+    const { data: claim, error: claimError } = await admin.rpc("claim_ai_evaluation", { _result_id: result_id });
+    if (claimError) return json({ error: "Antrean evaluasi gagal dibuat." }, 500);
+    if (claim === "busy") return json({ status: "busy", message: "Evaluasi untuk hasil ini sedang berjalan atau sudah dalam antrean." });
+    if (claim === "queued") return json({ status: "queued", message: "Evaluasi dimasukkan antrean dan akan berjalan otomatis." });
+    if (claim !== "processing") return json({ error: "Hasil ujian tidak ditemukan." }, 404);
+    runInBackground(admin, result_id);
+    return json({ status: "processing", message: "Evaluasi AI sedang berjalan di latar belakang." });
+  } catch (error) {
+    return json({ error: error instanceof Error ? error.message : String(error) }, 500);
+  }
+});
+
+function runInBackground(supabase: any, resultId: string) {
+  const task = (async () => {
+    try {
+      await evaluateResult(supabase, resultId);
+      await supabase.from("exam_results").update({ ai_eval_status: "done", ai_eval_error: null }).eq("id", resultId);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error("evaluate-exam background failed", resultId, message);
+      await supabase.from("exam_results").update({ ai_eval_status: "error", ai_eval_error: message.slice(0, 500) }).eq("id", resultId);
+    } finally {
+      // Hand off to a fresh invocation so each job gets its own time budget.
+      await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/evaluate-exam`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ queue_tick: true }),
+      }).catch((e) => console.error("queue tick failed", e));
+    }
+  })();
+  // @ts-ignore EdgeRuntime is provided by Supabase
+  if (typeof EdgeRuntime !== "undefined") EdgeRuntime.waitUntil(task);
+}
+
+async function evaluateResult(supabase: any, result_id: string) {
+    const { data: result, error: resultError } = await supabase.from("exam_results").select("*").eq("id", result_id).single();
+    if (resultError || !result) throw new Error("Hasil ujian tidak ditemukan.");
     const openai = getOpenAIConfig();
-    if (!openai) return json({ error: "Konfigurasi OpenAI belum tersedia. Setel OPENAI_API_KEY di Supabase secrets." }, 500);
+    if (!openai) throw new Error("Konfigurasi OpenAI belum tersedia.");
     const { data: sessionData } = await supabase.from("exam_sessions")
       .select("case_id, session_start_time").eq("id", result.session_id).single();
-    if (!sessionData) return json({ error: "Sesi ujian tidak ditemukan." }, 404);
+    if (!sessionData) throw new Error("Sesi ujian tidak ditemukan.");
     const [caseResult, answerKeyResult] = await Promise.all([
       supabase.from("clinical_cases").select("title, questions_text, time_limit_seconds").eq("id", sessionData.case_id).single(),
       supabase.from("case_answer_keys").select("answer_key_text, checklist_rubric").eq("case_id", sessionData.case_id).maybeSingle(),
     ]);
-    if (caseResult.error) return json({ error: "Soal ujian tidak ditemukan." }, 404);
-    if (answerKeyResult.error) return json({ error: "Kunci jawaban gagal dimuat." }, 500);
+    if (caseResult.error) throw new Error("Soal ujian tidak ditemukan.");
+    if (answerKeyResult.error) throw new Error("Kunci jawaban gagal dimuat.");
     const clinicalCase = caseResult.data;
     const answerKeys = answerKeyResult.data;
     let transcript = result.transcript;
     if (!transcript?.trim() && result.audio_file_url) {
       const openaiKey = Deno.env.get("OPENAI_API_KEY");
-      if (!openaiKey) return json({ error: "Konfigurasi transkripsi OpenAI belum tersedia." }, 500);
+      if (!openaiKey) throw new Error("Konfigurasi transkripsi OpenAI belum tersedia.");
       const { data: audioData, error: audioErr } = await supabase.storage.from("exam-audio").download(result.audio_file_url);
-      if (audioErr || !audioData) return json({ error: "Rekaman gagal diunduh." }, 500);
-      if (!audioData.size) return json({ error: "Rekaman kosong. Tidak ada jawaban untuk dinilai." }, 400);
-      if (audioData.size > 25 * 1024 * 1024) return json({ error: "Rekaman melebihi batas transkripsi 25 MB." }, 400);
+      if (audioErr || !audioData) throw new Error("Rekaman gagal diunduh.");
+      if (!audioData.size) throw new Error("Rekaman kosong. Tidak ada jawaban untuk dinilai.");
+      if (audioData.size > 25 * 1024 * 1024) throw new Error("Rekaman melebihi batas transkripsi 25 MB.");
       const formData = new FormData();
       const lowerName = String(result.audio_file_url).toLowerCase();
       const isMp4 = /\.(mp4|m4a)$/.test(lowerName) || audioData.type.includes("mp4");
       formData.append("file", audioData, isMp4 ? "audio.mp4" : "audio.webm");
       formData.append("model", "whisper-1");
       const whisperRes = await fetch("https://api.openai.com/v1/audio/transcriptions", {
-        method: "POST", headers: { Authorization: `Bearer ${openaiKey}` }, body: formData, signal: req.signal,
+        method: "POST", headers: { Authorization: `Bearer ${openaiKey}` }, body: formData,
       });
       if (!whisperRes.ok) {
         const message = await safeUpstreamError(whisperRes, "Transkripsi OpenAI gagal");
-        return json({ error: `Transkripsi OpenAI: ${message}` }, whisperRes.status);
+        throw new Error(`Transkripsi OpenAI: ${message}`);
       }
       transcript = (await whisperRes.json()).text;
       if (typeof transcript === "string" && transcript.trim()) {
         const { error } = await supabase.from("exam_results").update({ transcript }).eq("id", result_id);
-        if (error) return json({ error: "Transkrip gagal disimpan." }, 500);
+        if (error) throw new Error("Transkrip gagal disimpan.");
       }
     }
-    if (typeof transcript !== "string" || !transcript.trim()) return json({ error: "Tidak ada transkrip atau rekaman untuk dinilai." }, 400);
+    if (typeof transcript !== "string" || !transcript.trim()) throw new Error("Tidak ada transkrip atau rekaman untuk dinilai.");
     const items = parseRubric(answerKeys?.checklist_rubric);
     const rubricData = { enabled: items.length > 0, items };
     const answerKey = answerKeys?.answer_key_text || "";
@@ -93,14 +143,13 @@ Jangan gunakan Markdown bold pada teks jawaban. Batasi uraian tiap topik menjadi
 Balas HANYA dengan satu objek JSON (tanpa pagar kode, tanpa teks lain) dengan skema:
 ${JSON.stringify(scoreSchema)}`;
     const userContent = buildUserContent(clinicalCase, rubricData, answerKey, questions, transcript);
-    return examStream(async () => {
       const scoreReport: any = await openAIJson(
         openai,
         [
           { role: "system", content: systemPrompt },
           { role: "user", content: userContent },
         ],
-        { deterministic: true, signal: req.signal },
+        { deterministic: true },
       );
       if (!scoreReport || typeof scoreReport !== "object") throw new Error("AI tidak menghasilkan laporan penilaian. Hasil lama tetap tersimpan.");
       const assessed = Array.isArray(scoreReport.items) ? scoreReport.items : [];
@@ -194,13 +243,8 @@ ${JSON.stringify(scoreSchema)}`;
       if (cached) scoreReport.modelAnswer = cached;
       const { error } = await supabase.from("exam_results").update({ transcript, ai_score_report: scoreReport }).eq("id", result_id);
       if (error) throw new Error("Laporan AI gagal disimpan.");
-      return { success: true, score_report: scoreReport };
-    });
-  } catch (error) {
-    if (req.signal.aborted) return new Response(null, { status: 499, headers: corsHeaders });
-    return json({ error: error instanceof Error ? error.message : String(error) }, 500);
-  }
-});
+  return { success: true, score_report: scoreReport };
+}
 
 function buildSystemPrompt(rubricData: RubricData, answerKey: string, questions: string): string {
   const hasRubric = rubricData.enabled && rubricData.items.length > 0;
