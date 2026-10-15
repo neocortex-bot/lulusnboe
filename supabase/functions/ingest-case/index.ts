@@ -37,6 +37,9 @@ const BodySchema = z.object({
     .object({ items: z.array(RubricItem).min(0).max(100) })
     .optional(),
   properties: z.array(z.string().min(1).max(300)).max(50).default([]), // admin-only, tidak tampil ke peserta
+  // Kategori soal -> kolom clinical_cases.category (dibaca UI: CaseManager/CategoryFilter).
+  // Bebas teks; gunakan helper toCategoryKey di UI (lowercase, spasi -> "_").
+  category: z.string().max(100).optional(),
   media_notes: z.array(MediaNote).default([]),
   created_by_email: z.string().email().optional(),
 });
@@ -47,6 +50,7 @@ const SCHEMA_DOC = {
   fields: {
     title: "string 15-200 chars, unique. Format: '<TOPIK> — <Skenario> (<Inisial>, <umur> th)'",
     exam_mode: "'oral_board' | 'osce' | 'panel_exam' (default oral_board)",
+    category: "string bebas maks 100 char -> clinical_cases.category (pengelompokan/filter UI)",
     reading_time_minutes: "number 0.25-15 (or reading_time_seconds 5-900)",
     time_limit_minutes: "number 0.5-30 (or time_limit_seconds 30-1800)",
     show_results_to_candidate: "boolean, default false",
@@ -199,6 +203,7 @@ Deno.serve(async (req) => {
       questions_text: data.questions_text,
       answer_key_text: data.answer_key_text,
       checklist_rubric: rubric,
+      category: data.category ?? null,
       created_by: createdBy,
       // prereview = muncul di /prereview untuk diedit admin; draft = alur lama
       status: data.status,
