@@ -3,13 +3,14 @@ interface CasePromptDisplayProps {
   prompt: string;
   questionsText?: string;
   compact?: boolean;
+  heading?: string;
 }
 
-const CasePromptDisplay = ({ prompt, questionsText, compact }: CasePromptDisplayProps) => {
+const CasePromptDisplay = ({ prompt, questionsText, compact, heading = "Silahkan Dijawab" }: CasePromptDisplayProps) => {
   if (compact) {
     return (
       <div className="flex flex-col gap-3 p-4 h-full overflow-y-auto">
-        <h2 className="text-lg font-bold text-foreground">Silahkan Dijawab</h2>
+        <h2 className="text-lg font-bold text-foreground">{heading}</h2>
         <div className="bg-card border border-border rounded-lg p-4">
           <p className="text-sm leading-relaxed text-card-foreground whitespace-pre-wrap">
             {prompt}
@@ -29,7 +30,7 @@ const CasePromptDisplay = ({ prompt, questionsText, compact }: CasePromptDisplay
 
   return (
     <div className="flex flex-col gap-6 p-8 max-w-4xl mx-auto">
-      <h2 className="text-3xl font-bold text-foreground">Silahkan Dijawab</h2>
+      <h2 className="text-3xl font-bold text-foreground">{heading}</h2>
       <div className="bg-card border border-border rounded-xl p-8">
         <p className="text-xl leading-relaxed text-card-foreground whitespace-pre-wrap">
           {prompt}

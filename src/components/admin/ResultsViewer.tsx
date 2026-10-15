@@ -55,6 +55,10 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
       if (error) throw error;
       return data;
     },
+    refetchInterval: (query) => {
+      const rows = (query.state.data as any[] | undefined) ?? [];
+      return rows.some((r) => r.ai_eval_status === "processing" || r.ai_eval_status === "queued") ? 5000 : false;
+    },
   });
 
   const filteredResults = results.filter(
@@ -82,9 +86,9 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
     mutationFn: async (resultId: string) => {
       return invokeExamAi("evaluate-exam", resultId);
     },
-    onSuccess: () => {
+    onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ["exam_results_admin"] });
-      toast({ title: "AI Evaluation Complete" });
+      toast({ title: data?.status === "queued" ? "Masuk antrean evaluasi" : data?.status === "busy" ? "Evaluasi sedang berjalan" : "Evaluasi AI dimulai", description: data?.message });
     },
     onError: (e: Error) => {
       toast({ title: "Evaluation Failed", description: e.message, variant: "destructive" });
@@ -214,6 +218,9 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
                       </TableCell>
                       <TableCell>
                         <Badge variant={scoreDisplay.variant}>{scoreDisplay.label}</Badge>
+                        {r.ai_eval_status === "error" && (
+                          <p className="text-[11px] text-destructive mt-1 max-w-[180px]" title={r.ai_eval_error ?? ""}>Evaluasi gagal: {r.ai_eval_error ?? "coba lagi"}</p>
+                        )}
                       </TableCell>
                       <TableCell className="text-right space-x-2">
                         <TooltipProvider>
@@ -223,11 +230,11 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  disabled={evaluateMutation.isPending || !r.audio_file_url}
+                                  disabled={(evaluateMutation.isPending && evaluateMutation.variables === r.id) || !r.audio_file_url || r.ai_eval_status === "processing" || r.ai_eval_status === "queued"}
                                   onClick={(e) => { e.stopPropagation(); evaluateMutation.mutate(r.id); }}
                                 >
-                                  {evaluateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Play className="h-4 w-4 mr-1" />}
-                                  Evaluate
+                                  {(r.ai_eval_status === "processing" || r.ai_eval_status === "queued" || (evaluateMutation.isPending && evaluateMutation.variables === r.id)) ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Play className="h-4 w-4 mr-1" />}
+                                  {r.ai_eval_status === "processing" ? "Menilai..." : r.ai_eval_status === "queued" ? "Antre" : "Evaluate"}
                                 </Button>
                               </span>
                             </TooltipTrigger>
