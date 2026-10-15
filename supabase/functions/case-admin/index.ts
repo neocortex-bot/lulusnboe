@@ -46,6 +46,8 @@ const UpdateSchema = z.object({
   checklist_rubric: z.object({ items: z.array(RubricItem).max(100) }).optional(),
   rubric_ops: z.array(RubricOp).max(100).optional(),
   properties: z.array(z.string().min(1).max(500)).max(50).optional(),
+  // Kategori soal -> kolom clinical_cases.category. nullable agar bisa dikosongkan.
+  category: z.string().max(100).nullable().optional(),
   media_notes: z.array(MediaNote).optional(),
   created_by_email: z.string().email().optional(),
   dry_run: z.boolean().optional(),
@@ -62,7 +64,7 @@ const SCHEMA_DOC = {
     initial_prompt: "skenario", questions_text: ">=20 char", answer_key_text: ">=100 char",
     checklist_rubric: "{items:[{text,points 1-5,isCritical,answer?}]} — ganti seluruh rubrik",
     rubric_ops: "[{op:'add',item,index?}|{op:'update',index,item:{...sebagian}}|{op:'remove',index}|{op:'move',from,to}] — index 0-based",
-    properties: "string[] admin-only", media_notes: "array", dry_run: "true = validasi & preview tanpa simpan",
+    properties: "string[] admin-only", category: "string bebas maks 100 char -> clinical_cases.category (atau null utk mengosongkan)", media_notes: "array", dry_run: "true = validasi & preview tanpa simpan",
   },
   rubric_rules: "3-100 butir, >=1 kritis, total >=6 poin, tanpa duplikat (atau 0 butir = nonaktif)",
 };
@@ -168,6 +170,7 @@ Deno.serve(async (req) => {
     for (const k of ["title", "status", "exam_mode", "show_results_to_candidate", "initial_prompt", "questions_text", "answer_key_text", "media_notes"] as const) {
       if (data[k] !== undefined) patch[k] = data[k];
     }
+    if (data.category !== undefined) patch.category = data.category;
     if (data.reading_time_seconds !== undefined) patch.reading_time_seconds = data.reading_time_seconds;
     else if (data.reading_time_minutes !== undefined) patch.reading_time_seconds = Math.round(data.reading_time_minutes * 60);
     if (data.time_limit_seconds !== undefined) patch.time_limit_seconds = data.time_limit_seconds;
