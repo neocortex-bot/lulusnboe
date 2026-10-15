@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import CategoryPicker from "@/components/admin/CategoryPicker";
+import { uniqueCategories } from "@/lib/caseCategory";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -90,6 +92,15 @@ const CasePreview = () => {
   // Properti soal: admin-only, disimpan di case_answer_keys (tidak pernah ke peserta)
   const [properties, setProperties] = useState<string[]>([]);
   const [isEditing, setIsEditing] = useState(false);
+  const [category, setCategory] = useState<string | null>(null);
+  const { data: allCategories = [] } = useQuery({
+    queryKey: ["case_categories"],
+    queryFn: async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data } = await (supabase.from("clinical_cases") as any).select("category").not("category", "is", null);
+      return uniqueCategories((data ?? []) as { category?: string | null }[]);
+    },
+  });
 
   // ---- Fetch case + answer key ----
   const { data: caseRow, isLoading } = useQuery({
@@ -133,6 +144,7 @@ const CasePreview = () => {
     if (!caseRow) return;
     setTitle(caseRow.title);
     setExamMode(caseRow.exam_mode);
+    setCategory((caseRow as { category?: string | null }).category ?? null);
     setInitialPrompt(caseRow.initial_prompt);
     setTimeLimitSeconds(caseRow.time_limit_seconds ?? 600);
     setReadingTimeSeconds(caseRow.reading_time_seconds ?? 180);
@@ -215,6 +227,7 @@ const CasePreview = () => {
       const payload: Record<string, unknown> = {
         title,
         exam_mode: examMode,
+        category,
         initial_prompt: initialPrompt,
         time_limit_seconds: timeLimitSeconds,
         reading_time_seconds: readingTimeSeconds,
@@ -298,6 +311,7 @@ const CasePreview = () => {
     if (!caseRow) return;
     setTitle(caseRow.title);
     setExamMode(caseRow.exam_mode);
+    setCategory((caseRow as { category?: string | null }).category ?? null);
     setInitialPrompt(caseRow.initial_prompt);
     setTimeLimitSeconds(caseRow.time_limit_seconds ?? 600);
     setReadingTimeSeconds(caseRow.reading_time_seconds ?? 180);
@@ -489,6 +503,16 @@ const CasePreview = () => {
                     id="title"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
+                    disabled={!isEditing}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Kategori</Label>
+                  <CategoryPicker
+                    categories={allCategories}
+                    value={category}
+                    onChange={setCategory}
                     disabled={!isEditing}
                   />
                 </div>

@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import CategoryFilter from "./CategoryFilter";
+import { ALL, matchesCategory, uniqueCategories } from "@/lib/caseCategory";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { generateBookingCode } from "@/lib/bookingCode";
@@ -74,6 +76,7 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
     panel_exam: [],
   });
   const [pcCount, setPcCount] = useState(1);
+  const [categoryFilter, setCategoryFilter] = useState(ALL);
   const [selectedParticipantIds, setSelectedParticipantIds] = useState<string[]>([]);
   // Defaults to true so a deployment shows scores to participants unless the
   // admin explicitly unchecks it (which hides the results from participants).
@@ -168,7 +171,10 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
     },
   });
 
-  const casesForMode = cases.filter((clinicalCase) => clinicalCase.exam_mode === examMode);
+  const modeCases = cases.filter((clinicalCase) => clinicalCase.exam_mode === examMode);
+  const categories = uniqueCategories(modeCases as { category?: string | null }[]);
+  const casesForMode = modeCases.filter((clinicalCase) =>
+    matchesCategory((clinicalCase as { category?: string | null }).category, categoryFilter));
   const excludedCaseIds = useMemo(
     () => getExcludedCaseIds(completedCaseHistory ?? [], selectedParticipantIds, examMode),
     [completedCaseHistory, examMode, selectedParticipantIds],
@@ -309,6 +315,11 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
             isLoading={candidatesLoading}
             errorMessage={candidatesError ? "Daftar peserta gagal dimuat." : undefined}
           />
+
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium">Kategori:</span>
+            <CategoryFilter categories={categories} value={categoryFilter} onChange={setCategoryFilter} />
+          </div>
 
           <CaseTransferList
             cases={eligibleCases}

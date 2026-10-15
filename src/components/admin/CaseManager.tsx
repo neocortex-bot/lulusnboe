@@ -16,6 +16,8 @@ import CaseForm from "./CaseForm";
 import AssetUploader from "./AssetUploader";
 import ExcelImporter from "./ExcelImporter";
 import { Link } from "react-router-dom";
+import CategoryFilter from "./CategoryFilter";
+import { ALL, matchesCategory, toCategoryLabel, uniqueCategories } from "@/lib/caseCategory";
 
 interface ClinicalCase {
   id: string;
@@ -29,6 +31,7 @@ interface ClinicalCase {
   answer_key_text: string;
   show_results_to_candidate: boolean;
   status?: string;
+  category?: string | null;
   source?: string;
   rubric_mode?: string;
   created_by?: string | null;
@@ -41,6 +44,7 @@ const CaseManager = () => {
   const [showImporter, setShowImporter] = useState(false);
   const [caseToDelete, setCaseToDelete] = useState<ClinicalCase | null>(null);
   const [examGroup, setExamGroup] = useState("oral_board");
+  const [categoryFilter, setCategoryFilter] = useState(ALL);
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { user, isMasterAdmin } = useAuth();
@@ -110,7 +114,8 @@ const CaseManager = () => {
     setEditingCase(null);
   };
 
-  const filteredCases = cases.filter((clinicalCase) => clinicalCase.exam_mode === examGroup && clinicalCase.status !== "prereview");
+  const categories = uniqueCategories(cases);
+  const filteredCases = cases.filter((clinicalCase) => clinicalCase.exam_mode === examGroup && clinicalCase.status !== "prereview" && matchesCategory(clinicalCase.category, categoryFilter));
 
   return (
     <Card>
@@ -129,12 +134,15 @@ const CaseManager = () => {
         </div>
       </CardHeader>
       <CardContent>
-        <Tabs value={examGroup} onValueChange={setExamGroup} className="mb-5">
-          <TabsList>
-            <TabsTrigger value="oral_board">Oral Board</TabsTrigger>
-            <TabsTrigger value="panel_exam">Panel</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="mb-5 flex flex-wrap items-center gap-3">
+          <Tabs value={examGroup} onValueChange={setExamGroup}>
+            <TabsList>
+              <TabsTrigger value="oral_board">Oral Board</TabsTrigger>
+              <TabsTrigger value="panel_exam">Panel</TabsTrigger>
+            </TabsList>
+          </Tabs>
+          <CategoryFilter categories={categories} value={categoryFilter} onChange={setCategoryFilter} />
+        </div>
         {isLoading ? (
           <p className="text-muted-foreground">Loading...</p>
         ) : filteredCases.length === 0 ? (
@@ -157,7 +165,10 @@ const CaseManager = () => {
             <TableBody>
               {filteredCases.map((c) => (
                 <TableRow key={c.id}>
-                  <TableCell className="font-medium">{c.title}</TableCell>
+                  <TableCell className="font-medium">
+                    {c.title}
+                    {c.category && <Badge variant="outline" className="ml-2 text-xs">{toCategoryLabel(c.category)}</Badge>}
+                  </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1">
                       {c.source === 'agent_api' && (
