@@ -134,18 +134,13 @@ const CaseManager = () => {
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Clinical Cases</CardTitle>
         <div className="flex gap-2">
-          <Link to="/prereview" className="relative">
-            <Button variant="outline" size="sm">
-              Pre-review Soal
-              {prereviewCount > 0 && (
-                <span className="relative ml-2 inline-flex items-center">
-                  <span className="absolute -left-1.5 -top-2 h-2.5 w-2.5 rounded-full bg-destructive" />
-                  <span className="absolute -left-2 -top-3.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold leading-none text-destructive-foreground">
-                    {prereviewCount}
-                  </span>
-                </span>
-              )}
-            </Button>
+          <Link to="/prereview" className="relative inline-block">
+            <Button variant="outline" size="sm">Pre-review Soal</Button>
+            {prereviewCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold leading-none text-destructive-foreground shadow">
+                {prereviewCount}
+              </span>
+            )}
           </Link>
           <Button onClick={() => setShowImporter(true)} variant="outline" size="sm">
             <FileSpreadsheet className="h-4 w-4 mr-2" /> Import Excel
