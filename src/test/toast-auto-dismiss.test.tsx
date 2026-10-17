@@ -1,5 +1,5 @@
-import { act, render, renderHook, screen } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { act, render, renderHook, screen, waitFor } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 import { useToast } from "@/hooks/use-toast";
 import { TOAST_AUTO_DISMISS_MS, TOAST_ERROR_DISMISS_MS, toastDurationFor } from "@/lib/toastTiming";
 import { Toaster as LegacyToaster } from "@/components/ui/toaster";
@@ -14,7 +14,7 @@ describe("auto-dismiss notifikasi", () => {
     expect(TOAST_ERROR_DISMISS_MS).toBe(4000);
   });
 
-  it("toast hook lama memasang durasi otomatis", () => {
+  it("toast hook lama memasang durasi hilang otomatis", () => {
     const { result } = renderHook(() => useToast());
 
     act(() => {
@@ -28,7 +28,7 @@ describe("auto-dismiss notifikasi", () => {
     expect(result.current.toasts[0].duration).toBe(4000);
   });
 
-  it("toast hook lama tidak menutupi tombol di bawahnya", () => {
+  it("area notifikasi lama tidak menangkap klik, hanya kartu toast-nya", () => {
     const { result } = renderHook(() => useToast());
     render(<LegacyToaster />);
 
@@ -36,49 +36,46 @@ describe("auto-dismiss notifikasi", () => {
       result.current.toast({ title: "Draft tersimpan" });
     });
 
-    const viewport = document.querySelector("ol[data-sonner-toaster], [role='region'], ol");
+    const viewport = document.querySelector('[role="region"] ol');
+    const card = document.querySelector('li[role="status"]');
     expect(viewport).not.toBeNull();
+    expect(card).not.toBeNull();
     expect(viewport!.className).toContain("pointer-events-none");
+    expect(card!.className).toContain("pointer-events-auto");
   });
 
-  describe("sonner", () => {
-    beforeEach(() => {
-      vi.useFakeTimers();
+  it("notifikasi sonner hilang sendiri dalam 1,5 detik", async () => {
+    render(<SonnerToaster />);
+    const t0 = Date.now();
+
+    act(() => {
+      sonnerToast.success("Soal dipublikasikan");
     });
-    afterEach(() => {
-      vi.useRealTimers();
+    await waitFor(() => expect(screen.getByText("Soal dipublikasikan")).toBeInTheDocument());
+    await waitFor(
+      () => expect(screen.queryByText("Soal dipublikasikan")).not.toBeInTheDocument(),
+      { timeout: 3000 },
+    );
+
+    const elapsed = Date.now() - t0;
+    expect(elapsed).toBeGreaterThan(1000);
+    expect(elapsed).toBeLessThan(2600);
+  });
+
+  it("pesan error sonner masih bisa dibaca sebelum hilang", async () => {
+    render(<SonnerToaster />);
+
+    act(() => {
+      sonnerToast.error("Gagal menyimpan soal");
     });
+    await waitFor(() => expect(screen.getByText("Gagal menyimpan soal")).toBeInTheDocument());
 
-    it("notifikasi berhasil hilang sendiri setelah 1,5 detik", () => {
-      render(<SonnerToaster />);
+    await new Promise((resolve) => setTimeout(resolve, TOAST_AUTO_DISMISS_MS + 200));
+    expect(screen.getByText("Gagal menyimpan soal")).toBeInTheDocument();
 
-      act(() => {
-        sonnerToast.success("Soal dipublikasikan");
-      });
-      expect(screen.getByText("Soal dipublikasikan")).toBeInTheDocument();
-
-      act(() => {
-        vi.advanceTimersByTime(TOAST_AUTO_DISMISS_MS + 100);
-      });
-      expect(screen.queryByText("Soal dipublikasikan")).not.toBeInTheDocument();
-    });
-
-    it("error masih tampil setelah 1,5 detik dan hilang di 4 detik", () => {
-      render(<SonnerToaster />);
-
-      act(() => {
-        sonnerToast.error("Gagal menyimpan");
-      });
-
-      act(() => {
-        vi.advanceTimersByTime(TOAST_AUTO_DISMISS_MS + 100);
-      });
-      expect(screen.getByText("Gagal menyimpan")).toBeInTheDocument();
-
-      act(() => {
-        vi.advanceTimersByTime(TOAST_ERROR_DISMISS_MS);
-      });
-      expect(screen.queryByText("Gagal menyimpan")).not.toBeInTheDocument();
-    });
+    await waitFor(
+      () => expect(screen.queryByText("Gagal menyimpan soal")).not.toBeInTheDocument(),
+      { timeout: TOAST_ERROR_DISMISS_MS + 1500 },
+    );
   });
 });
