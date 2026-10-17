@@ -1,7 +1,20 @@
 import { useTheme } from "next-themes";
-import { Toaster as Sonner, toast } from "sonner";
+import { Toaster as Sonner, toast as sonnerToast } from "sonner";
+import { TOAST_AUTO_DISMISS_MS, TOAST_ERROR_DISMISS_MS } from "@/lib/toastTiming";
 
 type ToasterProps = React.ComponentProps<typeof Sonner>;
+
+const withLongerDuration =
+  (fn: (message: any, data?: any) => any) =>
+  (message: any, data?: any) =>
+    fn(message, { duration: TOAST_ERROR_DISMISS_MS, ...data });
+
+// Pesan berhasil/biasa hilang dalam 1,5 detik (default Toaster di bawah).
+// Error dan peringatan perlu waktu baca lebih lama.
+const toast = Object.assign(sonnerToast, {
+  error: withLongerDuration(sonnerToast.error),
+  warning: withLongerDuration(sonnerToast.warning),
+});
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme();
@@ -10,6 +23,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
     <Sonner
       theme={theme as ToasterProps["theme"]}
       className="toaster group"
+      duration={TOAST_AUTO_DISMISS_MS}
       toastOptions={{
         classNames: {
           toast:

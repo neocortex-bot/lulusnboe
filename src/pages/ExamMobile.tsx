@@ -8,7 +8,7 @@ import ExamActiveView from "@/components/exam/ExamActiveView";
 import ExamErrorBoundary from "@/components/exam/ExamErrorBoundary";
 
 import ExamCompleted from "@/pages/ExamCompleted";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/sonner";
 import { ShieldAlert, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
