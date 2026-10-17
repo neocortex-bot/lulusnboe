@@ -134,7 +134,7 @@ function dispatch(action: Action) {
 
 type Toast = Omit<ToasterToast, "id">;
 
-function toast({ ...props }: Toast) {
+function toast({ duration, variant, ...props }: Toast) {
   const id = genId();
 
   const update = (props: ToasterToast) =>
@@ -148,6 +148,9 @@ function toast({ ...props }: Toast) {
     type: "ADD_TOAST",
     toast: {
       ...props,
+      variant,
+      // Hilang otomatis: 1,5 detik untuk pesan biasa, lebih lama untuk error.
+      duration: duration ?? toastDurationFor(variant),
       id,
       open: true,
       onOpenChange: (open) => {
