@@ -114,6 +114,18 @@ const CaseManager = () => {
     setEditingCase(null);
   };
 
+  const { data: prereviewCount = 0 } = useQuery({
+    queryKey: ["prereview_count"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("clinical_cases")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "prereview");
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+
   const categories = uniqueCategories(cases);
   const filteredCases = cases.filter((clinicalCase) => clinicalCase.exam_mode === examGroup && clinicalCase.status !== "prereview" && matchesCategory(clinicalCase.category, categoryFilter));
 
@@ -122,8 +134,13 @@ const CaseManager = () => {
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Clinical Cases</CardTitle>
         <div className="flex gap-2">
-          <Link to="/prereview">
+          <Link to="/prereview" className="relative inline-block">
             <Button variant="outline" size="sm">Pre-review Soal</Button>
+            {prereviewCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold leading-none text-destructive-foreground shadow">
+                {prereviewCount}
+              </span>
+            )}
           </Link>
           <Button onClick={() => setShowImporter(true)} variant="outline" size="sm">
             <FileSpreadsheet className="h-4 w-4 mr-2" /> Import Excel
