@@ -1,41 +1,38 @@
-import { act, render, renderHook } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
-import { Toaster, toast as sonnerToast } from "@/components/ui/sonner";
-import { Toaster as LegacyToaster } from "@/components/ui/toaster";
-import { useToast } from "@/hooks/use-toast";
+import { act, render, waitFor, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
+import { Toaster, toast } from "@/components/ui/sonner";
 
-describe("debug toaster", () => {
-  it("sonner without fake timers", () => {
+describe("debug sonner real timers", () => {
+  it("success auto dismiss timing", async () => {
     render(<Toaster />);
+    console.log("API>>>" + typeof (toast as any).getHistory + "|" + typeof (toast as any).getToasts);
+    let id: any;
     act(() => {
-      sonnerToast.success("HaloA");
+      id = toast.success("HaloA");
     });
-    console.log("NOFAKE>>>" + document.body.innerHTML.slice(0, 400));
+    const t0 = Date.now();
+    await waitFor(() => expect(screen.getByText("HaloA")).toBeInTheDocument(), { timeout: 2000 });
+    const tAppear = Date.now() - t0;
+    await waitFor(() => expect(screen.queryByText("HaloA")).not.toBeInTheDocument(), { timeout: 4000 });
+    const tGone = Date.now() - t0;
+    console.log("TIMING>>>appear=" + tAppear + " gone=" + tGone);
+    const hist = (toast as any).getHistory ? (toast as any).getHistory() : [];
+    console.log("HIST>>>" + JSON.stringify(hist.map((h: any) => ({ id: h.id, type: h.type, duration: h.duration }))));
+    console.log("ACTIVE>>>" + JSON.stringify((toast as any).getToasts ? (toast as any).getToasts().map((h: any) => ({ id: h.id, type: h.type, duration: h.duration })) : []));
     expect(true).toBe(true);
   });
 
-  it("sonner with fake timers", () => {
-    vi.useFakeTimers();
+  it("error duration via store", async () => {
     render(<Toaster />);
     act(() => {
-      sonnerToast.success("HaloB");
+      toast.error("GagalB");
     });
-    console.log("FAKE>>>" + document.body.innerHTML.slice(0, 400));
-    act(() => {
-      vi.advanceTimersByTime(1600);
-    });
-    console.log("FAKE_AFTER>>>" + document.body.innerHTML.slice(0, 400));
-    vi.useRealTimers();
-    expect(true).toBe(true);
-  });
-
-  it("legacy viewport html", () => {
-    const { result } = renderHook(() => useToast());
-    render(<LegacyToaster />);
-    act(() => {
-      result.current.toast({ title: "Draft tersimpan" });
-    });
-    console.log("LEGACY>>>" + document.body.innerHTML.slice(0, 700));
+    await waitFor(() => expect(screen.getByText("GagalB")).toBeInTheDocument(), { timeout: 2000 });
+    const hist = (toast as any).getHistory ? (toast as any).getHistory() : [];
+    console.log("ERRHIST>>>" + JSON.stringify(hist.map((h: any) => ({ id: h.id, type: h.type, duration: h.duration }))));
+    const t0 = Date.now();
+    await waitFor(() => expect(screen.queryByText("GagalB")).not.toBeInTheDocument(), { timeout: 8000 });
+    console.log("ERRGONE>>>" + (Date.now() - t0));
     expect(true).toBe(true);
   });
 });
