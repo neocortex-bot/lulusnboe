@@ -303,6 +303,7 @@ export type Database = {
           case_id: string
           created_at: string
           current_candidate_id: string | null
+          examiner_id: string | null
           id: string
           session_start_time: string | null
           show_results_to_candidate_override: boolean
@@ -313,6 +314,7 @@ export type Database = {
           case_id: string
           created_at?: string
           current_candidate_id?: string | null
+          examiner_id?: string | null
           id?: string
           session_start_time?: string | null
           show_results_to_candidate_override?: boolean
@@ -323,6 +325,7 @@ export type Database = {
           case_id?: string
           created_at?: string
           current_candidate_id?: string | null
+          examiner_id?: string | null
           id?: string
           session_start_time?: string | null
           show_results_to_candidate_override?: boolean

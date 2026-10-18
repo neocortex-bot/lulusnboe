@@ -15,6 +15,7 @@ import SoalPreviewPage from "./pages/admin/SoalPreviewPage";
 import StationDisplay from "./pages/StationDisplay";
 import ExamEntry from "./pages/ExamEntry";
 import ExamMobile from "./pages/ExamMobile";
+import Examiner from "./pages/Examiner";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -62,6 +63,7 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route path="/examiner" element={<ProtectedRoute requireAdmin><Examiner /></ProtectedRoute>} />
             <Route path="/station/:token" element={<StationDisplay />} />
             <Route path="/exam" element={<ExamEntry />} />
             <Route path="/exam/:sessionId" element={<ExamMobile />} />

@@ -81,6 +81,17 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
   // Defaults to true so a deployment shows scores to participants unless the
   // admin explicitly unchecks it (which hides the results from participants).
   const [showResultsToCandidateOverride, setShowResultsToCandidateOverride] = useState(true);
+  const [examinerId, setExaminerId] = useState("");
+  const { data: admins = [] } = useQuery({
+    queryKey: ["examiner_admins"],
+    queryFn: async () => {
+      const { data: roles } = await supabase.from("user_roles").select("user_id").eq("role", "admin");
+      const ids = (roles ?? []).map((r) => r.user_id);
+      if (!ids.length) return [];
+      const { data } = await supabase.from("profiles").select("id, full_name, email").in("id", ids).order("full_name");
+      return data ?? [];
+    },
+  });
   const [deployedStations, setDeployedStations] = useState<DeployedStationToken[]>([]);
   const [showResults, setShowResults] = useState(false);
   const queryClient = useQueryClient();
@@ -253,6 +264,7 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
             station_token: token,
             status: "waiting",
             show_results_to_candidate_override: showResultsToCandidateOverride,
+            examiner_id: examinerId || null,
           })))
           .select("id, station_token");
         if (sessionError) throw sessionError;
@@ -375,6 +387,21 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
                     </Button>
                   </div>
                 </div>
+              </div>
+              <div className="space-y-1 rounded-md border border-border px-3 py-2">
+                <label htmlFor={`examiner-${examMode}`} className="text-sm font-medium">Penguji (opsional)</label>
+                <select
+                  id={`examiner-${examMode}`}
+                  value={examinerId}
+                  onChange={(e) => setExaminerId(e.target.value)}
+                  className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+                >
+                  <option value="">— Tanpa penguji —</option>
+                  {admins.map((a) => (
+                    <option key={a.id} value={a.id}>{a.full_name || a.email}</option>
+                  ))}
+                </select>
+                <p className="text-xs text-muted-foreground">Penguji membuka /examiner di HP untuk melihat properti soal peserta yang sedang ujian.</p>
               </div>
               <div className="flex items-start gap-2 rounded-md border border-border px-3 py-2">
                 <Checkbox
