@@ -8,9 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Check, ArrowLeft } from "lucide-react";
 import { pickActiveExaminerSessions, resolveSelectedSession } from "@/lib/examinerSessions";
 
-interface Prop { name?: string; label?: string; key?: string; value?: string }
+type Prop = string | { name?: string; label?: string; key?: string; value?: string };
 
-const propName = (p: Prop) => p.name ?? p.label ?? p.key ?? "";
+const splitProp = (p: Prop) => {
+  if (typeof p !== "string") return { name: p.name ?? p.label ?? p.key ?? "", value: p.value ?? "" };
+  const i = p.indexOf(":");
+  return i > 0 ? { name: p.slice(0, i).trim(), value: p.slice(i + 1).trim() } : { name: "", value: p };
+};
 
 function useNow() {
   const [now, setNow] = useState(Date.now());
@@ -152,8 +156,8 @@ const Examiner = () => {
                         className={`flex w-full items-start gap-3 rounded-md border p-3 text-left ${given[k] ? "border-primary bg-muted opacity-70" : "border-border"}`}>
                         <Check className={`mt-1 h-4 w-4 shrink-0 ${given[k] ? "text-primary" : "text-muted-foreground/30"}`} />
                         <div>
-                          <div className="text-sm text-muted-foreground">{propName(p)}</div>
-                          <div className="text-lg font-semibold">{p.value}</div>
+                          {splitProp(p).name && <div className="text-sm text-muted-foreground">{splitProp(p).name}</div>}
+                          <div className="text-lg font-semibold">{splitProp(p).value}</div>
                         </div>
                       </button>
                     );
