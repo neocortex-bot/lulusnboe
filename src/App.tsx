@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import CasePreview from "./pages/admin/CasePreview"; // NEW: Preview page
 import PreReview from "./pages/admin/PreReview";
+import ArchivePage from "./pages/admin/ArchivePage";
 import SoalPreviewPage from "./pages/admin/SoalPreviewPage";
 import StationDisplay from "./pages/StationDisplay";
 import ExamEntry from "./pages/ExamEntry";

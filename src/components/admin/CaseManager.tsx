@@ -133,7 +133,7 @@ const CaseManager = () => {
   });
 
   const categories = uniqueCategories(cases);
-  const filteredCases = cases.filter((clinicalCase) => clinicalCase.exam_mode === examGroup && clinicalCase.status !== "prereview" && matchesCategory(clinicalCase.category, categoryFilter));
+  const filteredCases = cases.filter((clinicalCase) => clinicalCase.exam_mode === examGroup && clinicalCase.status !== "prereview" && clinicalCase.status !== "archived" && matchesCategory(clinicalCase.category, categoryFilter));
 
   return (
     <Card>
@@ -280,21 +280,20 @@ const CaseManager = () => {
       <AlertDialog open={!!caseToDelete} onOpenChange={(o) => !o && setCaseToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Hapus soal ini?</AlertDialogTitle>
+            <AlertDialogTitle>Arsipkan soal ini?</AlertDialogTitle>
             <AlertDialogDescription>
-              Soal <span className="font-semibold">"{caseToDelete?.title}"</span> akan dihapus permanen beserta kunci jawaban dan hasil ujian terkait. Tindakan ini tidak bisa dibatalkan.
+              Soal <span className="font-semibold">"{caseToDelete?.title}"</span> akan dipindahkan ke arsip dan tidak tampil di daftar utama. Bisa dipulihkan kapan saja dari halaman <span className="font-mono">/archive</span>.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Batal</AlertDialogCancel>
             <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={() => {
                 if (caseToDelete) deleteMutation.mutate(caseToDelete.id);
                 setCaseToDelete(null);
               }}
             >
-              Ya, Hapus
+              Ya, Arsipkan
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
