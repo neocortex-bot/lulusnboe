@@ -193,26 +193,31 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
     () => getExcludedCaseIds(completedCaseHistory ?? [], selectedParticipantIds, examMode),
     [completedCaseHistory, examMode, selectedParticipantIds],
   );
+  // Retake bypasses the completed-case exclusion entirely.
+  const effectiveExcludedCaseIds = useMemo(
+    () => (allowRetake ? new Set<string>() : excludedCaseIds),
+    [allowRetake, excludedCaseIds],
+  );
   const historyLoading = selectedParticipantIds.length > 0 &&
     (completedCaseHistory === undefined || historyFetching);
   const historyUnavailable = selectedParticipantIds.length > 0 && Boolean(historyError);
   const eligibleCases = historyUnavailable ||
     (selectedParticipantIds.length > 0 && completedCaseHistory === undefined)
     ? []
-    : casesForMode.filter((clinicalCase) => !excludedCaseIds.has(clinicalCase.id));
+    : casesForMode.filter((clinicalCase) => !effectiveExcludedCaseIds.has(clinicalCase.id));
 
   useEffect(() => {
-    if (historyLoading || historyUnavailable || excludedCaseIds.size === 0) return;
+    if (historyLoading || historyUnavailable || effectiveExcludedCaseIds.size === 0) return;
 
     const removedCases = selectedCases.filter((clinicalCase) =>
-      excludedCaseIds.has(clinicalCase.id),
+      effectiveExcludedCaseIds.has(clinicalCase.id),
     );
     if (removedCases.length === 0) return;
 
     setSelectedCasesByMode((current) => ({
       ...current,
       [examMode]: (current[examMode] ?? []).filter(
-        (clinicalCase) => !excludedCaseIds.has(clinicalCase.id),
+        (clinicalCase) => !effectiveExcludedCaseIds.has(clinicalCase.id),
       ),
     }));
     toast({
