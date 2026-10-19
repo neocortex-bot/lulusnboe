@@ -17,7 +17,10 @@ interface ScoreItem {
   passed: boolean;
   comment?: string;
   points?: number;
+  maxPoints?: number;
+  coverage?: "full" | "partial" | "none";
   isCritical?: boolean;
+  evidenceQuote?: string;
 }
 
 interface ScoreReport {
@@ -192,11 +195,12 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
         ) : filteredResults.length === 0 ? (
           <p className="text-muted-foreground text-center py-8">No exam results yet.</p>
         ) : (
+          <div className="overflow-x-auto -mx-2 px-2">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Candidate</TableHead>
-                <TableHead>Case</TableHead>
+                <TableHead className="hidden sm:table-cell">Case</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>AI Score</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
@@ -209,20 +213,26 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
                 return (
                   <>
                     <TableRow key={r.id} className="cursor-pointer" onClick={() => setExpandedId(expandedId === r.id ? null : r.id)}>
-                      <TableCell className="font-medium">{r.profiles?.full_name ?? "—"}</TableCell>
-                      <TableCell>{r.exam_sessions?.clinical_cases?.title ?? "—"}</TableCell>
+                      <TableCell className="font-medium whitespace-normal break-words max-w-[120px] sm:max-w-none">
+                        {r.profiles?.full_name ?? "—"}
+                        <span className="block sm:hidden text-xs font-normal text-muted-foreground break-words">
+                          {r.exam_sessions?.clinical_cases?.title ?? ""}
+                        </span>
+                      </TableCell>
+                      <TableCell className="hidden sm:table-cell whitespace-normal break-words max-w-[220px]">{r.exam_sessions?.clinical_cases?.title ?? "—"}</TableCell>
                       <TableCell>
                         <Badge variant={r.exam_sessions?.status === "completed" ? "default" : "secondary"}>
                           {r.exam_sessions?.status ?? "—"}
                         </Badge>
                       </TableCell>
-                      <TableCell>
-                        <Badge variant={scoreDisplay.variant}>{scoreDisplay.label}</Badge>
+                      <TableCell className="whitespace-normal">
+                        <Badge variant={scoreDisplay.variant} className="whitespace-normal text-center">{scoreDisplay.label}</Badge>
                         {r.ai_eval_status === "error" && (
                           <p className="text-[11px] text-destructive mt-1 max-w-[180px]" title={r.ai_eval_error ?? ""}>Evaluasi gagal: {r.ai_eval_error ?? "coba lagi"}</p>
                         )}
                       </TableCell>
-                      <TableCell className="text-right space-x-2">
+                      <TableCell className="text-right">
+                        <div className="flex flex-wrap items-center justify-end gap-2">
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -233,8 +243,8 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
                                   disabled={(evaluateMutation.isPending && evaluateMutation.variables === r.id) || !r.audio_file_url || r.ai_eval_status === "processing" || r.ai_eval_status === "queued"}
                                   onClick={(e) => { e.stopPropagation(); evaluateMutation.mutate(r.id); }}
                                 >
-                                  {(r.ai_eval_status === "processing" || r.ai_eval_status === "queued" || (evaluateMutation.isPending && evaluateMutation.variables === r.id)) ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Play className="h-4 w-4 mr-1" />}
-                                  {r.ai_eval_status === "processing" ? "Menilai..." : r.ai_eval_status === "queued" ? "Antre" : "Evaluate"}
+                                  {(r.ai_eval_status === "processing" || r.ai_eval_status === "queued" || (evaluateMutation.isPending && evaluateMutation.variables === r.id)) ? <Loader2 className="h-4 w-4 animate-spin sm:mr-1" /> : <Play className="h-4 w-4 sm:mr-1" />}
+                                  <span className="hidden sm:inline">{r.ai_eval_status === "processing" ? "Menilai..." : r.ai_eval_status === "queued" ? "Antre" : "Evaluate"}</span>
                                 </Button>
                               </span>
                             </TooltipTrigger>
@@ -254,12 +264,13 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
                             }
                           }}
                         >
-                          {deleteMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Trash2 className="h-4 w-4 mr-1" />}
-                          Hapus
+                          {deleteMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin sm:mr-1" /> : <Trash2 className="h-4 w-4 sm:mr-1" />}
+                          <span className="hidden sm:inline">Hapus</span>
                         </Button>
                         <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); setExpandedId(expandedId === r.id ? null : r.id); }}>
                           {expandedId === r.id ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                         </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                     {expandedId === r.id && (
@@ -309,24 +320,33 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
                                 </div>
                               )}
                               {parsed.items.length > 0 ? (
-                                <div className="space-y-1">
-                                  {parsed.items.map((item, idx) => (
-                                    <div key={idx} className="flex items-center gap-2 text-sm">
-                                      <Badge variant={item.passed ? "default" : "destructive"} className="text-xs">
-                                        {item.passed ? "PASS" : "FAIL"}
-                                      </Badge>
-                                      {item.isCritical && <AlertTriangle className="h-3.5 w-3.5 text-destructive" />}
-                                      <span className="flex-1">{item.item}</span>
-                                      {item.points != null && (
-                                        <span className="text-xs font-mono text-muted-foreground">
-                                          {item.passed ? item.points : 0}/{item.points} pts
-                                        </span>
-                                      )}
-                                      {item.comment && (
-                                        <span className="text-muted-foreground text-xs">— {item.comment}</span>
-                                      )}
-                                    </div>
-                                  ))}
+                                <div className="space-y-1.5">
+                                  {parsed.items.map((item, idx) => {
+                                    const max = item.maxPoints ?? 2;
+                                    const earned = item.points ?? (item.passed ? max : 0);
+                                    const coverage = item.coverage ?? (earned >= max ? "full" : earned > 0 ? "partial" : "none");
+                                    const statusLabel = coverage === "full" ? "PASS" : coverage === "partial" ? "HALF" : "FAIL";
+                                    const statusVariant = coverage === "full" ? "default" : coverage === "partial" ? "secondary" : "destructive";
+                                    return (
+                                      <div key={idx} className="rounded-md border border-border bg-background p-2 text-sm space-y-1">
+                                        <div className="flex items-start gap-2">
+                                          <Badge variant={statusVariant} className="text-xs shrink-0 mt-0.5">
+                                            {statusLabel}
+                                          </Badge>
+                                          {item.isCritical && <AlertTriangle className="h-3.5 w-3.5 text-destructive shrink-0 mt-1" />}
+                                          <span className="flex-1 min-w-0 break-words">{item.item}</span>
+                                          <span className="text-xs font-mono text-muted-foreground shrink-0 mt-0.5">
+                                            {earned}/{max} pts
+                                          </span>
+                                        </div>
+                                        {(item.evidenceQuote || item.comment) && (
+                                          <p className="text-xs text-muted-foreground break-words">
+                                            {item.evidenceQuote ? `Kutipan: "${item.evidenceQuote}"` : item.comment}
+                                          </p>
+                                        )}
+                                      </div>
+                                    );
+                                  })}
                                   {parsed.totalPossible != null && (
                                     <div className="flex items-center justify-between text-sm font-semibold border-t border-border pt-2 mt-2">
                                       <span>Total</span>
@@ -364,6 +384,7 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
               })}
             </TableBody>
           </Table>
+          </div>
         )}
       </CardContent>
     </Card>
