@@ -314,6 +314,7 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
       setSelectedCases([]);
       setPcCount(1);
       setShowResultsToCandidateOverride(true);
+      setAllowRetake(false);
     },
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
   });
