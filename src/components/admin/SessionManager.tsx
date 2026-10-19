@@ -430,6 +430,25 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
                   </p>
                 </div>
               </div>
+              <div className="flex items-start gap-2 rounded-md border border-border px-3 py-2">
+                <Checkbox
+                  id={`allow-retake-${examMode}`}
+                  checked={allowRetake}
+                  onCheckedChange={(checked) => setAllowRetake(checked === true)}
+                  className="mt-0.5"
+                />
+                <div className="space-y-0.5">
+                  <label
+                    htmlFor={`allow-retake-${examMode}`}
+                    className="cursor-pointer text-sm font-medium"
+                  >
+                    Izinkan Ujian Ulang (Retake)
+                  </label>
+                  <p className="text-xs text-muted-foreground">
+                    Jika dicentang, soal yang sudah pernah dikerjakan peserta terpilih tetap bisa di-deploy, sehingga peserta dapat mengikuti ujian yang sama untuk kedua kalinya.
+                  </p>
+                </div>
+              </div>
             </div>
           )}
 
