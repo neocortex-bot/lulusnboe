@@ -225,13 +225,14 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
                           {r.exam_sessions?.status ?? "—"}
                         </Badge>
                       </TableCell>
-                      <TableCell>
-                        <Badge variant={scoreDisplay.variant}>{scoreDisplay.label}</Badge>
+                      <TableCell className="whitespace-normal">
+                        <Badge variant={scoreDisplay.variant} className="whitespace-normal text-center">{scoreDisplay.label}</Badge>
                         {r.ai_eval_status === "error" && (
                           <p className="text-[11px] text-destructive mt-1 max-w-[180px]" title={r.ai_eval_error ?? ""}>Evaluasi gagal: {r.ai_eval_error ?? "coba lagi"}</p>
                         )}
                       </TableCell>
-                      <TableCell className="text-right space-x-2">
+                      <TableCell className="text-right">
+                        <div className="flex flex-wrap items-center justify-end gap-2">
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -242,8 +243,8 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
                                   disabled={(evaluateMutation.isPending && evaluateMutation.variables === r.id) || !r.audio_file_url || r.ai_eval_status === "processing" || r.ai_eval_status === "queued"}
                                   onClick={(e) => { e.stopPropagation(); evaluateMutation.mutate(r.id); }}
                                 >
-                                  {(r.ai_eval_status === "processing" || r.ai_eval_status === "queued" || (evaluateMutation.isPending && evaluateMutation.variables === r.id)) ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Play className="h-4 w-4 mr-1" />}
-                                  {r.ai_eval_status === "processing" ? "Menilai..." : r.ai_eval_status === "queued" ? "Antre" : "Evaluate"}
+                                  {(r.ai_eval_status === "processing" || r.ai_eval_status === "queued" || (evaluateMutation.isPending && evaluateMutation.variables === r.id)) ? <Loader2 className="h-4 w-4 animate-spin sm:mr-1" /> : <Play className="h-4 w-4 sm:mr-1" />}
+                                  <span className="hidden sm:inline">{r.ai_eval_status === "processing" ? "Menilai..." : r.ai_eval_status === "queued" ? "Antre" : "Evaluate"}</span>
                                 </Button>
                               </span>
                             </TooltipTrigger>
@@ -263,12 +264,13 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
                             }
                           }}
                         >
-                          {deleteMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Trash2 className="h-4 w-4 mr-1" />}
-                          Hapus
+                          {deleteMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin sm:mr-1" /> : <Trash2 className="h-4 w-4 sm:mr-1" />}
+                          <span className="hidden sm:inline">Hapus</span>
                         </Button>
                         <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); setExpandedId(expandedId === r.id ? null : r.id); }}>
                           {expandedId === r.id ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                         </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                     {expandedId === r.id && (
@@ -382,6 +384,7 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
               })}
             </TableBody>
           </Table>
+          </div>
         )}
       </CardContent>
     </Card>
