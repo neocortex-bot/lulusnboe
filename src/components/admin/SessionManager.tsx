@@ -224,7 +224,7 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
       title: "Pilihan case diperbarui",
       description: `${removedCases.length} case dihapus karena sudah pernah diselesaikan oleh peserta terpilih.`,
     });
-  }, [examMode, excludedCaseIds, historyLoading, historyUnavailable, selectedCases, toast]);
+  }, [examMode, effectiveExcludedCaseIds, historyLoading, historyUnavailable, selectedCases, toast]);
 
   const casePickerEmptyMessage = historyUnavailable
     ? "Riwayat peserta gagal dimuat. Coba muat ulang halaman."
@@ -243,7 +243,7 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
         participantIds: selectedParticipantIds,
         caseIds: selectedCases.map((clinicalCase) => clinicalCase.id),
         pcCount,
-        excludedCaseIds,
+        excludedCaseIds: effectiveExcludedCaseIds,
       });
       if (validationError) throw new Error(validationError);
 
