@@ -19,7 +19,7 @@ interface ArchivedCase {
   exam_mode: string;
   category?: string | null;
   created_by?: string | null;
-  updated_at?: string;
+  created_at?: string;
 }
 
 const ArchivePage = () => {
