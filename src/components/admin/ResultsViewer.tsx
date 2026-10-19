@@ -195,11 +195,12 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
         ) : filteredResults.length === 0 ? (
           <p className="text-muted-foreground text-center py-8">No exam results yet.</p>
         ) : (
+          <div className="overflow-x-auto -mx-2 px-2">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Candidate</TableHead>
-                <TableHead>Case</TableHead>
+                <TableHead className="hidden sm:table-cell">Case</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>AI Score</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
@@ -212,8 +213,13 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
                 return (
                   <>
                     <TableRow key={r.id} className="cursor-pointer" onClick={() => setExpandedId(expandedId === r.id ? null : r.id)}>
-                      <TableCell className="font-medium">{r.profiles?.full_name ?? "—"}</TableCell>
-                      <TableCell>{r.exam_sessions?.clinical_cases?.title ?? "—"}</TableCell>
+                      <TableCell className="font-medium whitespace-normal break-words max-w-[120px] sm:max-w-none">
+                        {r.profiles?.full_name ?? "—"}
+                        <span className="block sm:hidden text-xs font-normal text-muted-foreground break-words">
+                          {r.exam_sessions?.clinical_cases?.title ?? ""}
+                        </span>
+                      </TableCell>
+                      <TableCell className="hidden sm:table-cell whitespace-normal break-words max-w-[220px]">{r.exam_sessions?.clinical_cases?.title ?? "—"}</TableCell>
                       <TableCell>
                         <Badge variant={r.exam_sessions?.status === "completed" ? "default" : "secondary"}>
                           {r.exam_sessions?.status ?? "—"}
