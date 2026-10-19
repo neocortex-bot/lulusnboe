@@ -81,6 +81,9 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
   // Defaults to true so a deployment shows scores to participants unless the
   // admin explicitly unchecks it (which hides the results from participants).
   const [showResultsToCandidateOverride, setShowResultsToCandidateOverride] = useState(true);
+  // When checked, participants may be deployed cases they already completed
+  // (retake). Default off: completed cases stay hidden from the picker.
+  const [allowRetake, setAllowRetake] = useState(false);
   const [examinerId, setExaminerId] = useState("");
   const { data: admins = [] } = useQuery({
     queryKey: ["examiner_admins"],
@@ -190,33 +193,38 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
     () => getExcludedCaseIds(completedCaseHistory ?? [], selectedParticipantIds, examMode),
     [completedCaseHistory, examMode, selectedParticipantIds],
   );
+  // Retake bypasses the completed-case exclusion entirely.
+  const effectiveExcludedCaseIds = useMemo(
+    () => (allowRetake ? new Set<string>() : excludedCaseIds),
+    [allowRetake, excludedCaseIds],
+  );
   const historyLoading = selectedParticipantIds.length > 0 &&
     (completedCaseHistory === undefined || historyFetching);
   const historyUnavailable = selectedParticipantIds.length > 0 && Boolean(historyError);
   const eligibleCases = historyUnavailable ||
     (selectedParticipantIds.length > 0 && completedCaseHistory === undefined)
     ? []
-    : casesForMode.filter((clinicalCase) => !excludedCaseIds.has(clinicalCase.id));
+    : casesForMode.filter((clinicalCase) => !effectiveExcludedCaseIds.has(clinicalCase.id));
 
   useEffect(() => {
-    if (historyLoading || historyUnavailable || excludedCaseIds.size === 0) return;
+    if (historyLoading || historyUnavailable || effectiveExcludedCaseIds.size === 0) return;
 
     const removedCases = selectedCases.filter((clinicalCase) =>
-      excludedCaseIds.has(clinicalCase.id),
+      effectiveExcludedCaseIds.has(clinicalCase.id),
     );
     if (removedCases.length === 0) return;
 
     setSelectedCasesByMode((current) => ({
       ...current,
       [examMode]: (current[examMode] ?? []).filter(
-        (clinicalCase) => !excludedCaseIds.has(clinicalCase.id),
+        (clinicalCase) => !effectiveExcludedCaseIds.has(clinicalCase.id),
       ),
     }));
     toast({
       title: "Pilihan case diperbarui",
       description: `${removedCases.length} case dihapus karena sudah pernah diselesaikan oleh peserta terpilih.`,
     });
-  }, [examMode, excludedCaseIds, historyLoading, historyUnavailable, selectedCases, toast]);
+  }, [examMode, effectiveExcludedCaseIds, historyLoading, historyUnavailable, selectedCases, toast]);
 
   const casePickerEmptyMessage = historyUnavailable
     ? "Riwayat peserta gagal dimuat. Coba muat ulang halaman."
@@ -235,7 +243,7 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
         participantIds: selectedParticipantIds,
         caseIds: selectedCases.map((clinicalCase) => clinicalCase.id),
         pcCount,
-        excludedCaseIds,
+        excludedCaseIds: effectiveExcludedCaseIds,
       });
       if (validationError) throw new Error(validationError);
 
@@ -306,6 +314,7 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
       setSelectedCases([]);
       setPcCount(1);
       setShowResultsToCandidateOverride(true);
+      setAllowRetake(false);
     },
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
   });
@@ -419,6 +428,25 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
                   </label>
                   <p className="text-xs text-muted-foreground">
                     Jika dicentang, seluruh soal dan PC pada deployment ini menampilkan nilai meski pengaturan per case nonaktif.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2 rounded-md border border-border px-3 py-2">
+                <Checkbox
+                  id={`allow-retake-${examMode}`}
+                  checked={allowRetake}
+                  onCheckedChange={(checked) => setAllowRetake(checked === true)}
+                  className="mt-0.5"
+                />
+                <div className="space-y-0.5">
+                  <label
+                    htmlFor={`allow-retake-${examMode}`}
+                    className="cursor-pointer text-sm font-medium"
+                  >
+                    Izinkan Ujian Ulang (Retake)
+                  </label>
+                  <p className="text-xs text-muted-foreground">
+                    Jika dicentang, soal yang sudah pernah dikerjakan peserta terpilih tetap bisa di-deploy, sehingga peserta dapat mengikuti ujian yang sama untuk kedua kalinya.
                   </p>
                 </div>
               </div>
