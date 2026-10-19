@@ -57,6 +57,14 @@ const App = () => (
               }
             />
             <Route
+              path="/archive"
+              element={
+                <ProtectedRoute requireAdmin>
+                  <ArchivePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/preview-soal/:slug"
               element={
                 <ProtectedRoute requireAdmin>
