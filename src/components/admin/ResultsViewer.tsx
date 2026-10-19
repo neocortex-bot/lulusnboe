@@ -17,7 +17,10 @@ interface ScoreItem {
   passed: boolean;
   comment?: string;
   points?: number;
+  maxPoints?: number;
+  coverage?: "full" | "partial" | "none";
   isCritical?: boolean;
+  evidenceQuote?: string;
 }
 
 interface ScoreReport {
@@ -309,24 +312,33 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
                                 </div>
                               )}
                               {parsed.items.length > 0 ? (
-                                <div className="space-y-1">
-                                  {parsed.items.map((item, idx) => (
-                                    <div key={idx} className="flex items-center gap-2 text-sm">
-                                      <Badge variant={item.passed ? "default" : "destructive"} className="text-xs">
-                                        {item.passed ? "PASS" : "FAIL"}
-                                      </Badge>
-                                      {item.isCritical && <AlertTriangle className="h-3.5 w-3.5 text-destructive" />}
-                                      <span className="flex-1">{item.item}</span>
-                                      {item.points != null && (
-                                        <span className="text-xs font-mono text-muted-foreground">
-                                          {item.passed ? item.points : 0}/{item.points} pts
-                                        </span>
-                                      )}
-                                      {item.comment && (
-                                        <span className="text-muted-foreground text-xs">— {item.comment}</span>
-                                      )}
-                                    </div>
-                                  ))}
+                                <div className="space-y-1.5">
+                                  {parsed.items.map((item, idx) => {
+                                    const max = item.maxPoints ?? 2;
+                                    const earned = item.points ?? (item.passed ? max : 0);
+                                    const coverage = item.coverage ?? (earned >= max ? "full" : earned > 0 ? "partial" : "none");
+                                    const statusLabel = coverage === "full" ? "PASS" : coverage === "partial" ? "HALF" : "FAIL";
+                                    const statusVariant = coverage === "full" ? "default" : coverage === "partial" ? "secondary" : "destructive";
+                                    return (
+                                      <div key={idx} className="rounded-md border border-border bg-background p-2 text-sm space-y-1">
+                                        <div className="flex items-start gap-2">
+                                          <Badge variant={statusVariant} className="text-xs shrink-0 mt-0.5">
+                                            {statusLabel}
+                                          </Badge>
+                                          {item.isCritical && <AlertTriangle className="h-3.5 w-3.5 text-destructive shrink-0 mt-1" />}
+                                          <span className="flex-1 min-w-0 break-words">{item.item}</span>
+                                          <span className="text-xs font-mono text-muted-foreground shrink-0 mt-0.5">
+                                            {earned}/{max} pts
+                                          </span>
+                                        </div>
+                                        {(item.evidenceQuote || item.comment) && (
+                                          <p className="text-xs text-muted-foreground break-words">
+                                            {item.evidenceQuote ? `Kutipan: "${item.evidenceQuote}"` : item.comment}
+                                          </p>
+                                        )}
+                                      </div>
+                                    );
+                                  })}
                                   {parsed.totalPossible != null && (
                                     <div className="flex items-center justify-between text-sm font-semibold border-t border-border pt-2 mt-2">
                                       <span>Total</span>
