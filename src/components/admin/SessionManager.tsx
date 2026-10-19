@@ -81,6 +81,9 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
   // Defaults to true so a deployment shows scores to participants unless the
   // admin explicitly unchecks it (which hides the results from participants).
   const [showResultsToCandidateOverride, setShowResultsToCandidateOverride] = useState(true);
+  // When checked, participants may be deployed cases they already completed
+  // (retake). Default off: completed cases stay hidden from the picker.
+  const [allowRetake, setAllowRetake] = useState(false);
   const [examinerId, setExaminerId] = useState("");
   const { data: admins = [] } = useQuery({
     queryKey: ["examiner_admins"],
