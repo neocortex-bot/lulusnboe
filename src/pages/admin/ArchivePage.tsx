@@ -33,7 +33,7 @@ const ArchivePage = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("clinical_cases")
-        .select("id, title, exam_mode, category, created_by, updated_at")
+        .select("id, title, exam_mode, created_by, updated_at")
         .eq("status", ARCHIVED_STATUS)
         .order("updated_at", { ascending: false });
       if (error) throw error;
