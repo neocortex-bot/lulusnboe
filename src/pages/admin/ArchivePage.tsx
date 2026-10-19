@@ -33,9 +33,9 @@ const ArchivePage = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("clinical_cases")
-        .select("id, title, exam_mode, created_by, updated_at")
+        .select("id, title, exam_mode, created_by, created_at")
         .eq("status", ARCHIVED_STATUS)
-        .order("updated_at", { ascending: false });
+        .order("created_at", { ascending: false });
       if (error) throw error;
       return (data || []) as ArchivedCase[];
     },
@@ -114,7 +114,7 @@ const ArchivePage = () => {
                       <TableCell className="font-medium">{c.title}</TableCell>
                       <TableCell>{c.exam_mode === "oral_board" ? "Oral Board" : "Panel Exam"}</TableCell>
                       <TableCell className="text-sm text-muted-foreground">
-                        {c.updated_at ? new Date(c.updated_at).toLocaleString("id-ID") : "—"}
+                        {c.created_at ? new Date(c.created_at).toLocaleString("id-ID") : "—"}
                       </TableCell>
                       <TableCell className="text-right space-x-2">
                         {canManage(c) ? (
