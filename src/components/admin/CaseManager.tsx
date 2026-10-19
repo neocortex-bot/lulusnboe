@@ -87,14 +87,20 @@ const CaseManager = () => {
     },
   });
 
+  // Soft delete: pindahkan ke arsip (status "archived"), bukan hapus permanen.
+  // Restore dilakukan dari halaman /archive.
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("clinical_cases").delete().eq("id", id);
+      const { error } = await supabase
+        .from("clinical_cases")
+        .update({ status: "archived" })
+        .eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["clinical_cases"] });
-      toast({ title: "Case deleted" });
+      queryClient.invalidateQueries({ queryKey: ["archived_cases"] });
+      toast({ title: "Soal diarsipkan", description: "Bisa dipulihkan dari halaman /archive." });
     },
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
   });
