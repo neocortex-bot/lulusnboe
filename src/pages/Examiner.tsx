@@ -1,11 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Check, ArrowLeft } from "lucide-react";
+import { ArrowLeft, Monitor, MonitorOff, AlertTriangle } from "lucide-react";
+import { parseDigitalProperties, PROPERTY_SHOW_EVENT, isMediaPending } from "@/lib/digitalProperties";
 import { pickActiveExaminerSessions, resolveSelectedSession } from "@/lib/examinerSessions";
 
 type Prop = string | { name?: string; label?: string; key?: string; value?: string };
@@ -27,7 +28,8 @@ const Examiner = () => {
   const qc = useQueryClient();
   const now = useNow();
   const [selected, setSelected] = useState<string | null>(null);
-  const [given, setGiven] = useState<Record<string, boolean>>({});
+  const [shown, setShown] = useState<number | null>(null);
+  const chRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
 
   const { data: rows = [] } = useQuery({
     queryKey: ["examiner_sessions", user?.id, isMasterAdmin],
@@ -67,6 +69,7 @@ const Examiner = () => {
           order: sq?.sequence_order ?? null,
           total: sq ? totals.filter((t: any) => t.deployment_id === sq.deployment_id).length : null,
           properties: (Array.isArray(rub?.properties) ? rub.properties : []) as Prop[],
+          digital: parseDigitalProperties(rub),
         };
       });
     },
@@ -84,6 +87,23 @@ const Examiner = () => {
   const active = useMemo(() => pickActiveExaminerSessions(rows), [rows]);
   const currentId = resolveSelectedSession(active, selected);
   const current = active.find((s) => s.id === currentId);
+
+  // Channel ke layar station untuk sesi terpilih
+  useEffect(() => {
+    setShown(null);
+    if (!currentId) return;
+    const ch = supabase.channel(`session:${currentId}`).subscribe();
+    chRef.current = ch;
+    return () => { chRef.current = null; void supabase.removeChannel(ch); };
+  }, [currentId]);
+
+  const toggleShow = (i: number) => {
+    if (!current || !chRef.current) return;
+    const next = shown === i ? null : i;
+    const p = next === null ? null : current.digital[next];
+    void chRef.current.send({ type: "broadcast", event: PROPERTY_SHOW_EVENT, payload: { property: p } });
+    setShown(next);
+  };
 
   const phase = (s: (typeof active)[number]) => {
     const start = new Date(s.session_start_time!).getTime();
@@ -146,23 +166,34 @@ const Examiner = () => {
                 </CardContent>
               </Card>
               <Card>
-                <CardHeader className="pb-2"><CardTitle className="text-base">Properti Soal (boleh diberikan bila diminta)</CardTitle></CardHeader>
+                <CardHeader className="pb-2"><CardTitle className="text-base">Properti Digital (tampilkan bila diminta)</CardTitle></CardHeader>
                 <CardContent className="space-y-2">
-                  {current.properties.length === 0 && <p className="text-sm text-muted-foreground">Soal ini tidak punya properti.</p>}
-                  {current.properties.map((p, i) => {
-                    const k = `${current.id}:${i}`;
+                  {current.digital.length === 0 && <p className="text-sm text-muted-foreground">Soal ini tidak punya properti digital.</p>}
+                  {current.digital.map((p, i) => {
+                    const on = shown === i;
                     return (
-                      <button key={k} onClick={() => setGiven((g) => ({ ...g, [k]: !g[k] }))}
-                        className={`flex w-full items-start gap-3 rounded-md border p-3 text-left ${given[k] ? "border-primary bg-muted opacity-70" : "border-border"}`}>
-                        <Check className={`mt-1 h-4 w-4 shrink-0 ${given[k] ? "text-primary" : "text-muted-foreground/30"}`} />
-                        <div>
-                          {splitProp(p).name && <div className="text-sm text-muted-foreground">{splitProp(p).name}</div>}
-                          <div className="text-lg font-semibold">{splitProp(p).value}</div>
+                      <button key={`${current.id}:${i}`} onClick={() => toggleShow(i)}
+                        className={`flex w-full items-start gap-3 rounded-md border p-3 text-left ${on ? "border-primary bg-primary/10" : "border-border"}`}>
+                        {on ? <Monitor className="mt-1 h-5 w-5 shrink-0 text-primary" /> : <MonitorOff className="mt-1 h-5 w-5 shrink-0 text-muted-foreground" />}
+                        <div className="min-w-0 flex-1">
+                          <div className="text-sm text-muted-foreground">{p.label}{p.media_type ? ` · ${p.media_type === "image" ? "gambar" : p.media_type === "video" ? "video" : "suara"}` : ""}</div>
+                          {p.value && <div className="whitespace-pre-line text-lg font-semibold">{p.value}</div>}
+                          {isMediaPending(p) && <div className="mt-1 inline-flex items-center gap-1 text-xs text-destructive"><AlertTriangle className="h-3 w-3" /> Media asli belum diunggah admin</div>}
+                          <div className={`mt-1 text-xs font-medium ${on ? "text-primary" : "text-muted-foreground"}`}>{on ? "Sedang tampil di layar — ketuk untuk menutup" : "Ketuk untuk tampilkan di layar"}</div>
                         </div>
                       </button>
                     );
                   })}
-                  <p className="text-xs text-muted-foreground">Ketuk untuk menandai sudah diberikan (hanya di HP ini).</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="pb-2"><CardTitle className="text-base">Properti Fisik</CardTitle></CardHeader>
+                <CardContent>
+                  {current.properties.length === 0 ? <p className="text-sm text-muted-foreground">Tidak ada properti fisik.</p> : (
+                    <ol className="list-inside list-decimal space-y-1 text-sm">
+                      {current.properties.map((p, i) => { const sp = splitProp(p); return <li key={i}>{sp.name ? `${sp.name}: ` : ""}{sp.value}</li>; })}
+                    </ol>
+                  )}
                 </CardContent>
               </Card>
             </div>

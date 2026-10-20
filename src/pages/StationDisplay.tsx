@@ -15,6 +15,7 @@ import {
 import QRDisplay from "@/components/station/QRDisplay";
 import CasePromptDisplay from "@/components/station/CasePromptDisplay";
 import AssetRenderer from "@/components/station/AssetRenderer";
+import { DigitalProperty, PROPERTY_SHOW_EVENT } from "@/lib/digitalProperties";
 import CountdownTimer from "@/components/station/CountdownTimer";
 import StationReadyNextCandidate from "@/components/station/StationReadyNextCandidate";
 import { Badge } from "@/components/ui/badge";
@@ -67,6 +68,7 @@ const StationDisplay = () => {
   const [assets, setAssets] = useState<AssetData[]>([]);
   const [caseMedia, setCaseMedia] = useState<{ asset_url: string; asset_type: string }[]>([]);
   const [activeAsset, setActiveAsset] = useState<AssetData | null>(null);
+  const [shownProperty, setShownProperty] = useState<DigitalProperty | null>(null);
   const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
   const broadcastCleanupRef = useRef<(() => void) | null>(null);
   const stationSubscriptionCleanupRef = useRef<(() => void) | null>(null);
@@ -586,7 +588,11 @@ const StationDisplay = () => {
     const channel = supabase.channel(`session:${session.id}`);
     channelRef.current = channel;
 
+    setShownProperty(null);
     channel
+      .on("broadcast", { event: PROPERTY_SHOW_EVENT }, (payload) => {
+        setShownProperty((payload.payload?.property as DigitalProperty | null) ?? null);
+      })
       .on("broadcast", { event: "chat" }, (payload) => {
         const message = payload.payload?.message as string || "";
         if (!message) return;
@@ -762,6 +768,15 @@ const StationDisplay = () => {
         </div>
       )}
 
+      {shownProperty && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-background/95 p-10">
+          {shownProperty.label && <h2 className="text-3xl font-semibold text-muted-foreground">{shownProperty.label}</h2>}
+          {shownProperty.value && <p className="max-w-4xl whitespace-pre-line text-center text-5xl font-bold">{shownProperty.value}</p>}
+          {shownProperty.media_url && (shownProperty.media_type === "audio"
+            ? <audio src={shownProperty.media_url} controls autoPlay className="w-full max-w-2xl" />
+            : <AssetRenderer url={shownProperty.media_url} type={shownProperty.media_type === "video" ? "video" : "image"} />)}
+        </div>
+      )}
       {/* Main content area */}
       <div className="flex-1 flex min-h-0">
         {hasMediaContent ? (
