@@ -34,6 +34,8 @@ import { useToast } from "@/hooks/use-toast";
 import RubricBuilder, { type RubricData } from "@/components/admin/RubricBuilder";
 import AssetUploader from "@/components/admin/AssetUploader";
 import PropertiesEditor from "@/components/admin/PropertiesEditor";
+import DigitalPropertiesEditor, { DigitalMediaPreview } from "@/components/admin/DigitalPropertiesEditor";
+import { DigitalProperty, parseDigitalProperties, cleanDigitalProperties, isMediaPending } from "@/lib/digitalProperties";
 import parseRubricData from "@/lib/rubricParser";
 import { canEditCase, isRubricEditable } from "@/lib/casePermissions";
 import { useAuth } from "@/contexts/AuthContext";
@@ -91,6 +93,7 @@ const CasePreview = () => {
   const [rubricData, setRubricData] = useState<RubricData>({ enabled: false, items: [] });
   // Properti soal: admin-only, disimpan di case_answer_keys (tidak pernah ke peserta)
   const [properties, setProperties] = useState<string[]>([]);
+  const [digitalProps, setDigitalProps] = useState<DigitalProperty[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [category, setCategory] = useState<string | null>(null);
   const { data: allCategories = [] } = useQuery({
@@ -152,6 +155,7 @@ const CasePreview = () => {
     setAnswerKeyText(caseRow.answer_key_text ?? "");
     setShowResultsToCandidate(caseRow.show_results_to_candidate ?? false);
     setRubricData(parseRubricData(caseRow.checklist_rubric));
+    setDigitalProps(parseDigitalProperties(caseRow.checklist_rubric));
     setProperties(
       Array.isArray((caseRow.checklist_rubric as any)?.properties)
         ? (caseRow.checklist_rubric as any).properties.map((p: any) => String(p))
@@ -261,6 +265,7 @@ const CasePreview = () => {
           enabled: rubricData.enabled,
           items: rubricData.items,
           properties: properties.map((p) => p.trim()).filter(Boolean),
+          digital_properties: cleanDigitalProperties(digitalProps),
         } as unknown as Json,
       };
       const { error: akErr } = await supabase
@@ -319,6 +324,7 @@ const CasePreview = () => {
     setAnswerKeyText(caseRow.answer_key_text ?? "");
     setShowResultsToCandidate(caseRow.show_results_to_candidate ?? false);
     setRubricData(parseRubricData(caseRow.checklist_rubric));
+    setDigitalProps(parseDigitalProperties(caseRow.checklist_rubric));
     setProperties(
       Array.isArray((caseRow.checklist_rubric as any)?.properties)
         ? (caseRow.checklist_rubric as any).properties.map((p: any) => String(p))
@@ -626,7 +632,39 @@ const CasePreview = () => {
 
             <Card>
               <CardHeader>
-                <CardTitle>Properti Soal</CardTitle>
+                <CardTitle>Properti Digital</CardTitle>
+                <CardDescription>
+                  Disembunyikan dari peserta; penguji memperlihatkannya ke layar station bila diminta.
+                  {digitalProps.some(isMediaPending) && (
+                    <span className="ml-2 font-medium text-destructive">
+                      {digitalProps.filter(isMediaPending).length} butuh media asli (PR admin)
+                    </span>
+                  )}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {isEditing ? (
+                  <DigitalPropertiesEditor items={digitalProps} onChange={setDigitalProps} caseId={id} />
+                ) : digitalProps.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">Belum ada properti digital.</p>
+                ) : (
+                  <div className="space-y-2">
+                    {digitalProps.map((p, i) => (
+                      <div key={i} className={`rounded-md border p-3 text-sm ${isMediaPending(p) ? "border-destructive bg-destructive/5" : "border-border"}`}>
+                        <div className="font-medium">{p.label || "(tanpa nama)"}</div>
+                        {p.value && <div className="whitespace-pre-line">{p.value}</div>}
+                        {isMediaPending(p) && <div className="mt-1 text-xs font-medium text-destructive">Butuh media asli — belum diunggah</div>}
+                        <div className="mt-2"><DigitalMediaPreview p={p} /></div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Properti Fisik</CardTitle>
                 <CardDescription>
                   Alat/media yang wajib disiapkan penguji. Tidak ditampilkan ke peserta.
                 </CardDescription>
