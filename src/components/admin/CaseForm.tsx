@@ -122,6 +122,7 @@ const CaseForm = ({ existingCase, onClose }: CaseFormProps) => {
               checklist_rubric: {
                 ...rubricData,
                 properties: properties.map((p) => p.trim()).filter(Boolean),
+                digital_properties: (existingCase?.checklist_rubric as any)?.digital_properties ?? [],
               } as any,
             },
             { onConflict: "case_id" }
