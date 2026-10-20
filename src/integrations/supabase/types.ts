@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.18"
+    PostgrestVersion: "14.4"
   }
   public: {
     Tables: {
@@ -122,12 +122,14 @@ export type Database = {
       clinical_cases: {
         Row: {
           answer_key_text: string
+          category: string | null
           checklist_rubric: Json
           created_at: string
           created_by: string | null
           exam_mode: string
           id: string
           initial_prompt: string
+          properties: string[]
           questions_text: string
           reading_time_seconds: number
           reviewed_at: string | null
@@ -141,12 +143,14 @@ export type Database = {
         }
         Insert: {
           answer_key_text?: string
+          category?: string | null
           checklist_rubric?: Json
           created_at?: string
           created_by?: string | null
           exam_mode?: string
           id?: string
           initial_prompt?: string
+          properties?: string[]
           questions_text?: string
           reading_time_seconds?: number
           reviewed_at?: string | null
@@ -160,12 +164,14 @@ export type Database = {
         }
         Update: {
           answer_key_text?: string
+          category?: string | null
           checklist_rubric?: Json
           created_at?: string
           created_by?: string | null
           exam_mode?: string
           id?: string
           initial_prompt?: string
+          properties?: string[]
           questions_text?: string
           reading_time_seconds?: number
           reviewed_at?: string | null
@@ -210,6 +216,10 @@ export type Database = {
       }
       exam_results: {
         Row: {
+          ai_eval_error: string | null
+          ai_eval_queued_at: string | null
+          ai_eval_started_at: string | null
+          ai_eval_status: string | null
           ai_score_report: Json | null
           audio_file_url: string | null
           candidate_id: string
@@ -219,6 +229,10 @@ export type Database = {
           transcript: string | null
         }
         Insert: {
+          ai_eval_error?: string | null
+          ai_eval_queued_at?: string | null
+          ai_eval_started_at?: string | null
+          ai_eval_status?: string | null
           ai_score_report?: Json | null
           audio_file_url?: string | null
           candidate_id: string
@@ -228,6 +242,10 @@ export type Database = {
           transcript?: string | null
         }
         Update: {
+          ai_eval_error?: string | null
+          ai_eval_queued_at?: string | null
+          ai_eval_started_at?: string | null
+          ai_eval_status?: string | null
           ai_score_report?: Json | null
           audio_file_url?: string | null
           candidate_id?: string
@@ -444,10 +462,12 @@ export type Database = {
           outcome: string
         }[]
       }
+      claim_ai_evaluation: { Args: { _result_id: string }; Returns: string }
       claim_exam_session: {
         Args: { _candidate_id: string; _session_id: string }
         Returns: Json
       }
+      claim_next_ai_evaluation: { Args: never; Returns: string }
       get_case_assets_for_display: {
         Args: { _case_id: string }
         Returns: {
