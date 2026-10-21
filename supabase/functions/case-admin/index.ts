@@ -233,7 +233,7 @@ Deno.serve(async (req) => {
     } : undefined;
 
     if (data.dry_run) {
-      return json(200, { dry_run: true, changed_fields: [...Object.keys(patch), ...(data.properties ? ["properties"] : []), ...(data.digital_properties ? ["digital_properties"] : [])], rubric: summary, preview_items: newItems });
+      return json(200, { dry_run: true, changed_fields: [...Object.keys(patch), ...(data.digital_properties ? ["digital_properties"] : [])], rubric: summary, preview_items: newItems });
     }
 
     if (Object.keys(patch).length) {
@@ -267,7 +267,7 @@ Deno.serve(async (req) => {
 
     const updated = await loadFull(id);
     console.log(`[case-admin] Updated id=${id} fields=${Object.keys(patch).join(",")}`);
-    return json(200, { ok: true, id, changed_fields: [...Object.keys(patch), ...(data.properties ? ["properties"] : []), ...(data.digital_properties ? ["digital_properties"] : [])], rubric: summary, case: updated });
+    return json(200, { ok: true, id, changed_fields: [...Object.keys(patch), ...(data.digital_properties ? ["digital_properties"] : [])], rubric: summary, case: updated });
   }
 
   return json(405, { error: "Method not allowed (use GET or PATCH)" });
