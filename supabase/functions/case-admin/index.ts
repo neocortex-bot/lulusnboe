@@ -46,6 +46,14 @@ const UpdateSchema = z.object({
   checklist_rubric: z.object({ items: z.array(RubricItem).max(100) }).optional(),
   rubric_ops: z.array(RubricOp).max(100).optional(),
   properties: z.array(z.string().min(1).max(500)).max(50).optional(),
+  // Properti digital: ganti seluruh daftar. needs_media=true + tanpa media_url = PR admin.
+  digital_properties: z.array(z.object({
+    label: z.string().min(1).max(200),
+    value: z.string().max(4000).default(""),
+    media_url: z.string().url().max(2000).nullable().optional(),
+    media_type: z.enum(["image", "video", "audio"]).nullable().optional(),
+    needs_media: z.boolean().default(false),
+  })).max(50).optional(),
   // Kategori soal -> kolom clinical_cases.category. nullable agar bisa dikosongkan.
   category: z.string().max(100).nullable().optional(),
   media_notes: z.array(MediaNote).optional(),
@@ -64,7 +72,8 @@ const SCHEMA_DOC = {
     initial_prompt: "skenario", questions_text: ">=20 char", answer_key_text: ">=100 char",
     checklist_rubric: "{items:[{text,points 1-5,isCritical,answer?}]} — ganti seluruh rubrik",
     rubric_ops: "[{op:'add',item,index?}|{op:'update',index,item:{...sebagian}}|{op:'remove',index}|{op:'move',from,to}] — index 0-based",
-    properties: "string[] admin-only", category: "string bebas maks 100 char -> clinical_cases.category (atau null utk mengosongkan)", media_notes: "array", dry_run: "true = validasi & preview tanpa simpan",
+    properties: "string[] admin-only (properti fisik)", category: "string bebas maks 100 char -> clinical_cases.category (atau null utk mengosongkan)", media_notes: "array", dry_run: "true = validasi & preview tanpa simpan",
+    digital_properties: "[{label, value, media_url?, media_type?: image|video|audio, needs_media: bool}] — ganti seluruh daftar; needs_media=true tanpa media_url = 'Butuh media asli' (PR admin). Ambil dulu via GET lalu kirim ulang lengkap agar tidak hilang.",
   },
   rubric_rules: "3-100 butir, >=1 kritis, total >=6 poin, tanpa duplikat (atau 0 butir = nonaktif)",
 };
