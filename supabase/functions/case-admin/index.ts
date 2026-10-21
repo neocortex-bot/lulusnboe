@@ -129,7 +129,7 @@ Deno.serve(async (req) => {
     if (!data) return null;
     const { data: ak } = await supabase
       .from("case_answer_keys").select("answer_key_text, checklist_rubric").eq("case_id", caseId).maybeSingle();
-    const akR = (ak?.checklist_rubric ?? {}) as { items?: RubricItemT[]; properties?: string[] };
+    const akR = (ak?.checklist_rubric ?? {}) as { items?: RubricItemT[]; properties?: string[]; digital_properties?: unknown[] };
     const ccR = (data.checklist_rubric ?? {}) as { items?: RubricItemT[] };
     const items = (akR.items?.length ? akR.items : ccR.items) ?? [];
     return {
@@ -137,6 +137,10 @@ Deno.serve(async (req) => {
       answer_key_text: ak?.answer_key_text ?? data.answer_key_text ?? null,
       rubric_items: items.map((it, index) => ({ index, ...it })),
       properties: akR.properties ?? [],
+      digital_properties: (akR.digital_properties ?? []).map((p) => {
+        const d = p as Record<string, unknown>;
+        return { ...d, media_pending: !!d.needs_media && !d.media_url };
+      }),
     };
   }
 
@@ -227,7 +231,7 @@ Deno.serve(async (req) => {
     } : undefined;
 
     if (data.dry_run) {
-      return json(200, { dry_run: true, changed_fields: [...Object.keys(patch), ...(data.properties ? ["properties"] : [])], rubric: summary, preview_items: newItems });
+      return json(200, { dry_run: true, changed_fields: [...Object.keys(patch), ...(data.properties ? ["properties"] : []), ...(data.digital_properties ? ["digital_properties"] : [])], rubric: summary, preview_items: newItems });
     }
 
     if (Object.keys(patch).length) {
@@ -235,7 +239,7 @@ Deno.serve(async (req) => {
       if (updErr) return json(500, { error: "Update failed", detail: updErr.message });
     }
 
-    if (data.answer_key_text !== undefined || newItems || data.properties) {
+    if (data.answer_key_text !== undefined || newItems || data.properties || data.digital_properties) {
       const { data: ak } = await supabase.from("case_answer_keys").select("checklist_rubric").eq("case_id", id).maybeSingle();
       const prev = (ak?.checklist_rubric ?? {}) as Record<string, unknown>;
       const akPayload: Record<string, unknown> = {
@@ -243,6 +247,13 @@ Deno.serve(async (req) => {
           ...prev,
           ...(newItems ? { enabled: newItems.length > 0, items: newItems } : {}),
           ...(data.properties ? { properties: data.properties } : {}),
+          ...(data.digital_properties ? {
+            digital_properties: data.digital_properties.map((p) => ({
+              label: p.label.trim(), value: p.value.trim(),
+              media_url: p.media_url ?? null, media_type: p.media_type ?? null,
+              needs_media: p.needs_media,
+            })),
+          } : {}),
         },
       };
       if (data.answer_key_text !== undefined) akPayload.answer_key_text = data.answer_key_text;
@@ -254,7 +265,7 @@ Deno.serve(async (req) => {
 
     const updated = await loadFull(id);
     console.log(`[case-admin] Updated id=${id} fields=${Object.keys(patch).join(",")}`);
-    return json(200, { ok: true, id, changed_fields: [...Object.keys(patch), ...(data.properties ? ["properties"] : [])], rubric: summary, case: updated });
+    return json(200, { ok: true, id, changed_fields: [...Object.keys(patch), ...(data.properties ? ["properties"] : []), ...(data.digital_properties ? ["digital_properties"] : [])], rubric: summary, case: updated });
   }
 
   return json(405, { error: "Method not allowed (use GET or PATCH)" });
