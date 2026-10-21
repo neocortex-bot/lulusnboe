@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { z } from "npm:zod@3.23.8";
 import { getRubricQualityError } from "./rubric-validation.ts";
+import { mergeProperties } from "./properties.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -72,8 +73,8 @@ const SCHEMA_DOC = {
     initial_prompt: "skenario", questions_text: ">=20 char", answer_key_text: ">=100 char",
     checklist_rubric: "{items:[{text,points 1-5,isCritical,answer?}]} — ganti seluruh rubrik",
     rubric_ops: "[{op:'add',item,index?}|{op:'update',index,item:{...sebagian}}|{op:'remove',index}|{op:'move',from,to}] — index 0-based",
-    properties: "string[] admin-only (properti fisik)", category: "string bebas maks 100 char -> clinical_cases.category (atau null utk mengosongkan)", media_notes: "array", dry_run: "true = validasi & preview tanpa simpan",
-    digital_properties: "[{label, value, media_url?, media_type?: image|video|audio, needs_media: bool}] — ganti seluruh daftar; needs_media=true tanpa media_url = 'Butuh media asli' (PR admin). Ambil dulu via GET lalu kirim ulang lengkap agar tidak hilang.",
+    properties: "string[] admin-only (properti fisik) -> disimpan di clinical_cases.properties DAN case_answer_keys.checklist_rubric.properties; tidak dikirim = tidak diubah", category: "string bebas maks 100 char -> clinical_cases.category (atau null utk mengosongkan)", media_notes: "array", dry_run: "true = validasi & preview tanpa simpan",
+    digital_properties: "[{label, value, media_url?, media_type?: image|video|audio, needs_media: bool}] -> case_answer_keys.checklist_rubric.digital_properties — ganti seluruh daftar; needs_media=true tanpa media_url = 'Butuh media asli' (PR admin). Ambil dulu via GET lalu kirim ulang lengkap agar tidak hilang.",
   },
   rubric_rules: "3-100 butir, >=1 kritis, total >=6 poin, tanpa duplikat (atau 0 butir = nonaktif)",
 };
@@ -136,7 +137,7 @@ Deno.serve(async (req) => {
       ...data,
       answer_key_text: ak?.answer_key_text ?? data.answer_key_text ?? null,
       rubric_items: items.map((it, index) => ({ index, ...it })),
-      properties: akR.properties ?? [],
+      properties: mergeProperties((data as Record<string, unknown>).properties, akR.properties),
       digital_properties: (akR.digital_properties ?? []).map((p) => {
         const d = p as Record<string, unknown>;
         return { ...d, media_pending: !!d.needs_media && !d.media_url };
@@ -184,6 +185,7 @@ Deno.serve(async (req) => {
       if (data[k] !== undefined) patch[k] = data[k];
     }
     if (data.category !== undefined) patch.category = data.category;
+    if (data.properties !== undefined) patch.properties = data.properties;
     if (data.reading_time_seconds !== undefined) patch.reading_time_seconds = data.reading_time_seconds;
     else if (data.reading_time_minutes !== undefined) patch.reading_time_seconds = Math.round(data.reading_time_minutes * 60);
     if (data.time_limit_seconds !== undefined) patch.time_limit_seconds = data.time_limit_seconds;
