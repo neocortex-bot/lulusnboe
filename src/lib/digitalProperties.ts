@@ -9,6 +9,8 @@ export interface DigitalProperty {
   media_type?: DigitalMediaType | null;
   /** Ditandai admin: seharusnya pakai media asli, tapi belum diunggah. */
   needs_media?: boolean;
+  /** Tampilkan teks saat ditampilkan ke layar. Hanya bisa dimatikan bila ada media. */
+  show_caption?: boolean;
 }
 
 export const PROPERTY_SHOW_EVENT = "show_property";
@@ -24,6 +26,7 @@ export function parseDigitalProperties(rubric: unknown): DigitalProperty[] {
       media_url: p.media_url ? String(p.media_url) : null,
       media_type: ["image", "video", "audio"].includes(p.media_type) ? p.media_type : null,
       needs_media: !!p.needs_media,
+      show_caption: p.show_caption !== false,
     }));
 }
 
@@ -42,3 +45,6 @@ export function mediaTypeFromMime(mime: string): DigitalMediaType | null {
   if (mime.startsWith("audio/")) return "audio";
   return null;
 }
+
+/** Caption (label+nilai) hanya boleh disembunyikan bila media sudah terunggah. */
+export const isCaptionVisible = (p: DigitalProperty) => !p.media_url || p.show_caption !== false;

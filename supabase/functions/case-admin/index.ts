@@ -54,6 +54,7 @@ const UpdateSchema = z.object({
     media_url: z.string().url().max(2000).nullable().optional(),
     media_type: z.enum(["image", "video", "audio"]).nullable().optional(),
     needs_media: z.boolean().default(false),
+    show_caption: z.boolean().default(true),
   })).max(50).optional(),
   // Kategori soal -> kolom clinical_cases.category. nullable agar bisa dikosongkan.
   category: z.string().max(100).nullable().optional(),
@@ -74,7 +75,7 @@ const SCHEMA_DOC = {
     checklist_rubric: "{items:[{text,points 1-5,isCritical,answer?}]} — ganti seluruh rubrik",
     rubric_ops: "[{op:'add',item,index?}|{op:'update',index,item:{...sebagian}}|{op:'remove',index}|{op:'move',from,to}] — index 0-based",
     properties: "string[] admin-only (properti fisik) -> disimpan di clinical_cases.properties DAN case_answer_keys.checklist_rubric.properties; tidak dikirim = tidak diubah", category: "string bebas maks 100 char -> clinical_cases.category (atau null utk mengosongkan)", media_notes: "array", dry_run: "true = validasi & preview tanpa simpan",
-    digital_properties: "[{label, value, media_url?, media_type?: image|video|audio, needs_media: bool}] -> case_answer_keys.checklist_rubric.digital_properties — ganti seluruh daftar; needs_media=true tanpa media_url = 'Butuh media asli' (PR admin). Ambil dulu via GET lalu kirim ulang lengkap agar tidak hilang.",
+    digital_properties: "[{label, value, media_url?, media_type?: image|video|audio, needs_media: bool, show_caption?: bool (default true; false = hanya media tampil, hanya berlaku bila media_url ada)}] -> case_answer_keys.checklist_rubric.digital_properties — ganti seluruh daftar; needs_media=true tanpa media_url = 'Butuh media asli' (PR admin). Ambil dulu via GET lalu kirim ulang lengkap agar tidak hilang.",
   },
   rubric_rules: "3-100 butir, >=1 kritis, total >=6 poin, tanpa duplikat (atau 0 butir = nonaktif)",
 };
@@ -254,6 +255,7 @@ Deno.serve(async (req) => {
               label: p.label.trim(), value: p.value.trim(),
               media_url: p.media_url ?? null, media_type: p.media_type ?? null,
               needs_media: p.needs_media,
+              show_caption: p.media_url ? p.show_caption : true,
             })),
           } : {}),
         },
