@@ -15,7 +15,7 @@ import {
 import QRDisplay from "@/components/station/QRDisplay";
 import CasePromptDisplay from "@/components/station/CasePromptDisplay";
 import AssetRenderer from "@/components/station/AssetRenderer";
-import { DigitalProperty, PROPERTY_SHOW_EVENT } from "@/lib/digitalProperties";
+import { DigitalProperty, PROPERTY_SHOW_EVENT, isCaptionVisible } from "@/lib/digitalProperties";
 import CountdownTimer from "@/components/station/CountdownTimer";
 import StationReadyNextCandidate from "@/components/station/StationReadyNextCandidate";
 import { Badge } from "@/components/ui/badge";
@@ -770,8 +770,8 @@ const StationDisplay = () => {
 
       {shownProperty && (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-background/95 p-10">
-          {shownProperty.label && <h2 className="text-3xl font-semibold text-muted-foreground">{shownProperty.label}</h2>}
-          {shownProperty.value && <p className="max-w-4xl whitespace-pre-line text-center text-5xl font-bold">{shownProperty.value}</p>}
+          {isCaptionVisible(shownProperty) && shownProperty.label && <h2 className="text-3xl font-semibold text-muted-foreground">{shownProperty.label}</h2>}
+          {isCaptionVisible(shownProperty) && shownProperty.value && <p className="max-w-4xl whitespace-pre-line text-center text-5xl font-bold">{shownProperty.value}</p>}
           {shownProperty.media_url && (shownProperty.media_type === "audio"
             ? <audio src={shownProperty.media_url} controls autoPlay className="w-full max-w-2xl" />
             : <AssetRenderer url={shownProperty.media_url} type={shownProperty.media_type === "video" ? "video" : "image"} />)}

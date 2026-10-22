@@ -70,6 +70,10 @@ const DigitalPropertiesEditor = ({ items, onChange, caseId }: Props) => {
               <Switch checked={!!p.needs_media} onCheckedChange={(v) => set(i, { needs_media: v })} />
               Butuh media asli
             </label>
+            <label className={`flex items-center gap-2 text-sm ${p.media_url ? "" : "opacity-50"}`} title={p.media_url ? "" : "Unggah media dulu agar teks bisa disembunyikan"}>
+              <Switch checked={!p.media_url || p.show_caption !== false} disabled={!p.media_url} onCheckedChange={(v) => set(i, { show_caption: v })} />
+              Tampilkan caption saat ditampilkan
+            </label>
             <Label className="inline-flex cursor-pointer items-center gap-1 rounded-md border border-input px-3 py-1.5 text-sm hover:bg-accent">
               <Upload className="h-4 w-4" /> {uploading === i ? "Mengunggah..." : p.media_url ? "Ganti media" : "Unggah media"}
               <input type="file" accept="image/*,video/*,audio/*" className="hidden" disabled={uploading !== null}
