@@ -14,6 +14,8 @@ export interface DigitalProperty {
 }
 
 export const PROPERTY_SHOW_EVENT = "show_property";
+export const PROPERTY_ACK_EVENT = "property_displayed";
+export const PROPERTY_SYNC_EVENT = "request_property";
 
 export function parseDigitalProperties(rubric: unknown): DigitalProperty[] {
   const raw = (rubric as { digital_properties?: unknown } | null)?.digital_properties;

@@ -2,3 +2,5 @@
 - Use streamed exam AI responses with a shared browser reader so long generation remains connected and safe errors reach every caller.
 - Preserve direct OpenAI transcription until the owner explicitly requests a provider migration; report its billing errors separately.
 - Persist exact rubric evidence quotes in grading reports; transcript highlighting must not infer correctness from isolated keyword overlap.
+- Examiner session phases use session_start_time as the answering start; active claimed sessions without it are reading, so examiners must not filter them out.
+- Property display uses station receipt acknowledgements and reconnect sync; examiner controls must not report delivery solely from a successful broadcast send.

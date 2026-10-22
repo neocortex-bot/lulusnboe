@@ -15,7 +15,8 @@ import {
 import QRDisplay from "@/components/station/QRDisplay";
 import CasePromptDisplay from "@/components/station/CasePromptDisplay";
 import AssetRenderer from "@/components/station/AssetRenderer";
-import { DigitalProperty, PROPERTY_SHOW_EVENT, isCaptionVisible } from "@/lib/digitalProperties";
+import { DigitalProperty, PROPERTY_SHOW_EVENT, PROPERTY_ACK_EVENT, PROPERTY_SYNC_EVENT } from "@/lib/digitalProperties";
+import PropertyDisplay from "@/components/station/PropertyDisplay";
 import CountdownTimer from "@/components/station/CountdownTimer";
 import StationReadyNextCandidate from "@/components/station/StationReadyNextCandidate";
 import { Badge } from "@/components/ui/badge";
@@ -66,6 +67,8 @@ const StationDisplay = () => {
   const [session, setSession] = useState<SessionData | null>(null);
   const [caseData, setCaseData] = useState<CaseData | null>(null);
   const [assets, setAssets] = useState<AssetData[]>([]);
+  const assetsRef = useRef<AssetData[]>([]);
+  assetsRef.current = assets;
   const [caseMedia, setCaseMedia] = useState<{ asset_url: string; asset_type: string }[]>([]);
   const [activeAsset, setActiveAsset] = useState<AssetData | null>(null);
   const [shownProperty, setShownProperty] = useState<DigitalProperty | null>(null);
@@ -112,6 +115,7 @@ const StationDisplay = () => {
     channelRef.current = null;
     displayedSessionRef.current = null;
     setActiveAsset(null);
+    setShownProperty(null);
     setAssets([]);
     setCaseMedia([]);
     setCaseData(null);
@@ -583,22 +587,26 @@ const StationDisplay = () => {
 
   // Subscribe to broadcast channel
   useEffect(() => {
+    setShownProperty(null);
     if (state !== "active" || !session?.id) return;
-
+    const displayedId = session.id;
+    let alive = true;
     const channel = supabase.channel(`session:${session.id}`);
     channelRef.current = channel;
 
     setShownProperty(null);
     channel
       .on("broadcast", { event: PROPERTY_SHOW_EVENT }, (payload) => {
+        if (!alive || displayedSessionRef.current !== displayedId) return;
         setShownProperty((payload.payload?.property as DigitalProperty | null) ?? null);
+        void channel.send({ type: "broadcast", event: PROPERTY_ACK_EVENT, payload: { request_id: payload.payload?.request_id } });
       })
       .on("broadcast", { event: "chat" }, (payload) => {
         const message = payload.payload?.message as string || "";
         if (!message) return;
 
         let matched: AssetData | null = null;
-        for (const asset of assets) {
+        for (const asset of assetsRef.current) {
           if (matchesKeywords(message, asset.trigger_keywords)) {
             matched = asset;
             break;
@@ -620,19 +628,22 @@ const StationDisplay = () => {
           });
         }
       })
-      .subscribe();
+      .subscribe((status) => {
+        if (status === "SUBSCRIBED") void channel.send({ type: "broadcast", event: PROPERTY_SYNC_EVENT, payload: {} });
+      });
 
     let cleaned = false;
     const cleanup = () => {
       if (cleaned) return;
       cleaned = true;
+      alive = false;
       void supabase.removeChannel(channel);
       if (channelRef.current === channel) channelRef.current = null;
       if (broadcastCleanupRef.current === cleanup) broadcastCleanupRef.current = null;
     };
     broadcastCleanupRef.current = cleanup;
     return cleanup;
-  }, [state, session?.id, assets]);
+  }, [state, session?.id]);
 
   const handleTimerComplete = useCallback(async () => {
     if (!session?.id) return;
@@ -769,13 +780,7 @@ const StationDisplay = () => {
       )}
 
       {shownProperty && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-background/95 p-10">
-          {isCaptionVisible(shownProperty) && shownProperty.label && <h2 className="text-3xl font-semibold text-muted-foreground">{shownProperty.label}</h2>}
-          {isCaptionVisible(shownProperty) && shownProperty.value && <p className="max-w-4xl whitespace-pre-line text-center text-5xl font-bold">{shownProperty.value}</p>}
-          {shownProperty.media_url && (shownProperty.media_type === "audio"
-            ? <audio src={shownProperty.media_url} controls autoPlay className="w-full max-w-2xl" />
-            : <AssetRenderer url={shownProperty.media_url} type={shownProperty.media_type === "video" ? "video" : "image"} />)}
-        </div>
+        <PropertyDisplay key={`${session?.id}:${shownProperty.media_url}:${shownProperty.label}`} property={shownProperty} />
       )}
       {/* Main content area */}
       <div className="flex-1 flex min-h-0">
