@@ -1,5 +1,10 @@
 # Roadmap
 
+## Pemeriksaan penguji (22 Okt 2026)
+- [ ] Perbaiki sesi membaca, pilihan satu/beberapa sesi, dan fase timer penguji.
+- [ ] Verifikasi pengiriman properti, caption, dan tampilan media di layar peserta.
+- [ ] Jalankan tes regresi; pemeriksaan login langsung terhalang Supabase external_unmanaged.
+
 ## Selesai (14 Okt 2026)
 - [x] Deploy edge functions (ingest-case, case-admin, dll) ke backend Lovable Cloud baru
 - [x] Bangun ulang tabel database di backend Cloud baru (11 tabel dari supabase/migrations)
