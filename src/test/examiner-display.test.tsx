@@ -2,7 +2,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-libra
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import Examiner from "@/pages/Examiner";
 import PropertyDisplay from "@/components/station/PropertyDisplay";
-import { PROPERTY_ACK_EVENT, PROPERTY_SHOW_EVENT } from "@/lib/digitalProperties";
+import { PROPERTY_ACK_EVENT, PROPERTY_SHOW_EVENT, PROPERTY_SYNC_EVENT } from "@/lib/digitalProperties";
 
 const mock = vi.hoisted(() => ({ rows: [] as any[], channels: [] as any[], send: vi.fn(), invalid: vi.fn() }));
 vi.mock("@/contexts/AuthContext", () => ({ useAuth: () => ({ user: { id: "admin" }, isMasterAdmin: false }) }));
@@ -65,6 +65,21 @@ describe("examiner delivery and session transitions", () => {
     await waitFor(() => expect(screen.getByRole("alert")).toBeInTheDocument());
     expect(button).toHaveAttribute("aria-pressed", "false");
     expect(button).not.toBeDisabled();
+  });
+  it("reports a missing receipt and resends the desired property when the station reconnects", async () => {
+    vi.useFakeTimers();
+    render(<Examiner />);
+    fireEvent.click(screen.getByRole("button", { name: /EKG/ }));
+    const request = mock.send.mock.calls.at(-1)?.[0].payload;
+    await act(async () => { vi.advanceTimersByTime(5000); });
+    expect(screen.getByRole("alert")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /EKG/ })).toHaveAttribute("aria-pressed", "false");
+    const channel = mock.channels.find(ch => ch.name === "session:Peserta A");
+    act(() => channel.handlers[PROPERTY_SYNC_EVENT]({ payload: {} }));
+    expect(mock.send).toHaveBeenLastCalledWith({ type: "broadcast", event: PROPERTY_SHOW_EVENT, payload: request });
+    await act(async () => channel.handlers[PROPERTY_ACK_EVENT]({ payload: { request_id: request.request_id } }));
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /EKG/ })).toHaveAttribute("aria-pressed", "true");
   });
 });
 
