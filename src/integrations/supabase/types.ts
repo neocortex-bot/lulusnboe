@@ -324,6 +324,7 @@ export type Database = {
           examiner_id: string | null
           id: string
           session_start_time: string | null
+          show_examiner_panel: boolean
           show_results_to_candidate_override: boolean
           station_token: string
           status: string
@@ -335,6 +336,7 @@ export type Database = {
           examiner_id?: string | null
           id?: string
           session_start_time?: string | null
+          show_examiner_panel?: boolean
           show_results_to_candidate_override?: boolean
           station_token: string
           status?: string
@@ -346,6 +348,7 @@ export type Database = {
           examiner_id?: string | null
           id?: string
           session_start_time?: string | null
+          show_examiner_panel?: boolean
           show_results_to_candidate_override?: boolean
           station_token?: string
           status?: string
@@ -479,6 +482,7 @@ export type Database = {
           trigger_keywords: string[]
         }[]
       }
+      get_case_digital_properties: { Args: { _case_id: string }; Returns: Json }
       get_case_display: {
         Args: { _case_id: string }
         Returns: {
@@ -500,6 +504,7 @@ export type Database = {
           sequence_order: number
           sequence_total: number
           session_start_time: string
+          show_examiner_panel: boolean
           status: string
         }[]
       }

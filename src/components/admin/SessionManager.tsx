@@ -276,6 +276,7 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
             status: "waiting",
             show_results_to_candidate_override: showResultsToCandidateOverride,
             examiner_id: examinerId || null,
+            show_examiner_panel: showExaminerPanel,
           })))
           .select("id, station_token");
         if (sessionError) throw sessionError;
