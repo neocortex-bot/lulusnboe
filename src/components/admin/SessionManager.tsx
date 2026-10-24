@@ -85,6 +85,9 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
   // (retake). Default off: completed cases stay hidden from the picker.
   const [allowRetake, setAllowRetake] = useState(false);
   const [examinerId, setExaminerId] = useState("");
+  // Latihan mandiri: layar station menampilkan panel properti digital (1/3
+  // layar) yang bisa dibuka sendiri oleh peserta.
+  const [showExaminerPanel, setShowExaminerPanel] = useState(false);
   const { data: admins = [] } = useQuery({
     queryKey: ["examiner_admins"],
     queryFn: async () => {
