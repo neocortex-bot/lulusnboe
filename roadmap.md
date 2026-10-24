@@ -1,5 +1,9 @@
 # Roadmap
 
+## Latihan mandiri (24 Okt 2026)
+- [x] Checkbox deploy "Tampilkan Panel Properti di Layar" + kolom show_examiner_panel + layout 2/3 soal, 1/3 panel properti digital yang dibuka peserta sendiri.
+- [ ] Verifikasi tampilan panel di PC station dengan sesi sungguhan.
+
 ## Pemeriksaan penguji (22 Okt 2026)
 - [x] Perbaiki sesi membaca, pilihan satu/beberapa sesi, dan fase timer penguji.
 - [x] Uji konfirmasi pengiriman, pengiriman ulang, caption, dan tampilan properti: 21 tes lolos.
