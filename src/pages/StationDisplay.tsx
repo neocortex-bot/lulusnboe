@@ -15,7 +15,7 @@ import {
 import QRDisplay from "@/components/station/QRDisplay";
 import CasePromptDisplay from "@/components/station/CasePromptDisplay";
 import AssetRenderer from "@/components/station/AssetRenderer";
-import { DigitalProperty, PROPERTY_SHOW_EVENT, PROPERTY_ACK_EVENT, PROPERTY_SYNC_EVENT } from "@/lib/digitalProperties";
+import { DigitalProperty, parseDigitalProperties, PROPERTY_SHOW_EVENT, PROPERTY_ACK_EVENT, PROPERTY_SYNC_EVENT } from "@/lib/digitalProperties";
 import PropertyDisplay from "@/components/station/PropertyDisplay";
 import CountdownTimer from "@/components/station/CountdownTimer";
 import StationReadyNextCandidate from "@/components/station/StationReadyNextCandidate";
@@ -38,6 +38,7 @@ interface SessionData {
   case_id: string;
   status: string;
   session_start_time: string | null;
+  show_examiner_panel?: boolean | null;
 }
 
 interface CaseData {
@@ -72,6 +73,8 @@ const StationDisplay = () => {
   const [caseMedia, setCaseMedia] = useState<{ asset_url: string; asset_type: string }[]>([]);
   const [activeAsset, setActiveAsset] = useState<AssetData | null>(null);
   const [shownProperty, setShownProperty] = useState<DigitalProperty | null>(null);
+  // Latihan mandiri: properti digital yang bisa dibuka sendiri oleh peserta.
+  const [selfPracticeProps, setSelfPracticeProps] = useState<DigitalProperty[]>([]);
   const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
   const broadcastCleanupRef = useRef<(() => void) | null>(null);
   const stationSubscriptionCleanupRef = useRef<(() => void) | null>(null);
@@ -116,6 +119,7 @@ const StationDisplay = () => {
     displayedSessionRef.current = null;
     setActiveAsset(null);
     setShownProperty(null);
+    setSelfPracticeProps([]);
     setAssets([]);
     setCaseMedia([]);
     setCaseData(null);
@@ -182,7 +186,7 @@ const StationDisplay = () => {
       const row = firstRpcRow(data);
       if (cancelled) return;
       if (error || !row) { setState("loading"); return; }
-      const sessionRow = row as { id: string; case_id: string; status: string; session_start_time: string | null };
+      const sessionRow = row as SessionData;
       setSession(sessionRow);
       if (sessionRow.status === "active") setState("active");
       else if (sessionRow.status === "completed" || sessionRow.status === "force_closed") {
