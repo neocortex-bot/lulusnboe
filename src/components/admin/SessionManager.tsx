@@ -319,6 +319,7 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
       setPcCount(1);
       setShowResultsToCandidateOverride(true);
       setAllowRetake(false);
+      setShowExaminerPanel(false);
     },
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
   });
@@ -432,6 +433,25 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
                   </label>
                   <p className="text-xs text-muted-foreground">
                     Jika dicentang, seluruh soal dan PC pada deployment ini menampilkan nilai meski pengaturan per case nonaktif.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2 rounded-md border border-border px-3 py-2">
+                <Checkbox
+                  id={`show-examiner-panel-${examMode}`}
+                  checked={showExaminerPanel}
+                  onCheckedChange={(checked) => setShowExaminerPanel(checked === true)}
+                  className="mt-0.5"
+                />
+                <div className="space-y-0.5">
+                  <label
+                    htmlFor={`show-examiner-panel-${examMode}`}
+                    className="cursor-pointer text-sm font-medium"
+                  >
+                    Tampilkan Panel Properti di Layar (Latihan Mandiri)
+                  </label>
+                  <p className="text-xs text-muted-foreground">
+                    Jika dicentang, layar PC station terbagi: 2/3 soal dan 1/3 panel properti digital yang bisa dibuka sendiri oleh peserta tanpa penguji.
                   </p>
                 </div>
               </div>
