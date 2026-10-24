@@ -327,12 +327,17 @@ const StationDisplay = () => {
     if (!session?.id) return;
     const displayedSessionId = session.id;
 
-    const updateFromRow = (updated: Pick<SessionData, "status" | "session_start_time">) => {
+    const updateFromRow = (updated: Pick<SessionData, "status" | "session_start_time"> & { show_examiner_panel?: boolean | null }) => {
       if (
         regeneratingRef.current ||
         displayedSessionRef.current !== displayedSessionId
       ) return;
-      setSession((prev) => prev ? { ...prev, status: updated.status, session_start_time: updated.session_start_time } : prev);
+      setSession((prev) => prev ? {
+        ...prev,
+        status: updated.status,
+        session_start_time: updated.session_start_time,
+        show_examiner_panel: updated.show_examiner_panel ?? prev.show_examiner_panel,
+      } : prev);
       if (updated.status === "active") setState("active");
       else if (updated.status === "completed" || updated.status === "force_closed") {
         setState("completed_screen");
@@ -363,7 +368,7 @@ const StationDisplay = () => {
         onChange: ({ table, row }) => {
           if (table === "exam_sessions") {
             if (row.id === displayedSessionId && typeof row.status === "string") {
-              updateFromRow(row as unknown as Pick<SessionData, "status" | "session_start_time">);
+              updateFromRow(row as unknown as Pick<SessionData, "status" | "session_start_time"> & { show_examiner_panel?: boolean | null });
             }
             return;
           }
@@ -588,6 +593,28 @@ const StationDisplay = () => {
       cancelled = true;
     };
   }, [state, session?.case_id]);
+
+  // Latihan mandiri: ambil properti digital untuk panel 1/3 di layar station.
+  useEffect(() => {
+    if (state !== "active" || !session?.case_id || !session.show_examiner_panel) {
+      setSelfPracticeProps([]);
+      return;
+    }
+    let cancelled = false;
+    const fetchProps = async () => {
+      const { data, error } = await supabase.rpc("get_case_digital_properties", { _case_id: session.case_id });
+      if (cancelled) return;
+      if (error) {
+        console.warn("Gagal memuat properti digital:", error);
+        return;
+      }
+      setSelfPracticeProps(parseDigitalProperties({ digital_properties: data }));
+    };
+    void fetchProps();
+    return () => {
+      cancelled = true;
+    };
+  }, [state, session?.case_id, session?.show_examiner_panel]);
 
   // Subscribe to broadcast channel
   useEffect(() => {
