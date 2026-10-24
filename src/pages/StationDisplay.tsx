@@ -773,6 +773,7 @@ const StationDisplay = () => {
   }
 
   const hasMediaContent = activeAsset || caseMedia.length > 0;
+  const selfPractice = Boolean(session?.show_examiner_panel) && selfPracticeProps.length > 0;
   const isReadingPhase = !session?.session_start_time;
   const promptHeading = isReadingPhase ? "Silahkan Soal Dibaca" : "Silahkan Dijawab";
 
@@ -815,6 +816,7 @@ const StationDisplay = () => {
       )}
       {/* Main content area */}
       <div className="flex-1 flex min-h-0">
+        <div className={selfPractice ? "flex min-h-0 w-2/3" : "flex min-h-0 flex-1"}>
         {hasMediaContent ? (
           <>
             {/* Sidebar: case info + questions (always visible) */}
@@ -854,6 +856,29 @@ const StationDisplay = () => {
               />
             )}
           </div>
+        )}
+        </div>
+        {selfPractice && (
+          <aside aria-label="Panel properti latihan mandiri" className="flex w-1/3 shrink-0 flex-col gap-3 overflow-y-auto border-l border-border bg-muted/30 p-4">
+            <h2 className="text-lg font-semibold text-foreground">Properti Soal</h2>
+            <p className="text-sm text-muted-foreground">
+              Latihan mandiri: ketuk pemeriksaan untuk menampilkannya, ketuk lagi untuk menutup.
+            </p>
+            {selfPracticeProps.map((prop, idx) => {
+              const isOpen = shownProperty === prop;
+              return (
+                <button
+                  key={`${prop.label}-${idx}`}
+                  type="button"
+                  onClick={() => setShownProperty(isOpen ? null : prop)}
+                  aria-pressed={isOpen}
+                  className={`rounded-lg border px-4 py-3 text-left text-base font-medium transition-colors ${isOpen ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:bg-accent"}`}
+                >
+                  {prop.label || prop.value}
+                </button>
+              );
+            })}
+          </aside>
         )}
       </div>
     </div>
