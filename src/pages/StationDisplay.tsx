@@ -15,7 +15,7 @@ import {
 import QRDisplay from "@/components/station/QRDisplay";
 import CasePromptDisplay from "@/components/station/CasePromptDisplay";
 import AssetRenderer from "@/components/station/AssetRenderer";
-import { DigitalProperty, PROPERTY_SHOW_EVENT, PROPERTY_ACK_EVENT, PROPERTY_SYNC_EVENT } from "@/lib/digitalProperties";
+import { DigitalProperty, parseDigitalProperties, PROPERTY_SHOW_EVENT, PROPERTY_ACK_EVENT, PROPERTY_SYNC_EVENT } from "@/lib/digitalProperties";
 import PropertyDisplay from "@/components/station/PropertyDisplay";
 import CountdownTimer from "@/components/station/CountdownTimer";
 import StationReadyNextCandidate from "@/components/station/StationReadyNextCandidate";
@@ -38,6 +38,7 @@ interface SessionData {
   case_id: string;
   status: string;
   session_start_time: string | null;
+  show_examiner_panel?: boolean | null;
 }
 
 interface CaseData {
@@ -72,6 +73,8 @@ const StationDisplay = () => {
   const [caseMedia, setCaseMedia] = useState<{ asset_url: string; asset_type: string }[]>([]);
   const [activeAsset, setActiveAsset] = useState<AssetData | null>(null);
   const [shownProperty, setShownProperty] = useState<DigitalProperty | null>(null);
+  // Latihan mandiri: properti digital yang bisa dibuka sendiri oleh peserta.
+  const [selfPracticeProps, setSelfPracticeProps] = useState<DigitalProperty[]>([]);
   const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
   const broadcastCleanupRef = useRef<(() => void) | null>(null);
   const stationSubscriptionCleanupRef = useRef<(() => void) | null>(null);
@@ -116,6 +119,7 @@ const StationDisplay = () => {
     displayedSessionRef.current = null;
     setActiveAsset(null);
     setShownProperty(null);
+    setSelfPracticeProps([]);
     setAssets([]);
     setCaseMedia([]);
     setCaseData(null);
@@ -182,7 +186,7 @@ const StationDisplay = () => {
       const row = firstRpcRow(data);
       if (cancelled) return;
       if (error || !row) { setState("loading"); return; }
-      const sessionRow = row as { id: string; case_id: string; status: string; session_start_time: string | null };
+      const sessionRow = row as SessionData;
       setSession(sessionRow);
       if (sessionRow.status === "active") setState("active");
       else if (sessionRow.status === "completed" || sessionRow.status === "force_closed") {
@@ -323,12 +327,17 @@ const StationDisplay = () => {
     if (!session?.id) return;
     const displayedSessionId = session.id;
 
-    const updateFromRow = (updated: Pick<SessionData, "status" | "session_start_time">) => {
+    const updateFromRow = (updated: Pick<SessionData, "status" | "session_start_time"> & { show_examiner_panel?: boolean | null }) => {
       if (
         regeneratingRef.current ||
         displayedSessionRef.current !== displayedSessionId
       ) return;
-      setSession((prev) => prev ? { ...prev, status: updated.status, session_start_time: updated.session_start_time } : prev);
+      setSession((prev) => prev ? {
+        ...prev,
+        status: updated.status,
+        session_start_time: updated.session_start_time,
+        show_examiner_panel: updated.show_examiner_panel ?? prev.show_examiner_panel,
+      } : prev);
       if (updated.status === "active") setState("active");
       else if (updated.status === "completed" || updated.status === "force_closed") {
         setState("completed_screen");
@@ -359,7 +368,7 @@ const StationDisplay = () => {
         onChange: ({ table, row }) => {
           if (table === "exam_sessions") {
             if (row.id === displayedSessionId && typeof row.status === "string") {
-              updateFromRow(row as unknown as Pick<SessionData, "status" | "session_start_time">);
+              updateFromRow(row as unknown as Pick<SessionData, "status" | "session_start_time"> & { show_examiner_panel?: boolean | null });
             }
             return;
           }
@@ -585,6 +594,28 @@ const StationDisplay = () => {
     };
   }, [state, session?.case_id]);
 
+  // Latihan mandiri: ambil properti digital untuk panel 1/3 di layar station.
+  useEffect(() => {
+    if (state !== "active" || !session?.case_id || !session.show_examiner_panel) {
+      setSelfPracticeProps([]);
+      return;
+    }
+    let cancelled = false;
+    const fetchProps = async () => {
+      const { data, error } = await supabase.rpc("get_case_digital_properties", { _case_id: session.case_id });
+      if (cancelled) return;
+      if (error) {
+        console.warn("Gagal memuat properti digital:", error);
+        return;
+      }
+      setSelfPracticeProps(parseDigitalProperties({ digital_properties: data }));
+    };
+    void fetchProps();
+    return () => {
+      cancelled = true;
+    };
+  }, [state, session?.case_id, session?.show_examiner_panel]);
+
   // Subscribe to broadcast channel
   useEffect(() => {
     setShownProperty(null);
@@ -742,6 +773,7 @@ const StationDisplay = () => {
   }
 
   const hasMediaContent = activeAsset || caseMedia.length > 0;
+  const selfPractice = Boolean(session?.show_examiner_panel) && selfPracticeProps.length > 0;
   const isReadingPhase = !session?.session_start_time;
   const promptHeading = isReadingPhase ? "Silahkan Soal Dibaca" : "Silahkan Dijawab";
 
@@ -784,6 +816,7 @@ const StationDisplay = () => {
       )}
       {/* Main content area */}
       <div className="flex-1 flex min-h-0">
+        <div className={selfPractice ? "flex min-h-0 w-2/3" : "flex min-h-0 flex-1"}>
         {hasMediaContent ? (
           <>
             {/* Sidebar: case info + questions (always visible) */}
@@ -823,6 +856,29 @@ const StationDisplay = () => {
               />
             )}
           </div>
+        )}
+        </div>
+        {selfPractice && (
+          <aside aria-label="Panel properti latihan mandiri" className="flex w-1/3 shrink-0 flex-col gap-3 overflow-y-auto border-l border-border bg-muted/30 p-4">
+            <h2 className="text-lg font-semibold text-foreground">Properti Soal</h2>
+            <p className="text-sm text-muted-foreground">
+              Latihan mandiri: ketuk pemeriksaan untuk menampilkannya, ketuk lagi untuk menutup.
+            </p>
+            {selfPracticeProps.map((prop, idx) => {
+              const isOpen = shownProperty === prop;
+              return (
+                <button
+                  key={`${prop.label}-${idx}`}
+                  type="button"
+                  onClick={() => setShownProperty(isOpen ? null : prop)}
+                  aria-pressed={isOpen}
+                  className={`rounded-lg border px-4 py-3 text-left text-base font-medium transition-colors ${isOpen ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:bg-accent"}`}
+                >
+                  {prop.label || prop.value}
+                </button>
+              );
+            })}
+          </aside>
         )}
       </div>
     </div>
