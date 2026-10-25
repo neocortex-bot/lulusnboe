@@ -120,6 +120,25 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
     },
   });
 
+  // Admin mengubah nilai satu butir rubrik: simpan report baru + hitung ulang otomatis
+  const overrideScoreMutation = useMutation({
+    mutationFn: async ({ resultId, report, itemIndex, newPoints }: { resultId: string; report: RubricScoreReport; itemIndex: number; newPoints: number }) => {
+      const updated = applyItemScore(report, itemIndex, newPoints);
+      const { error } = await supabase
+        .from("exam_results")
+        .update({ ai_score_report: updated as unknown as Json })
+        .eq("id", resultId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["exam_results_admin"] });
+      toast({ title: "Nilai butir diperbarui" });
+    },
+    onError: (e: Error) => {
+      toast({ title: "Gagal menyimpan nilai", description: e.message, variant: "destructive" });
+    },
+  });
+
   const deleteMutation = useMutation({
     mutationFn: async ({ resultId, audioUrl }: { resultId: string; audioUrl: string | null }) => {
       if (audioUrl) {
@@ -336,9 +355,28 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
                                           </Badge>
                                           {item.isCritical && <AlertTriangle className="h-3.5 w-3.5 text-destructive shrink-0 mt-1" />}
                                           <span className="flex-1 min-w-0 break-words">{item.item}</span>
-                                          <span className="text-xs font-mono text-muted-foreground shrink-0 mt-0.5">
-                                            {earned}/{max} pts
-                                          </span>
+                                          <div className="flex items-center gap-1 shrink-0 mt-0.5" title="Klik angka untuk mengubah nilai butir ini">
+                                            {scoreChoices(max).map((choice) => (
+                                              <button
+                                                key={choice}
+                                                type="button"
+                                                disabled={overrideScoreMutation.isPending}
+                                                onClick={() => {
+                                                  if (choice === earned) return;
+                                                  overrideScoreMutation.mutate({ resultId: r.id, report: parsed, itemIndex: idx, newPoints: choice });
+                                                }}
+                                                className={`h-6 min-w-6 rounded border px-1 text-xs font-mono transition-colors disabled:opacity-50 ${
+                                                  choice === earned
+                                                    ? "border-primary bg-primary text-primary-foreground font-bold"
+                                                    : "border-border bg-background text-muted-foreground hover:border-primary hover:text-foreground"
+                                                }`}
+                                                aria-label={`Beri nilai ${choice} untuk butir ${idx + 1}`}
+                                              >
+                                                {choice}
+                                              </button>
+                                            ))}
+                                            <span className="text-xs font-mono text-muted-foreground">/{max}</span>
+                                          </div>
                                         </div>
                                         {(item.evidenceQuote || item.comment) && (
                                           <p className="text-xs text-muted-foreground break-words">
