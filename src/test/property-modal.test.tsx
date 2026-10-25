@@ -26,11 +26,11 @@ describe("participant information modal", () => {
   });
 
   it("dismisses on outside interaction", () => {
+    vi.useFakeTimers();
     const dismiss = vi.fn();
     render(<PropertyDisplay property={property} onDismiss={dismiss} />);
     // Radix registers outside pointer listeners after the opening event.
-    vi.useFakeTimers();
-    act(() => { vi.runOnlyPendingTimers(); });
+    act(() => { vi.advanceTimersByTime(1); });
     fireEvent.pointerDown(document.body);
     expect(dismiss).toHaveBeenCalledTimes(1);
   });

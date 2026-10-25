@@ -102,13 +102,13 @@ describe("examiner delivery and session transitions", () => {
 
 describe("participant property visibility", () => {
   it("with media and caption off, does not expose the interpretation in text or alt", () => {
-    const { container } = render(<PropertyDisplay property={{ label: "Diagnostic clue", value: "Secret answer", media_url: "/test.png", media_type: "image", show_caption: false }} />);
-    expect(container.textContent).not.toContain("Secret answer");
-    expect(container.textContent).not.toContain("Diagnostic clue");
+    render(<PropertyDisplay property={{ label: "Diagnostic clue", value: "Secret answer", media_url: "/test.png", media_type: "image", show_caption: false }} />);
+    expect(screen.queryByText("Secret answer")).not.toBeInTheDocument();
+    expect(screen.queryByText("Diagnostic clue")).not.toBeInTheDocument();
     expect(screen.getByRole("img")).not.toHaveAttribute("alt", "Diagnostic clue");
   });
   it("without media, keeps the results visible even if caption was off", () => {
-    const { container } = render(<PropertyDisplay property={{ label: "TD", value: "140/90", show_caption: false }} />);
-    expect(container.textContent).toContain("140/90");
+    render(<PropertyDisplay property={{ label: "TD", value: "140/90", show_caption: false }} />);
+    expect(screen.getByText("140/90")).toBeInTheDocument();
   });
 });
