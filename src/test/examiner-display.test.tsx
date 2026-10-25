@@ -66,6 +66,23 @@ describe("examiner delivery and session transitions", () => {
     expect(button).toHaveAttribute("aria-pressed", "false");
     expect(button).not.toBeDisabled();
   });
+  it("clears examiner intent when the participant dismisses the matching modal", async () => {
+    render(<Examiner />);
+    const button = screen.getByRole("button", { name: /EKG/ });
+    fireEvent.click(button);
+    const req = mock.send.mock.calls.at(-1)?.[0].payload;
+    const channel = mock.channels.find(ch => ch.name === "session:Peserta A");
+    await act(async () => channel.handlers[PROPERTY_ACK_EVENT]({ payload: { request_id: req.request_id } }));
+    expect(button).toHaveAttribute("aria-pressed", "true");
+    await act(async () => channel.handlers[PROPERTY_ACK_EVENT]({ payload: { request_id: "stale", displayed: false } }));
+    expect(button).toHaveAttribute("aria-pressed", "true");
+    await act(async () => channel.handlers[PROPERTY_ACK_EVENT]({ payload: { request_id: req.request_id, displayed: false } }));
+    expect(button).toHaveAttribute("aria-pressed", "false");
+    act(() => channel.handlers[PROPERTY_SYNC_EVENT]({ payload: {} }));
+    expect(mock.send.mock.calls.at(-1)?.[0].payload.property).toBeNull();
+    fireEvent.click(button);
+    expect(mock.send.mock.calls.at(-1)?.[0].payload.property).toEqual(expect.objectContaining({ label: "EKG" }));
+  });
   it("reports a missing receipt and resends the desired property when the station reconnects", async () => {
     vi.useFakeTimers();
     render(<Examiner />);

@@ -118,6 +118,9 @@ const Examiner = () => {
       .on("broadcast", { event: PROPERTY_ACK_EVENT }, ({ payload }) => {
         if (!alive || !desiredRef.current || payload?.request_id !== desiredRef.current.request_id) return;
         if (ackTimer.current) clearTimeout(ackTimer.current);
+        if (payload?.displayed === false) {
+          desiredRef.current = { property: null, request_id: desiredRef.current.request_id, index: null };
+        }
         setShown(desiredRef.current.index);
         setSending(false);
         setDisplayError(null);
