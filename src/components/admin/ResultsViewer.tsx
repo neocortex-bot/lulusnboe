@@ -363,7 +363,7 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
                                                 disabled={overrideScoreMutation.isPending}
                                                 onClick={() => {
                                                   if (choice === earned) return;
-                                                  overrideScoreMutation.mutate({ resultId: r.id, report: parsed, itemIndex: idx, newPoints: choice });
+                                                  overrideScoreMutation.mutate({ resultId: r.id, report: parsed as unknown as RubricScoreReport, itemIndex: idx, newPoints: choice });
                                                 }}
                                                 className={`h-6 min-w-6 rounded border px-1 text-xs font-mono transition-colors disabled:opacity-50 ${
                                                   choice === earned
