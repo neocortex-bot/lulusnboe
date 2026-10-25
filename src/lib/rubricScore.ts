@@ -12,6 +12,7 @@ export interface ScoreItem {
   coverage?: "full" | "partial" | "none";
   isCritical?: boolean;
   evidenceQuote?: string;
+  manualOverride?: boolean;
 }
 
 export interface ScoreReport {
@@ -52,6 +53,8 @@ export function applyItemScore(report: ScoreReport, index: number, newPoints: nu
       points: clamped,
       coverage: coverageForPoints(clamped, max),
       passed: clamped > 0,
+      // Penanda: butir ini sudah dinilai manual — evaluasi ulang AI tidak boleh menimpanya.
+      manualOverride: true,
     };
   });
 

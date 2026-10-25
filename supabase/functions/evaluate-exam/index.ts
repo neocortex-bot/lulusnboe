@@ -232,14 +232,23 @@ ${JSON.stringify(scoreSchema)}`;
       });
       // `points` is the earned score, `maxPoints` the ceiling, so totals are
       // straight sums. Each rubric line caps at 2.
+      // Re-read to preserve a model answer generated concurrently and any
+      // rubric items an admin scored manually (never overwrite those).
+      const { data: latest } = await supabase.from("exam_results").select("ai_score_report").eq("id", result_id).single();
+      const previous = latest?.ai_score_report;
+      const prevItems: any[] = Array.isArray(previous?.items) ? previous.items : [];
+      if (prevItems.some((it: any) => it?.manualOverride)) {
+        scoreReport.items = scoreReport.items.map((item: any) => {
+          const kept = prevItems.find((p: any) => p?.manualOverride && p.item === item.item);
+          return kept ?? item;
+        });
+      }
       scoreReport.totalPossible = scoreReport.items.reduce((sum: number, item: any) => sum + (item.maxPoints ?? 2), 0);
       scoreReport.totalScore = scoreReport.items.reduce((sum: number, item: any) => sum + (item.points ?? 0), 0);
       if (rubricData.enabled) scoreReport.score = scoreReport.totalPossible > 0 ? Math.round(scoreReport.totalScore / scoreReport.totalPossible * 100) : 0;
       scoreReport.hasCriticalFail = scoreReport.items.some((item: any) => item.isCritical && !item.passed);
       scoreReport.passStatus = scoreReport.score >= 68 && !scoreReport.hasCriticalFail ? "LULUS" : "TIDAK LULUS";
-      // Re-read to preserve a model answer generated concurrently.
-      const { data: latest } = await supabase.from("exam_results").select("ai_score_report").eq("id", result_id).single();
-      const cached = latest?.ai_score_report?.modelAnswer;
+      const cached = previous?.modelAnswer;
       if (cached) scoreReport.modelAnswer = cached;
       const { error } = await supabase.from("exam_results").update({ transcript, ai_score_report: scoreReport }).eq("id", result_id);
       if (error) throw new Error("Laporan AI gagal disimpan.");
