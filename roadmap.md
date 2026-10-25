@@ -1,5 +1,9 @@
 # Roadmap
 
+## Modal informasi peserta (25 Okt 2026)
+- [x] Modal bersama untuk ujian dan latihan mandiri, hitung mundur 10 detik, klik luar menutup, klik dalam tetap terbuka; interaksi browser terverifikasi dengan data uji.
+- [x] Sinkronkan penutupan dengan status penguji dan uji regresi: 24 tes lolos; ujian sungguhan tetap belum terverifikasi karena akses Supabase eksternal.
+
 ## Latihan mandiri (24 Okt 2026)
 - [x] Checkbox deploy "Tampilkan Panel Properti di Layar" + kolom show_examiner_panel + layout 2/3 soal, 1/3 panel properti digital yang dibuka peserta sendiri.
 - [ ] Verifikasi tampilan panel di PC station dengan sesi sungguhan.

@@ -73,6 +73,8 @@ const StationDisplay = () => {
   const [caseMedia, setCaseMedia] = useState<{ asset_url: string; asset_type: string }[]>([]);
   const [activeAsset, setActiveAsset] = useState<AssetData | null>(null);
   const [shownProperty, setShownProperty] = useState<DigitalProperty | null>(null);
+  const propertyRequestRef = useRef<string | null>(null);
+  const [propertyDisplayKey, setPropertyDisplayKey] = useState(0);
   // Latihan mandiri: properti digital yang bisa dibuka sendiri oleh peserta.
   const [selfPracticeProps, setSelfPracticeProps] = useState<DigitalProperty[]>([]);
   const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
@@ -619,6 +621,7 @@ const StationDisplay = () => {
   // Subscribe to broadcast channel
   useEffect(() => {
     setShownProperty(null);
+    propertyRequestRef.current = null;
     if (state !== "active" || !session?.id) return;
     const displayedId = session.id;
     let alive = true;
@@ -629,6 +632,8 @@ const StationDisplay = () => {
     channel
       .on("broadcast", { event: PROPERTY_SHOW_EVENT }, (payload) => {
         if (!alive || displayedSessionRef.current !== displayedId) return;
+        propertyRequestRef.current = payload.payload?.request_id ?? null;
+        setPropertyDisplayKey((key) => key + 1);
         setShownProperty((payload.payload?.property as DigitalProperty | null) ?? null);
         void channel.send({ type: "broadcast", event: PROPERTY_ACK_EVENT, payload: { request_id: payload.payload?.request_id } });
       })
@@ -675,6 +680,15 @@ const StationDisplay = () => {
     broadcastCleanupRef.current = cleanup;
     return cleanup;
   }, [state, session?.id]);
+
+  const dismissProperty = useCallback(() => {
+    setShownProperty(null);
+    const requestId = propertyRequestRef.current;
+    propertyRequestRef.current = null;
+    if (requestId && channelRef.current) {
+      void channelRef.current.send({ type: "broadcast", event: PROPERTY_ACK_EVENT, payload: { request_id: requestId, displayed: false } });
+    }
+  }, []);
 
   const handleTimerComplete = useCallback(async () => {
     if (!session?.id) return;
@@ -812,7 +826,7 @@ const StationDisplay = () => {
       )}
 
       {shownProperty && (
-        <PropertyDisplay key={`${session?.id}:${shownProperty.media_url}:${shownProperty.label}`} property={shownProperty} />
+        <PropertyDisplay key={`${session?.id}:${propertyDisplayKey}`} property={shownProperty} onDismiss={dismissProperty} />
       )}
       {/* Main content area */}
       <div className="flex-1 flex min-h-0">
@@ -870,7 +884,12 @@ const StationDisplay = () => {
                 <button
                   key={`${prop.label}-${idx}`}
                   type="button"
-                  onClick={() => setShownProperty(isOpen ? null : prop)}
+                  onClick={() => {
+                    if (isOpen) { dismissProperty(); return; }
+                    propertyRequestRef.current = null;
+                    setPropertyDisplayKey((key) => key + 1);
+                    setShownProperty(prop);
+                  }}
                   aria-pressed={isOpen}
                   className={`rounded-lg border px-4 py-3 text-left text-base font-medium transition-colors ${isOpen ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:bg-accent"}`}
                 >
