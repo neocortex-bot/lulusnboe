@@ -11,6 +11,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import type { Json } from "@/integrations/supabase/types";
 import DetailedFeedbackDisplay from "@/components/exam/DetailedFeedbackDisplay";
 import { invokeExamAi } from "@/lib/examAi";
+import { applyItemScore, scoreChoices, type ScoreReport as RubricScoreReport } from "@/lib/rubricScore";
 
 interface ScoreItem {
   item: string;
