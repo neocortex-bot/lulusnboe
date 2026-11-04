@@ -3,9 +3,26 @@
  * Handles both old format (array) and new format (object with enabled/items)
  */
 export interface RubricItem {
+  /** Penanda tetap butir, agar nilai ujian terdahulu tetap terhubung saat teks diedit. */
+  id?: string;
   text: string;
   points: number;
   isCritical: boolean;
+}
+
+export function newRubricItemId(): string {
+  return `item-${crypto.randomUUID().slice(0, 8)}`;
+}
+
+/** Pastikan setiap butir punya penanda tetap sebelum disimpan. */
+export function withRubricItemIds<T extends RubricItem>(items: T[]): T[] {
+  const seen = new Set<string>();
+  return items.map((item) => {
+    let id = item.id?.trim();
+    if (!id || seen.has(id)) id = newRubricItemId();
+    seen.add(id);
+    return { ...item, id };
+  });
 }
 
 export interface RubricData {

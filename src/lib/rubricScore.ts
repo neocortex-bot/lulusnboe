@@ -41,6 +41,25 @@ export function coverageForPoints(points: number, maxPoints: number): "full" | "
 }
 
 /**
+ * Cari butir yang sama di laporan terbaru: penanda butir, lalu teks, lalu posisi.
+ */
+export function findReportItemIndex(
+  report: ScoreReport,
+  target: (ScoreItem & { rubricItemId?: string }) | undefined,
+  fallbackIndex: number,
+): number {
+  if (!target) return -1;
+  const items = report.items as Array<ScoreItem & { rubricItemId?: string }>;
+  if (target.rubricItemId) {
+    const byId = items.findIndex((item) => item.rubricItemId === target.rubricItemId);
+    if (byId >= 0) return byId;
+  }
+  const byText = items.findIndex((item) => item.item.trim() === target.item.trim());
+  if (byText >= 0) return byText;
+  return fallbackIndex < items.length ? fallbackIndex : -1;
+}
+
+/**
  * Terapkan nilai baru untuk butir ke-`index`, lalu hitung ulang totalScore,
  * score (0-100), passStatus, dan hasCriticalFail. Mengembalikan salinan report baru.
  */
