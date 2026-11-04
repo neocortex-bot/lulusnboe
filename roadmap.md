@@ -1,6 +1,8 @@
 # Roadmap
 
 ## Sinkronisasi rubrik (4 Nov 2026)
+- [x] Perbaikan: butir yang teksnya diedit tetap memakai nilai lama; klik nilai berurutan tidak saling menimpa.
+- [ ] 26 hasil ujian terdahulu kehilangan nilai butir saat sinkronisasi pertama — tidak ada cadangan database; menunggu keputusan pengguna untuk evaluasi ulang AI.
 - [x] Trigger terpasang untuk menghitung ulang hasil saat poin, critical, atau daftar butir berubah.
 - [x] Sinkronkan seluruh 161 laporan terdahulu, termasuk tes terakhir; pemeriksaan menunjukkan 0 laporan tidak sinkron.
 - [x] 16 tes regresi dan 6 pemeriksaan fungsi Supabase lolos; halaman berhasil dikompilasi.
