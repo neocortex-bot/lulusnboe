@@ -12,8 +12,8 @@ WITH report AS (
 )
 SELECT
  critical->>'hasCriticalFail' = 'false' AS changed_critical,
- removed->>'totalPossible' = '4' AND removed->>'totalScore' = '3' AND removed->>'passStatus' = 'LULUS' AND jsonb_array_length(removed->'items') = 2 AS removed_critical_passes,
- weighted->>'totalPossible' = '8' AND weighted->>'totalScore' = '5' AS new_weights,
+ (removed->>'totalPossible')::numeric = 4 AND (removed->>'totalScore')::numeric = 3 AND removed->>'passStatus' = 'LULUS' AND jsonb_array_length(removed->'items') = 2 AS removed_critical_passes,
+ (weighted->>'totalPossible')::numeric = 8 AND (weighted->>'totalScore')::numeric = 5 AS new_weights,
  weighted->'items'->1->>'points' = '1' AND weighted->'items'->1->>'manualOverride' = 'true' AND weighted->'items'->1->>'evidenceQuote' = 'exact quote' AS preserves_manual,
  added->>'passStatus' = 'BELUM DINILAI' AS new_item_pending,
  public.reconcile_rubric_report(weighted, '{"items":[{"text":"Correct","points":4},{"text":"Manual","points":4}]}') = weighted AS idempotent
