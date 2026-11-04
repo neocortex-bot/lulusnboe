@@ -1,0 +1,1 @@
+GRANT EXECUTE ON FUNCTION public.reconcile_rubric_report(jsonb,jsonb) TO supabase_read_only_user;
