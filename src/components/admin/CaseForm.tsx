@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import RubricBuilder, { type RubricData } from "./RubricBuilder";
+import sharedParseRubricData, { withRubricItemIds } from "@/lib/rubricParser";
 import AssetUploader from "./AssetUploader";
 import PropertiesEditor from "./PropertiesEditor";
 
@@ -29,28 +30,8 @@ interface CaseFormProps {
   onClose: () => void;
 }
 
-function normalizeItem(item: any): { text: string; points: number; isCritical: boolean } {
-  if (typeof item === "string") {
-    return { text: item, points: 10, isCritical: false };
-  }
-  return {
-    text: item.text || item.item_text || String(item),
-    points: item.points ?? 10,
-    isCritical: item.isCritical ?? item.is_critical ?? false,
-  };
-}
-
 function parseRubricData(raw: any): RubricData {
-  if (raw && typeof raw === "object" && !Array.isArray(raw) && "enabled" in raw) {
-    return {
-      enabled: !!raw.enabled,
-      items: Array.isArray(raw.items) ? raw.items.map(normalizeItem) : [],
-    };
-  }
-  if (Array.isArray(raw) && raw.length > 0) {
-    return { enabled: true, items: raw.map(normalizeItem) };
-  }
-  return { enabled: false, items: [] };
+  return sharedParseRubricData(raw);
 }
 
 const CaseForm = ({ existingCase, onClose }: CaseFormProps) => {
