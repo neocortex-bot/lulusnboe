@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import RubricBuilder, { type RubricData } from "./RubricBuilder";
+import sharedParseRubricData, { withRubricItemIds } from "@/lib/rubricParser";
 import AssetUploader from "./AssetUploader";
 import PropertiesEditor from "./PropertiesEditor";
 
@@ -29,28 +30,8 @@ interface CaseFormProps {
   onClose: () => void;
 }
 
-function normalizeItem(item: any): { text: string; points: number; isCritical: boolean } {
-  if (typeof item === "string") {
-    return { text: item, points: 10, isCritical: false };
-  }
-  return {
-    text: item.text || item.item_text || String(item),
-    points: item.points ?? 10,
-    isCritical: item.isCritical ?? item.is_critical ?? false,
-  };
-}
-
 function parseRubricData(raw: any): RubricData {
-  if (raw && typeof raw === "object" && !Array.isArray(raw) && "enabled" in raw) {
-    return {
-      enabled: !!raw.enabled,
-      items: Array.isArray(raw.items) ? raw.items.map(normalizeItem) : [],
-    };
-  }
-  if (Array.isArray(raw) && raw.length > 0) {
-    return { enabled: true, items: raw.map(normalizeItem) };
-  }
-  return { enabled: false, items: [] };
+  return sharedParseRubricData(raw);
 }
 
 const CaseForm = ({ existingCase, onClose }: CaseFormProps) => {
@@ -90,7 +71,7 @@ const CaseForm = ({ existingCase, onClose }: CaseFormProps) => {
         // Keep answer_key_text and checklist_rubric on clinical_cases for backward compat
         // but the authoritative source is now case_answer_keys
         answer_key_text: answerKeyText,
-        checklist_rubric: rubricData as any,
+        checklist_rubric: { ...rubricData, items: withRubricItemIds(rubricData.items) } as any,
         // Deteksi mode penilaian: daftar tilik aktif hanya bila enabled & ada items
         rubric_mode: rubricData.enabled && rubricData.items.length > 0 ? "checklist" : "none",
       };
@@ -121,6 +102,7 @@ const CaseForm = ({ existingCase, onClose }: CaseFormProps) => {
               answer_key_text: answerKeyText,
               checklist_rubric: {
                 ...rubricData,
+                items: withRubricItemIds(rubricData.items),
                 properties: properties.map((p) => p.trim()).filter(Boolean),
                 digital_properties: (existingCase?.checklist_rubric as any)?.digital_properties ?? [],
               } as any,

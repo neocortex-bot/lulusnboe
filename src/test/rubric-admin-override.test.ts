@@ -68,3 +68,31 @@ describe("admin rubric override", () => {
     expect(baseReport.totalScore).toBe(3);
   });
 });
+
+import { findReportItemIndex } from "@/lib/rubricScore";
+import { withRubricItemIds } from "@/lib/rubricParser";
+
+describe("consecutive manual edits", () => {
+  it("applies a second edit on top of the first instead of reverting it", () => {
+    const report = {
+      items: [
+        { item: "A", passed: true, points: 2, maxPoints: 2 },
+        { item: "B", passed: true, points: 2, maxPoints: 2 },
+      ],
+    };
+    const first = applyItemScore(report, 0, 0);
+    const idx = findReportItemIndex(first, report.items[1], 1);
+    const second = applyItemScore(first, idx, 1);
+    expect(second.items[0].points).toBe(0);
+    expect(second.items[1].points).toBe(1);
+  });
+
+  it("keeps existing rubric item ids and only fills missing ones", () => {
+    const items = withRubricItemIds([
+      { id: "item-1", text: "A", points: 2, isCritical: false },
+      { text: "B", points: 2, isCritical: false },
+    ]);
+    expect(items[0].id).toBe("item-1");
+    expect(items[1].id).toMatch(/^item-/);
+  });
+});

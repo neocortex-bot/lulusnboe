@@ -36,7 +36,7 @@ import AssetUploader from "@/components/admin/AssetUploader";
 import PropertiesEditor from "@/components/admin/PropertiesEditor";
 import DigitalPropertiesEditor, { DigitalMediaPreview } from "@/components/admin/DigitalPropertiesEditor";
 import { DigitalProperty, parseDigitalProperties, cleanDigitalProperties, isMediaPending } from "@/lib/digitalProperties";
-import parseRubricData from "@/lib/rubricParser";
+import parseRubricData, { withRubricItemIds } from "@/lib/rubricParser";
 import { canEditCase, isRubricEditable } from "@/lib/casePermissions";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -228,6 +228,7 @@ const CasePreview = () => {
         throw new Error("Anda tidak memiliki akses untuk mengubah soal ini.");
       }
       if (!id) throw new Error("Case ID missing");
+      const rubricItemsWithIds = withRubricItemIds(rubricData.items);
       const payload: Record<string, unknown> = {
         title,
         exam_mode: examMode,
@@ -238,7 +239,7 @@ const CasePreview = () => {
         questions_text: questionsText,
         answer_key_text: answerKeyText,
         show_results_to_candidate: showResultsToCandidate,
-        checklist_rubric: { enabled: rubricData.enabled, items: rubricData.items },
+        checklist_rubric: { enabled: rubricData.enabled, items: rubricItemsWithIds },
         rubric_mode: rubricMode,
       };
 
@@ -263,7 +264,7 @@ const CasePreview = () => {
         answer_key_text: answerKeyText,
         checklist_rubric: {
           enabled: rubricData.enabled,
-          items: rubricData.items,
+          items: rubricItemsWithIds,
           properties: properties.map((p) => p.trim()).filter(Boolean),
           digital_properties: cleanDigitalProperties(digitalProps),
         } as unknown as Json,
