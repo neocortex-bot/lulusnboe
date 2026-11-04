@@ -138,21 +138,45 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
     },
   });
 
-  // Admin mengubah nilai satu butir rubrik: simpan report baru + hitung ulang otomatis
+  // Admin mengubah nilai satu butir rubrik. Selalu mulai dari laporan terbaru di database
+  // agar klik berurutan tidak menimpa nilai manual yang baru saja disimpan.
   const overrideScoreMutation = useMutation({
     mutationFn: async ({ resultId, report, itemIndex, newPoints }: { resultId: string; report: RubricScoreReport; itemIndex: number; newPoints: number }) => {
-      const updated = applyItemScore(report, itemIndex, newPoints);
-      const { error } = await supabase
+      const target = report.items[itemIndex];
+      const { data: latestRow, error: readError } = await supabase
+        .from("exam_results")
+        .select("ai_score_report")
+        .eq("id", resultId)
+        .single();
+      if (readError) throw readError;
+      const latest = (parseScoreReport(latestRow?.ai_score_report) ?? report) as unknown as RubricScoreReport;
+      const latestIndex = findReportItemIndex(latest, target, itemIndex);
+      if (latestIndex < 0) throw new Error("Butir rubrik tidak ditemukan; muat ulang halaman.");
+      const updated = applyItemScore(latest, latestIndex, newPoints);
+      const { data: savedRow, error } = await supabase
         .from("exam_results")
         .update({ ai_score_report: updated as unknown as Json })
-        .eq("id", resultId);
+        .eq("id", resultId)
+        .select("ai_score_report")
+        .single();
       if (error) throw error;
+      return { resultId, report: savedRow?.ai_score_report ?? updated };
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["exam_results_admin"] });
+    onMutate: async ({ resultId, report, itemIndex, newPoints }) => {
+      await queryClient.cancelQueries({ queryKey: ["exam_results_admin"] });
+      const optimistic = applyItemScore(report, itemIndex, newPoints);
+      queryClient.setQueryData(["exam_results_admin"], (rows: any[] | undefined) =>
+        rows?.map((row) => (row.id === resultId ? { ...row, ai_score_report: optimistic } : row))
+      );
+    },
+    onSuccess: ({ resultId, report }) => {
+      queryClient.setQueryData(["exam_results_admin"], (rows: any[] | undefined) =>
+        rows?.map((row) => (row.id === resultId ? { ...row, ai_score_report: report } : row))
+      );
       toast({ title: "Nilai butir diperbarui" });
     },
     onError: (e: Error) => {
+      queryClient.invalidateQueries({ queryKey: ["exam_results_admin"] });
       toast({ title: "Gagal menyimpan nilai", description: e.message, variant: "destructive" });
     },
   });
