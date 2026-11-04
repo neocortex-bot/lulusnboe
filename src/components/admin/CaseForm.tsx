@@ -90,7 +90,7 @@ const CaseForm = ({ existingCase, onClose }: CaseFormProps) => {
         // Keep answer_key_text and checklist_rubric on clinical_cases for backward compat
         // but the authoritative source is now case_answer_keys
         answer_key_text: answerKeyText,
-        checklist_rubric: rubricData as any,
+        checklist_rubric: { ...rubricData, items: withRubricItemIds(rubricData.items) } as any,
         // Deteksi mode penilaian: daftar tilik aktif hanya bila enabled & ada items
         rubric_mode: rubricData.enabled && rubricData.items.length > 0 ? "checklist" : "none",
       };
@@ -121,6 +121,7 @@ const CaseForm = ({ existingCase, onClose }: CaseFormProps) => {
               answer_key_text: answerKeyText,
               checklist_rubric: {
                 ...rubricData,
+                items: withRubricItemIds(rubricData.items),
                 properties: properties.map((p) => p.trim()).filter(Boolean),
                 digital_properties: (existingCase?.checklist_rubric as any)?.digital_properties ?? [],
               } as any,
