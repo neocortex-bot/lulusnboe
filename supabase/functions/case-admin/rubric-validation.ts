@@ -21,6 +21,12 @@ export function getRubricQualityError(items: RubricQualityItem[]): string | null
     return `Active rubric must contain 3-100 items (got ${items.length}).`;
   }
 
+  // Agreed scoring scale is 0-1-2 per item.
+  const tooHigh = items.find((item) => !(item.points >= 1 && item.points <= 2));
+  if (tooHigh) {
+    return `Each rubric item must be worth 1-2 points (got ${tooHigh.points}).`;
+  }
+
   const criticalCount = items.filter((item) => item.isCritical).length;
   if (criticalCount < 1) {
     return "At least 1 rubric item must be isCritical:true";

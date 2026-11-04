@@ -10,7 +10,7 @@ const corsHeaders = {
 const RubricItem = z.object({
   text: z.string().min(5).max(500),
   answer: z.string().max(1500).optional(), // word-by-word ucapan peserta untuk butir ini
-  points: z.number().int().min(1).max(5),
+  points: z.number().int().min(1).max(2),
   isCritical: z.boolean(),
 });
 
@@ -57,7 +57,7 @@ const SCHEMA_DOC = {
     initial_prompt: "string >=400 chars; must contain >=3 of RIWAYAT/PEMERIKSAAN/TUGAS/EKG/LAB",
     questions_text: "string >=300 chars; >=5 numbered tasks; must NOT reveal rubric items",
     answer_key_text: "string >=800 chars; expected candidate verbalisation, numbers, thresholds",
-    checklist_rubric: "{ items: [{ text, points 1-5, isCritical }] } — OPSIONAL dan FLEKSIBEL. Bila dikirim: minimal 3 butir (maks 100), >=1 critical, total points >=6 → rubric_mode='checklist'. Boleh rubrik fokus 3-4 butir maupun rubrik rinci puluhan butir atomik. Bila dikosongkan/tidak dikirim → rubric_mode='none' (tanpa daftar tilik, penilaian berbasis answer key)",
+    checklist_rubric: "{ items: [{ text, points 1-2 (skala 0-1-2), isCritical }] } — OPSIONAL dan FLEKSIBEL. Bila dikirim: minimal 3 butir (maks 100), >=1 critical, total points >=6 → rubric_mode='checklist'. Boleh rubrik fokus 3-4 butir maupun rubrik rinci puluhan butir atomik. Bila dikosongkan/tidak dikirim → rubric_mode='none' (tanpa daftar tilik, penilaian berbasis answer key)",
     media_notes: "[{ description, category: case_media|examination|additional_info, trigger_keywords: [] }] — informational only, media uploaded manually",
     created_by_email: "optional admin email to own the case",
   },
