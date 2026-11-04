@@ -53,6 +53,7 @@ function normalizeItem(item: any): RubricItem {
   }
   
   return {
+    ...(typeof item.id === "string" && item.id.trim() ? { id: item.id.trim() } : {}),
     text: item.text || item.item_text || String(item),
     points: item.points ?? item.point_value ?? 10,
     isCritical: item.isCritical ?? item.is_critical ?? item.critical ?? false,

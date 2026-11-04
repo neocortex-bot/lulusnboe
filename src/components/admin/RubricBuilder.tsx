@@ -5,8 +5,10 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, X, AlertTriangle } from "lucide-react";
+import { newRubricItemId } from "@/lib/rubricParser";
 
 export interface RubricItem {
+  id?: string;
   text: string;
   points: number;
   isCritical: boolean;
@@ -35,7 +37,7 @@ const RubricBuilder = ({ data, onChange, disabled = false }: RubricBuilderProps)
     if (!trimmed) return;
     onChange({
       ...data,
-      items: [...data.items, { text: trimmed, points: newPoints, isCritical: false }],
+      items: [...data.items, { id: newRubricItemId(), text: trimmed, points: newPoints, isCritical: false }],
     });
     setNewText("");
     setNewPoints(10);
