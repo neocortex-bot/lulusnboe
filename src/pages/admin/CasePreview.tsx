@@ -276,6 +276,7 @@ const CasePreview = () => {
     onSuccess: (_data, action) => {
       queryClient.invalidateQueries({ queryKey: ["clinical_cases"] });
       queryClient.invalidateQueries({ queryKey: ["clinical_case_preview", id] });
+      queryClient.invalidateQueries({ queryKey: ["exam_results_admin"] });
       const msg =
         action === "approve"
           ? "Case di-approve & dipublikasikan ✅"

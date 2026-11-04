@@ -69,6 +69,24 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
     (result: any) => result.exam_sessions?.clinical_cases?.exam_mode === examMode
   );
 
+  // Rubric edits in another page/device also recalculate completed results.
+  useEffect(() => {
+    const channel = supabase
+      .channel(`rubric-results-${crypto.randomUUID()}`)
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "exam_results" }, () => {
+        queryClient.invalidateQueries({ queryKey: ["exam_results_admin"] });
+      })
+      .subscribe();
+    const refresh = () => queryClient.invalidateQueries({ queryKey: ["exam_results_admin"] });
+    const interval = window.setInterval(refresh, 15000);
+    window.addEventListener("focus", refresh);
+    return () => {
+      supabase.removeChannel(channel);
+      window.clearInterval(interval);
+      window.removeEventListener("focus", refresh);
+    };
+  }, [queryClient]);
+
   useEffect(() => {
     if (!expandedId) return;
     const result = results.find((r: any) => r.id === expandedId);
