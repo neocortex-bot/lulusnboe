@@ -1,4 +1,4 @@
--- Run through Supabase read_query as postgres. Assertions exercise the deployed
+-- Run through Supabase read_query. Assertions exercise the deployed
 -- pure reconciliation function without changing candidate data.
 WITH report AS (
   SELECT '{"items":[{"item":"Critical","points":0,"maxPoints":2,"isCritical":true},{"item":"Correct","points":2,"maxPoints":2},{"item":"Manual","points":1,"maxPoints":2,"manualOverride":true,"evidenceQuote":"exact quote"}]}'::jsonb AS value
