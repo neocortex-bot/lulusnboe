@@ -1,9 +1,10 @@
 # Roadmap
 
 ## Sinkronisasi rubrik (4 Nov 2026)
-- [ ] Hitung ulang semua hasil terdahulu saat poin, critical, atau daftar butir berubah.
-- [ ] Perbaiki hasil tes terakhir yang masih memakai penanda critical sebelum edit soal.
-- [ ] Uji regresi dan sinkronisasi hasil tersimpan; verifikasi halaman sesi bila akses tersedia.
+- [x] Trigger terpasang untuk menghitung ulang hasil saat poin, critical, atau daftar butir berubah.
+- [x] Sinkronkan seluruh 161 laporan terdahulu, termasuk tes terakhir; pemeriksaan menunjukkan 0 laporan tidak sinkron.
+- [x] 16 tes regresi dan 6 pemeriksaan fungsi Supabase lolos; halaman berhasil dikompilasi.
+- [ ] Verifikasi penyimpanan rubrik sampai hasil tampil di halaman sesi dengan login admin — akses pengujian login Supabase eksternal tidak tersedia.
 
 ## Modal informasi peserta (25 Okt 2026)
 - [x] Modal bersama untuk ujian dan latihan mandiri, hitung mundur 10 detik, klik luar menutup, klik dalam tetap terbuka; interaksi browser terverifikasi dengan data uji.
