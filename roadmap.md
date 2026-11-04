@@ -1,5 +1,9 @@
 # Roadmap
 
+## Sinkronisasi rubrik (4 Nov 2026)
+- [ ] Hitung ulang semua hasil terdahulu saat poin, critical, atau daftar butir berubah.
+- [ ] Uji regresi dan sinkronisasi hasil tersimpan; verifikasi halaman sesi bila akses tersedia.
+
 ## Modal informasi peserta (25 Okt 2026)
 - [x] Modal bersama untuk ujian dan latihan mandiri, hitung mundur 10 detik, klik luar menutup, klik dalam tetap terbuka; interaksi browser terverifikasi dengan data uji.
 - [x] Sinkronkan penutupan dengan status penguji dan uji regresi: 24 tes lolos; ujian sungguhan tetap belum terverifikasi karena akses Supabase eksternal.
