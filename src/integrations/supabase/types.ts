@@ -544,6 +544,7 @@ export type Database = {
           status: string
         }[]
       }
+      rubric_text_head: { Args: { _text: string }; Returns: string }
       start_exam_timer: { Args: { _session_id: string }; Returns: string }
     }
     Enums: {
