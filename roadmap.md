@@ -2,6 +2,7 @@
 
 ## Sinkronisasi rubrik (4 Nov 2026)
 - [ ] Hitung ulang semua hasil terdahulu saat poin, critical, atau daftar butir berubah.
+- [ ] Perbaiki hasil tes terakhir yang masih memakai penanda critical sebelum edit soal.
 - [ ] Uji regresi dan sinkronisasi hasil tersimpan; verifikasi halaman sesi bila akses tersedia.
 
 ## Modal informasi peserta (25 Okt 2026)
