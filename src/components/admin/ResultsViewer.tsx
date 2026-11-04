@@ -69,6 +69,24 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
     (result: any) => result.exam_sessions?.clinical_cases?.exam_mode === examMode
   );
 
+  // Rubric edits in another page/device also recalculate completed results.
+  useEffect(() => {
+    const channel = supabase
+      .channel(`rubric-results-${crypto.randomUUID()}`)
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "exam_results" }, () => {
+        queryClient.invalidateQueries({ queryKey: ["exam_results_admin"] });
+      })
+      .subscribe();
+    const refresh = () => queryClient.invalidateQueries({ queryKey: ["exam_results_admin"] });
+    const interval = window.setInterval(refresh, 15000);
+    window.addEventListener("focus", refresh);
+    return () => {
+      supabase.removeChannel(channel);
+      window.clearInterval(interval);
+      window.removeEventListener("focus", refresh);
+    };
+  }, [queryClient]);
+
   useEffect(() => {
     if (!expandedId) return;
     const result = results.find((r: any) => r.id === expandedId);
@@ -179,6 +197,7 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
   const getOverallDisplay = (report: Json | null): { label: string; variant: "default" | "destructive" | "outline" } => {
     const parsed = parseScoreReport(report);
     if (parsed.items.length === 0 && parsed.score == null) return { label: "—", variant: "outline" };
+    if (parsed.passStatus === "BELUM DINILAI") return { label: "BELUM DINILAI", variant: "outline" };
 
     // New format with score
     if (parsed.score != null) {
@@ -389,13 +408,13 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
                                   {parsed.totalPossible != null && (
                                     <div className="flex items-center justify-between text-sm font-semibold border-t border-border pt-2 mt-2">
                                       <span>Total</span>
-                                      <span>{parsed.totalScore}/{parsed.totalPossible} pts ({Math.round((parsed.totalScore! / parsed.totalPossible) * 100)}%)</span>
+                                      <span>{parsed.totalScore}/{parsed.totalPossible} pts ({parsed.totalPossible > 0 ? Math.round(((parsed.totalScore ?? 0) / parsed.totalPossible) * 100) : 0}%)</span>
                                     </div>
                                   )}
                                   {parsed.score != null && (
                                     <div className="flex items-center justify-between text-base font-bold border-t border-border pt-3 mt-3">
                                       <span>Nilai Akhir</span>
-                                      <Badge variant={parsed.score >= 68 && !parsed.hasCriticalFail ? "default" : "destructive"} className="text-base px-3 py-1">
+                                      <Badge variant={parsed.passStatus === "BELUM DINILAI" ? "outline" : parsed.score >= 68 && !parsed.hasCriticalFail ? "default" : "destructive"} className="text-base px-3 py-1">
                                         {parsed.score}/100 — {parsed.passStatus || (parsed.score >= 68 ? "LULUS" : "TIDAK LULUS")}
                                       </Badge>
                                     </div>

@@ -13,6 +13,7 @@ export interface ScoreItem {
   isCritical?: boolean;
   evidenceQuote?: string;
   manualOverride?: boolean;
+  pendingAssessment?: boolean;
 }
 
 export interface ScoreReport {
@@ -55,6 +56,7 @@ export function applyItemScore(report: ScoreReport, index: number, newPoints: nu
       passed: clamped > 0,
       // Penanda: butir ini sudah dinilai manual — evaluasi ulang AI tidak boleh menimpanya.
       manualOverride: true,
+      pendingAssessment: false,
     };
   });
 
@@ -64,7 +66,8 @@ export function applyItemScore(report: ScoreReport, index: number, newPoints: nu
     (item) => item.isCritical && (item.coverage ?? "none") === "none"
   );
   const score = totalPossible > 0 ? Math.round((totalScore / totalPossible) * 100) : 0;
-  const passStatus = score >= PASS_THRESHOLD && !hasCriticalFail ? "LULUS" : "TIDAK LULUS";
+  const pendingRubricAssessment = items.some((item) => item.pendingAssessment);
+  const passStatus = totalPossible === 0 || pendingRubricAssessment ? "BELUM DINILAI" : score >= PASS_THRESHOLD && !hasCriticalFail ? "LULUS" : "TIDAK LULUS";
 
   return {
     ...report,
@@ -74,5 +77,6 @@ export function applyItemScore(report: ScoreReport, index: number, newPoints: nu
     score,
     passStatus,
     hasCriticalFail,
+    pendingRubricAssessment,
   };
 }

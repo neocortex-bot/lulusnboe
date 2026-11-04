@@ -15,6 +15,13 @@ const baseReport: ScoreReport = {
 };
 
 describe("admin rubric override", () => {
+  it("clears pending assessment when admin scores a new rubric item", () => {
+    const report = { items: [{ item: "New", passed: false, points: 0, maxPoints: 2, pendingAssessment: true }] };
+    const updated = applyItemScore(report, 0, 2);
+    expect(updated.items[0].pendingAssessment).toBe(false);
+    expect(updated.pendingRubricAssessment).toBe(false);
+    expect(updated.passStatus).toBe("LULUS");
+  });
   it("offers every integer score from 0 to maxPoints", () => {
     expect(scoreChoices(2)).toEqual([0, 1, 2]);
     expect(scoreChoices(5)).toEqual([0, 1, 2, 3, 4, 5]);
