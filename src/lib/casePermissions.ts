@@ -1,4 +1,5 @@
 interface CanEditCaseParams {
+  isAdmin?: boolean;
   isMasterAdmin: boolean;
   createdBy?: string | null;
   userId?: string | null;
@@ -9,8 +10,11 @@ interface IsRubricEditableParams {
   isEditing: boolean;
 }
 
-export const canEditCase = ({ isMasterAdmin, createdBy, userId }: CanEditCaseParams) =>
-  isMasterAdmin || (!!createdBy && createdBy === userId);
+export const canEditCase = ({ isAdmin, isMasterAdmin, userId }: CanEditCaseParams) =>
+  !!userId && (isMasterAdmin || isAdmin === true);
+
+export const canDeleteCase = ({ isMasterAdmin, createdBy, userId }: CanEditCaseParams) =>
+  !!userId && (isMasterAdmin || (!!createdBy && createdBy === userId));
 
 export const isRubricEditable = ({ canEdit, isEditing }: IsRubricEditableParams) =>
   canEdit && isEditing;

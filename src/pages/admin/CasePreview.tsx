@@ -37,7 +37,7 @@ import PropertiesEditor from "@/components/admin/PropertiesEditor";
 import DigitalPropertiesEditor, { DigitalMediaPreview } from "@/components/admin/DigitalPropertiesEditor";
 import { DigitalProperty, parseDigitalProperties, cleanDigitalProperties, isMediaPending } from "@/lib/digitalProperties";
 import parseRubricData, { withRubricItemIds } from "@/lib/rubricParser";
-import { canEditCase, isRubricEditable } from "@/lib/casePermissions";
+import { canDeleteCase, canEditCase, isRubricEditable } from "@/lib/casePermissions";
 import { useAuth } from "@/contexts/AuthContext";
 
 
@@ -78,7 +78,7 @@ const CasePreview = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const { user, isMasterAdmin } = useAuth();
+  const { user, isAdmin, isMasterAdmin } = useAuth();
 
 
   // ---- State form (di-sync dari DB via useEffect) ----
@@ -136,11 +136,13 @@ const CasePreview = () => {
   });
 
   const canEdit = canEditCase({
+    isAdmin,
     isMasterAdmin,
     createdBy: caseRow?.created_by,
     userId: user?.id,
   });
   const rubricEditable = isRubricEditable({ canEdit, isEditing });
+  const canDelete = canDeleteCase({ isMasterAdmin, createdBy: caseRow?.created_by, userId: user?.id });
 
   // Sync form ketika data datang
   useEffect(() => {
@@ -293,7 +295,7 @@ const CasePreview = () => {
 
   const deleteMutation = useMutation({
     mutationFn: async () => {
-      if (!canEdit) {
+      if (!canDelete) {
         throw new Error("Anda tidak memiliki akses untuk menghapus soal ini.");
       }
       if (!id) throw new Error("Case ID missing");
@@ -392,7 +394,7 @@ const CasePreview = () => {
 
           {!canEdit ? (
             <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-              <Eye className="h-3.5 w-3.5" /> Hanya lihat — soal milik admin lain
+              <Eye className="h-3.5 w-3.5" /> Hanya lihat
             </span>
           ) : !isEditing ? (
             <Button onClick={() => setIsEditing(true)} className="gap-2">

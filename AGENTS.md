@@ -7,3 +7,4 @@
 - Use the shared PropertyDisplay modal for examiner-sent and self-practice properties so dismissal, countdown, and caption handling stay consistent.
 - Reconcile persisted exam reports against current rubric metadata with database triggers on rubric and report saves; this covers admin/agent edits and in-flight AI results without reevaluation.
 - Rubric items carry stable ids assigned on save, and reconciliation matches by id, then text, then position, so text edits never reset earned scores.
+- Keep case edit permissions separate from case deletion permissions; enforce edits through server-side admin roles so collaborative editing does not broaden permanent deletion access.

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { canEditCase } from "@/lib/casePermissions";
+import { canDeleteCase } from "@/lib/casePermissions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -70,7 +70,7 @@ const ArchivePage = () => {
   });
 
   const canManage = (c: ArchivedCase) =>
-    canEditCase({ isMasterAdmin, createdBy: c.created_by, userId: user?.id });
+    canDeleteCase({ isMasterAdmin, createdBy: c.created_by, userId: user?.id });
 
   return (
     <div className="min-h-screen bg-background">

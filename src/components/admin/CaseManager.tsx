@@ -11,7 +11,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Upload, FileSpreadsheet, Eye, AlertTriangle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { canEditCase } from "@/lib/casePermissions";
+import { canDeleteCase, canEditCase } from "@/lib/casePermissions";
 import CaseForm from "./CaseForm";
 import AssetUploader from "./AssetUploader";
 import ExcelImporter from "./ExcelImporter";
@@ -47,10 +47,13 @@ const CaseManager = () => {
   const [categoryFilter, setCategoryFilter] = useState(ALL);
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const { user, isMasterAdmin } = useAuth();
+  const { user, isAdmin, isMasterAdmin } = useAuth();
 
   const canManage = (c: ClinicalCase) =>
-    canEditCase({ isMasterAdmin, createdBy: c.created_by, userId: user?.id });
+    canEditCase({ isAdmin, isMasterAdmin, createdBy: c.created_by, userId: user?.id });
+
+  const canDelete = (c: ClinicalCase) =>
+    canDeleteCase({ isMasterAdmin, createdBy: c.created_by, userId: user?.id });
 
   const { data: cases = [], isLoading } = useQuery({
     queryKey: ["clinical_cases"],
@@ -243,9 +246,9 @@ const CaseManager = () => {
                         <Button variant="ghost" size="icon" title="Edit soal" onClick={() => handleEdit(c)}>
                           <Pencil className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" title="Hapus soal" onClick={() => setCaseToDelete(c)}>
+                        {canDelete(c) && <Button variant="ghost" size="icon" title="Hapus soal" onClick={() => setCaseToDelete(c)}>
                           <Trash2 className="h-4 w-4" />
-                        </Button>
+                        </Button>}
                       </>
                     ) : (
                       <span className="text-xs text-muted-foreground">Hanya lihat</span>
