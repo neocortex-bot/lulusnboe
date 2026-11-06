@@ -1,5 +1,9 @@
 # Roadmap
 
+## Akses edit semua admin (6 Nov 2026)
+- [x] Semua admin dapat mengedit soal, kunci jawaban, rubrik, dan properti/media; izin hapus soal tetap terpisah.
+- [ ] Verifikasi simpan dengan admin bukan pemilik — akses login pengujian Supabase eksternal tidak tersedia.
+
 ## Sinkronisasi rubrik (4 Nov 2026)
 - [x] Perbaikan: butir yang teksnya diedit tetap memakai nilai lama; klik nilai berurutan tidak saling menimpa.
 - [ ] 26 hasil ujian terdahulu kehilangan nilai butir saat sinkronisasi pertama — tidak ada cadangan database; menunggu keputusan pengguna untuk evaluasi ulang AI.
