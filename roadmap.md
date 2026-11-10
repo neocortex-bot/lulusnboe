@@ -1,5 +1,9 @@
 # Roadmap
 
+## Peninjauan pre-review (10 Nov 2026)
+- [ ] Tinjau kedua soal, perbaiki ketidaksesuaian klinis, lengkapi jawaban dan properti tanpa menghilangkan butir.
+- [ ] Terbitkan soal yang lengkap dan verifikasi kelengkapan tersimpan serta ketersediaannya untuk ujian.
+
 ## Akses edit semua admin (6 Nov 2026)
 - [x] Semua admin dapat mengedit soal, kunci jawaban, rubrik, dan properti/media; izin hapus soal tetap terpisah.
 - [ ] Verifikasi simpan dengan admin bukan pemilik — akses login pengujian Supabase eksternal tidak tersedia.
