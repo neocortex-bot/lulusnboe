@@ -1,8 +1,10 @@
 # Roadmap
 
 ## Peninjauan pre-review (10 Nov 2026)
-- [ ] Tinjau kedua soal, perbaiki ketidaksesuaian klinis, lengkapi jawaban dan properti tanpa menghilangkan butir.
-- [ ] Terbitkan soal yang lengkap dan verifikasi kelengkapan tersimpan serta ketersediaannya untuk ujian.
+- [x] Tinjau kedua soal, perbaiki ketidaksesuaian klinis, lengkapi jawaban dan properti tanpa menghilangkan butir.
+- [x] Terbitkan kedua soal sebagai oral board berbasis laporan teks; 16/15 butir, 32/30 poin, masing-masing 3 kritis; jawaban, ID dan properti tersimpan lengkap, pre-review tersisa 0.
+- [ ] Lima media asli belum tersedia — laporan teks sudah tersedia; menunggu unggahan foto/rekaman klinis asli.
+- [ ] Verifikasi pilihan deploy melalui akun admin — login pengujian Supabase eksternal tidak tersedia; status published dan filter deploy diperiksa.
 
 ## Akses edit semua admin (6 Nov 2026)
 - [x] Semua admin dapat mengedit soal, kunci jawaban, rubrik, dan properti/media; izin hapus soal tetap terpisah.
