@@ -1,5 +1,11 @@
 # Roadmap
 
+## Tampilan properti (17 Nov 2026)
+- [x] Ubah countdown modal bersama menjadi 20 detik.
+- [x] Tambahkan override caption media di penguji tanpa mengubah soal; properti teks tetap terlihat.
+- [x] 19 tes durasi, override, pengiriman dan reconnect lolos; build OK.
+- [ ] Verifikasi dengan ujian sungguhan — akses login Supabase eksternal tidak tersedia.
+
 ## Peninjauan pre-review (10 Nov 2026)
 - [x] Tinjau kedua soal, perbaiki ketidaksesuaian klinis, lengkapi jawaban dan properti tanpa menghilangkan butir.
 - [x] Terbitkan kedua soal sebagai oral board berbasis laporan teks; 16/15 butir, 32/30 poin, masing-masing 3 kritis; jawaban, ID dan properti tersimpan lengkap, pre-review tersisa 0.

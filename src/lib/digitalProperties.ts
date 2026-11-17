@@ -50,3 +50,8 @@ export function mediaTypeFromMime(mime: string): DigitalMediaType | null {
 
 /** Caption (label+nilai) hanya boleh disembunyikan bila media sudah terunggah. */
 export const isCaptionVisible = (p: DigitalProperty) => !p.media_url || p.show_caption !== false;
+
+/** Override hanya untuk tampilan penguji, tanpa mengubah detail soal tersimpan. */
+export function withExaminerCaptionOverride(p: DigitalProperty, hideMediaCaptions: boolean): DigitalProperty {
+  return hideMediaCaptions && p.media_url ? { ...p, show_caption: false } : p;
+}
