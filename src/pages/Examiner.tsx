@@ -5,8 +5,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Monitor, MonitorOff, AlertTriangle, Loader2 } from "lucide-react";
-import { parseDigitalProperties, PROPERTY_SHOW_EVENT, PROPERTY_ACK_EVENT, PROPERTY_SYNC_EVENT, isMediaPending, isCaptionVisible, type DigitalProperty } from "@/lib/digitalProperties";
+import { ArrowLeft, Monitor, MonitorOff, AlertTriangle, CaptionsOff } from "lucide-react";
+import { parseDigitalProperties, PROPERTY_SHOW_EVENT, PROPERTY_ACK_EVENT, PROPERTY_SYNC_EVENT, isMediaPending, isCaptionVisible, withExaminerCaptionOverride, type DigitalProperty } from "@/lib/digitalProperties";
 import { pickActiveExaminerSessions, resolveSelectedSession, examinerPhase, type ExaminerSessionRow } from "@/lib/examinerSessions";
 
 type Prop = string | { name?: string; label?: string; key?: string; value?: string };
@@ -33,6 +33,7 @@ const Examiner = () => {
   const previousRef = useRef<ExaminerSessionRow | null>(null);
   const [connected, setConnected] = useState(false);
   const [sending, setSending] = useState(false);
+  const [hideMediaCaptions, setHideMediaCaptions] = useState(false);
   const [displayError, setDisplayError] = useState<string | null>(null);
   const desiredRef = useRef<{ property: DigitalProperty | null; request_id: string; index: number | null } | null>(null);
   const ackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -149,12 +150,10 @@ const Examiner = () => {
     };
   }, [currentId]);
 
-  const toggleShow = async (i: number) => {
+  const sendProperty = async (property: DigitalProperty | null, index: number | null) => {
     if (!current || !chRef.current || !connected || sending) return;
     const ch = chRef.current;
-    const next = shown === i ? null : i;
-    const p = next === null ? null : current.digital[next];
-    const request = { property: p ?? null, request_id: crypto.randomUUID(), index: next };
+    const request = { property, request_id: crypto.randomUUID(), index };
     desiredRef.current = request;
     setSending(true);
     setDisplayError(null);
@@ -175,6 +174,23 @@ const Examiner = () => {
       setSending(false);
       setShown(null);
       setDisplayError("Gagal mengirim properti. Silakan coba kembali.");
+    }
+  };
+
+  const toggleShow = (i: number) => {
+    if (!current) return;
+    const next = shown === i ? null : i;
+    const property = next === null ? null : current.digital[next];
+    void sendProperty(property ? withExaminerCaptionOverride(property, hideMediaCaptions) : null, next);
+  };
+
+  const toggleCaptions = () => {
+    const hide = !hideMediaCaptions;
+    setHideMediaCaptions(hide);
+    const desired = desiredRef.current;
+    if (desired?.property && desired.index !== null && current) {
+      const property = current.digital[desired.index];
+      if (property?.media_url) void sendProperty(withExaminerCaptionOverride(property, hide), desired.index);
     }
   };
 
@@ -237,6 +253,12 @@ const Examiner = () => {
               <Card>
                 <CardHeader className="pb-2"><CardTitle className="text-base">Properti Digital (tampilkan bila diminta)</CardTitle></CardHeader>
                 <CardContent className="space-y-2">
+                  <Button className="h-auto w-full whitespace-normal" variant={hideMediaCaptions ? "default" : "outline"}
+                    aria-pressed={hideMediaCaptions} disabled={!connected || sending || isError || !current.digital.some((p) => p.media_url)}
+                    onClick={toggleCaptions}>
+                    <CaptionsOff className="mr-2 h-4 w-4 shrink-0" />
+                    {hideMediaCaptions ? "Caption media disembunyikan — batalkan" : "Hilangkan semua caption"}
+                  </Button>
                   <p role="status" className="text-sm text-muted-foreground">{sending ? "Menunggu konfirmasi layar peserta..." : connected ? "Pengiriman siap" : "Menghubungkan..."}</p>
                   {displayError && <p role="alert" className="text-sm text-destructive">{displayError}</p>}
                   {current.digital.length === 0 && <p className="text-sm text-muted-foreground">Soal ini tidak punya properti digital.</p>}
@@ -249,7 +271,7 @@ const Examiner = () => {
                         <div className="min-w-0 flex-1">
                           <div className="text-sm text-muted-foreground">{p.label}{p.media_type ? ` · ${p.media_type === "image" ? "gambar" : p.media_type === "video" ? "video" : "suara"}` : ""}</div>
                           {p.value && <div className="whitespace-pre-line break-words text-lg font-semibold">{p.value}</div>}
-                          {!isCaptionVisible(p) && <p className="text-xs text-muted-foreground">Peserta hanya melihat media, tanpa caption.</p>}
+                          {!isCaptionVisible(withExaminerCaptionOverride(p, hideMediaCaptions)) && <p className="text-xs text-muted-foreground">Peserta hanya melihat media, tanpa caption.</p>}
                           {isMediaPending(p) && <div className="mt-1 inline-flex items-center gap-1 text-xs text-destructive"><AlertTriangle className="h-3 w-3" /> Media asli belum diunggah admin</div>}
                           <div className={`mt-1 text-xs font-medium ${on ? "text-primary" : "text-muted-foreground"}`}>{on ? "Sedang tampil di layar — ketuk untuk menutup" : "Ketuk untuk tampilkan di layar"}</div>
                         </div>

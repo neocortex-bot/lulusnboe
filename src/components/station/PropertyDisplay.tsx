@@ -4,11 +4,11 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/compone
 
 export default function PropertyDisplay({ property, onDismiss }: { property: DigitalProperty; onDismiss?: () => void }) {
   const [failed, setFailed] = useState(false);
-  const [remaining, setRemaining] = useState(10);
+  const [remaining, setRemaining] = useState(20);
   const dismissRef = useRef(onDismiss);
   dismissRef.current = onDismiss;
   useEffect(() => {
-    const deadline = Date.now() + 10000;
+    const deadline = Date.now() + 20000;
     const timer = setInterval(() => {
       const seconds = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
       setRemaining(seconds);

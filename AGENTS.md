@@ -5,6 +5,7 @@
 - Examiner session phases use session_start_time as the answering start; active claimed sessions without it are reading, so examiners must not filter them out.
 - Property display uses station receipt acknowledgements and reconnect sync; examiner controls must not report delivery solely from a successful broadcast send. Station modal dismissal acknowledges displayed:false with the matching request ID to clear examiner intent and prevent stale reopening.
 - Use the shared PropertyDisplay modal for examiner-sent and self-practice properties so dismissal, countdown, and caption handling stay consistent.
+- Apply examiner caption overrides to broadcast payloads only, including the currently displayed media and reconnect intent; never modify saved case properties.
 - Reconcile persisted exam reports against current rubric metadata with database triggers on rubric and report saves; this covers admin/agent edits and in-flight AI results without reevaluation.
 - Rubric items carry stable ids assigned on save, and reconciliation matches by id, then text, then position, so text edits never reset earned scores.
 - Keep case edit permissions separate from case deletion permissions; enforce edits through server-side admin roles so collaborative editing does not broaden permanent deletion access.

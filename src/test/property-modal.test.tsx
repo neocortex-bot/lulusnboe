@@ -6,11 +6,11 @@ afterEach(() => { cleanup(); vi.useRealTimers(); });
 const property = { label: "Tanda vital", value: "TD 140/90 mmHg" };
 
 describe("participant information modal", () => {
-  it("dismisses exactly at 10 seconds", () => {
+  it("dismisses exactly at 20 seconds", () => {
     vi.useFakeTimers();
     const dismiss = vi.fn();
     render(<PropertyDisplay property={property} onDismiss={dismiss} />);
-    act(() => { vi.advanceTimersByTime(9000); });
+    act(() => { vi.advanceTimersByTime(19000); });
     expect(dismiss).not.toHaveBeenCalled();
     act(() => { vi.advanceTimersByTime(1000); });
     expect(dismiss).toHaveBeenCalledTimes(1);
@@ -40,7 +40,7 @@ describe("participant information modal", () => {
     const dismiss = vi.fn();
     const view = render(<PropertyDisplay property={property} onDismiss={dismiss} />);
     view.unmount();
-    act(() => { vi.advanceTimersByTime(10000); });
+    act(() => { vi.advanceTimersByTime(20000); });
     expect(dismiss).not.toHaveBeenCalled();
   });
 });
