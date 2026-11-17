@@ -24,6 +24,25 @@ beforeEach(() => { mock.rows = [session("Peserta A")]; mock.channels = []; mock.
 afterEach(() => { cleanup(); vi.useRealTimers(); });
 
 describe("examiner delivery and session transitions", () => {
+  it("overrides captions on displayed media, reconnects with the override, and restores the author's setting", async () => {
+    const row = session("Peserta A");
+    row.digital = [{ label: "EKG", value: "Normal", media_url: "/ekg.png", show_caption: true } as any];
+    mock.rows = [row];
+    render(<Examiner />);
+    fireEvent.click(screen.getByRole("button", { name: /EKG/ }));
+    const channel = mock.channels.find(ch => ch.name === "session:Peserta A");
+    const request = mock.send.mock.calls.at(-1)?.[0].payload;
+    await act(async () => channel.handlers[PROPERTY_ACK_EVENT]({ payload: { request_id: request.request_id } }));
+    fireEvent.click(screen.getByRole("button", { name: "Hilangkan semua caption" }));
+    const hidden = mock.send.mock.calls.at(-1)?.[0].payload;
+    expect(hidden.property.show_caption).toBe(false);
+    expect(row.digital[0]).toHaveProperty("show_caption", true);
+    act(() => channel.handlers[PROPERTY_SYNC_EVENT]({ payload: {} }));
+    expect(mock.send.mock.calls.at(-1)?.[0].payload.property.show_caption).toBe(false);
+    await act(async () => channel.handlers[PROPERTY_ACK_EVENT]({ payload: { request_id: hidden.request_id } }));
+    fireEvent.click(screen.getByRole("button", { name: /Caption media disembunyikan/ }));
+    expect(mock.send.mock.calls.at(-1)?.[0].payload.property.show_caption).toBe(true);
+  });
   it("auto-opens a reading session and keeps it when a second session appears", async () => {
     const view = render(<Examiner />);
     expect(screen.getByRole("heading", { name: "Peserta A" })).toBeInTheDocument();
