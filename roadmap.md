@@ -1,5 +1,11 @@
 # Roadmap
 
+## Verifikasi rekaman dan ujian bersamaan (18 Nov 2026)
+- [x] Enam perekam hook aplikasi bersamaan di Chromium dengan mikrofon sintetis, dua putaran masing-masing 12 detik: 12 audio berhasil didekode, mikrofon tetap hidup antarsoal dan semuanya berhenti pada akhir; tanpa error browser. Heap JS harness 3,41 → 3,80–3,84 MiB per konteks, bukan pengukuran RAM ujian penuh.
+- [x] Tes jalur Safari/iPhone: MP4 tanpa timeslice dan fallback opsi bitrate; 10 tes terarah lolos. Ini simulasi API, bukan verifikasi Safari/iPhone fisik.
+- [ ] Verifikasi ujian nyata sampai unggah dan penilaian — akses akun Supabase eksternal tidak tersedia.
+- [ ] Verifikasi rekaman iPhone asli — perangkat fisik tidak tersedia.
+
 ## Optimasi memori ujian (18 Nov 2026)
 - [x] Audio 32 kbps, preferensi mono 16 kHz dengan fallback Safari; buffer dilepas sesudah stop, mikrofon pada akhir rangkaian, indikator suara 10 Hz dan speech preview berbatas sesi.
 - [x] Hasil 20 per halaman, filter mode di server dan ringkasan JSON saja; transkrip/rubrik dimuat saat dibuka dan cache rincian dilepas saat ditutup.
