@@ -131,22 +131,12 @@ const StationDisplay = () => {
     stationToken: string,
     displayedSessionId: string | null
   ): Promise<StationSequenceInfo | null> => {
-    const { data: currentItem, error: currentError } = await supabase
-      .from("exam_sequence_items")
-      .select("deployment_id, station_token, sequence_order, session_id")
-      .eq("station_token", stationToken)
-      .maybeSingle();
-
-    if (currentError) throw currentError;
-    if (!currentItem) return null;
-
-    const { data, error } = await supabase
-      .from("exam_sequence_items")
-      .select("deployment_id, station_token, sequence_order, session_id")
-      .eq("deployment_id", currentItem.deployment_id)
-      .order("sequence_order", { ascending: true });
+    const { data, error } = await (supabase.rpc as any)("get_station_sequence_items", {
+      _station_token: stationToken,
+    });
 
     if (error) throw error;
+    if (!data || data.length === 0) return null;
     return resolveStationSequenceInfo(data ?? [], displayedSessionId, stationToken);
   }, []);
 

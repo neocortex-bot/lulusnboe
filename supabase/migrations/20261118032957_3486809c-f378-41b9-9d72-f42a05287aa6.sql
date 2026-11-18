@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.is_deployment_participant(uuid) FROM PUBLIC, anon;
