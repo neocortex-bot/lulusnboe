@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Mic, Loader2, ArrowLeft } from "lucide-react";
+import { EXAM_AUDIO_CONSTRAINTS } from "@/lib/examPerformance";
 
 interface AudioGatekeeperProps {
   onReady: (stream: MediaStream) => void;
@@ -16,7 +17,7 @@ const AudioGatekeeper = ({ onReady }: AudioGatekeeperProps) => {
     setRequesting(true);
     setError(null);
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: EXAM_AUDIO_CONSTRAINTS });
       onReady(stream);
     } catch (err: any) {
       setError("Izin mikrofon diperlukan. Silakan izinkan akses dan coba lagi.");

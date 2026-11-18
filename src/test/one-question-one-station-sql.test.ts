@@ -53,7 +53,7 @@ describe("one-question-one-station SQL invariant", () => {
 
   it("keeps result attribution on result -> session -> case", () => {
     expect(examActiveSource).toContain("session_id: sessionId");
-    expect(resultsViewerSource).toContain("exam_sessions:session_id(status, case_id, clinical_cases:case_id(title, exam_mode))");
+    expect(resultsViewerSource).toContain("exam_sessions:session_id!inner(status, case_id, clinical_cases:case_id!inner(title, exam_mode))");
     expect(evaluateExamSource).toContain(".eq(\"id\", result.session_id).single()");
     expect(evaluateExamSource).toContain(".eq(\"id\", sessionData.case_id).single()");
   });

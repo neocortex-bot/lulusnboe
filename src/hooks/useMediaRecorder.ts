@@ -1,4 +1,5 @@
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
+import { EXAM_AUDIO_BITS_PER_SECOND } from "@/lib/examPerformance";
 
 interface UseMediaRecorderReturn {
   isRecording: boolean;
@@ -16,10 +17,25 @@ const useMediaRecorder = (): UseMediaRecorderReturn => {
   const [error, setError] = useState<string | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  const stopPromiseRef = useRef<Promise<Blob | null> | null>(null);
+
+  useEffect(() => () => {
+    const recorder = recorderRef.current;
+    if (recorder) {
+      recorder.ondataavailable = null;
+      recorder.onerror = null;
+      // Preserve an already requested stop callback so submission can finish.
+      if (recorder.state !== "inactive") recorder.stop();
+    }
+    recorderRef.current = null;
+    chunksRef.current = [];
+    stopPromiseRef.current = null;
+  }, []);
 
   const start = useCallback((stream: MediaStream) => {
     if (recorderRef.current && recorderRef.current.state !== "inactive") return;
     chunksRef.current = [];
+    stopPromiseRef.current = null;
     setChunkCount(0);
     setRecordedBytes(0);
     setError(null);
@@ -39,9 +55,16 @@ const useMediaRecorder = (): UseMediaRecorderReturn => {
         ? "audio/mp4"
         : "";
 
-      const recorder = mimeType
-        ? new MediaRecorder(stream, { mimeType })
-        : new MediaRecorder(stream);
+      let recorder: MediaRecorder;
+      try {
+        recorder = new MediaRecorder(stream, {
+          ...(mimeType ? { mimeType } : {}),
+          audioBitsPerSecond: EXAM_AUDIO_BITS_PER_SECOND,
+        });
+      } catch {
+        // Older Safari versions can reject bitrate options.
+        recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
+      }
 
       recorder.ondataavailable = (e) => {
         if (e.data.size > 0) {
@@ -68,12 +91,22 @@ const useMediaRecorder = (): UseMediaRecorderReturn => {
   }, []);
 
   const stop = useCallback((): Promise<Blob | null> => {
-    return new Promise((resolve) => {
+    if (stopPromiseRef.current) return stopPromiseRef.current;
+    const promise = new Promise<Blob | null>((resolve) => {
       const recorder = recorderRef.current;
-      const buildBlob = () =>
-        chunksRef.current.length > 0
+      const buildBlob = () => {
+        const blob = chunksRef.current.length > 0
           ? new Blob(chunksRef.current, { type: chunksRef.current[0].type || "audio/webm" })
           : null;
+        chunksRef.current = [];
+        if (recorder) {
+          recorder.ondataavailable = null;
+          recorder.onerror = null;
+          recorder.onstop = null;
+        }
+        recorderRef.current = null;
+        return blob;
+      };
 
       if (!recorder || recorder.state === "inactive") {
         setIsRecording(false);
@@ -94,6 +127,9 @@ const useMediaRecorder = (): UseMediaRecorderReturn => {
         resolve(buildBlob());
       }
     });
+    stopPromiseRef.current = promise;
+    void promise.then(() => { if (stopPromiseRef.current === promise) stopPromiseRef.current = null; });
+    return promise;
   }, []);
 
   return { isRecording, chunkCount, recordedBytes, error, start, stop };

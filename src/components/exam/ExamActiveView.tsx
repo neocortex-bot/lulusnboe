@@ -71,7 +71,6 @@ const ExamActiveView = ({
   onComplete,
 }: ExamActiveViewProps) => {
   const { isRecording, chunkCount, recordedBytes, error: recorderError, start, stop } = useMediaRecorder();
-  const { level, hasRecentSound } = useAudioLevel(audioStream);
   const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const completingRef = useRef(false);
@@ -79,6 +78,7 @@ const ExamActiveView = ({
   const [showCase, setShowCase] = useState(true);
   const [isLastCase, setIsLastCase] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const { level, hasRecentSound } = useAudioLevel(submitting ? null : audioStream);
   const [liveTranscript, setLiveTranscript] = useState("");
 
 
@@ -158,7 +158,7 @@ const ExamActiveView = ({
   // The authoritative transcript is produced server-side from the recording.
   useEffect(() => {
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SR) return;
+    if (!SR || submitting) return;
     // iOS: speech recognition takes exclusive mic control and silences MediaRecorder.
     const ua = navigator.userAgent;
     const isIOS = /iPad|iPhone|iPod/.test(ua) || (ua.includes("Macintosh") && navigator.maxTouchPoints > 1);
@@ -168,7 +168,8 @@ const ExamActiveView = ({
     try {
       recognition = new SR();
       recognition.lang = "id-ID";
-      recognition.continuous = true;
+      // Restart short recognition sessions instead of retaining a whole exam's results.
+      recognition.continuous = false;
       recognition.interimResults = true;
       recognition.onresult = (event: any) => {
         let text = "";
@@ -198,7 +199,7 @@ const ExamActiveView = ({
         /* ignore */
       }
     };
-  }, []);
+  }, [submitting]);
 
 
 

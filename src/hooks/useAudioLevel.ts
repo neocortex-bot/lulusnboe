@@ -12,7 +12,7 @@ const useAudioLevel = (stream: MediaStream | null) => {
   useEffect(() => {
     if (!stream) return;
     let ctx: AudioContext | null = null;
-    let raf = 0;
+    let timer: ReturnType<typeof setTimeout> | undefined;
 
     try {
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
@@ -33,7 +33,7 @@ const useAudioLevel = (stream: MediaStream | null) => {
         setLevel(normalized);
         if (normalized > 6) lastSoundRef.current = Date.now();
         setHasRecentSound(Date.now() - lastSoundRef.current < 8000);
-        raf = requestAnimationFrame(loop);
+        timer = setTimeout(loop, 100);
       };
       loop();
     } catch (err) {
@@ -41,7 +41,7 @@ const useAudioLevel = (stream: MediaStream | null) => {
     }
 
     return () => {
-      cancelAnimationFrame(raf);
+      clearTimeout(timer);
       ctx?.close().catch(() => {});
     };
   }, [stream]);

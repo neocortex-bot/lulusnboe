@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,6 +12,7 @@ import type { Json } from "@/integrations/supabase/types";
 import DetailedFeedbackDisplay from "@/components/exam/DetailedFeedbackDisplay";
 import { invokeExamAi } from "@/lib/examAi";
 import { applyItemScore, findReportItemIndex, scoreChoices, type ScoreReport as RubricScoreReport } from "@/lib/rubricScore";
+import { EXAM_RESULTS_PAGE_SIZE, resultPageRange, createRealtimeFallback } from "@/lib/examPerformance";
 
 interface ScoreItem {
   item: string;
@@ -43,52 +44,83 @@ interface ResultsViewerProps {
   examMode: string;
 }
 
+// JSON-path aliases keep the response small; a dynamic selector avoids recursive SDK type expansion.
+const resultSummaryColumns: string = "id, created_at, audio_file_url, ai_eval_status, ai_eval_error, score:ai_score_report->score, passStatus:ai_score_report->>passStatus, totalScore:ai_score_report->totalScore, totalPossible:ai_score_report->totalPossible, hasCriticalFail:ai_score_report->hasCriticalFail, profiles:candidate_id(full_name), exam_sessions:session_id!inner(status, case_id, clinical_cases:case_id!inner(title, exam_mode))";
+
 const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [audioUrls, setAudioUrls] = useState<Record<string, string>>({});
+  const [page, setPage] = useState(0);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const { data: results = [], isLoading } = useQuery({
-    queryKey: ["exam_results_admin"],
+  const { data: resultPage, isLoading, isError } = useQuery({
+    queryKey: ["exam_results_admin", examMode, page],
+    gcTime: 30_000,
+    staleTime: 30_000,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const [from, to] = resultPageRange(page);
+      const { data, error, count } = await supabase
         .from("exam_results")
-        .select("*, profiles:candidate_id(full_name, email), exam_sessions:session_id(status, case_id, clinical_cases:case_id(title, exam_mode))")
-        .order("created_at", { ascending: false });
+        .select(resultSummaryColumns, { count: "exact" })
+        .eq("exam_sessions.clinical_cases.exam_mode", examMode)
+        .order("created_at", { ascending: false })
+        .order("id", { ascending: false })
+        .range(from, to);
+      if (error) throw error;
+      return { rows: (data ?? []).map((row: any) => ({ ...row, ai_score_report: {
+        items: [], score: row.score, passStatus: row.passStatus,
+        totalScore: row.totalScore, totalPossible: row.totalPossible, hasCriticalFail: row.hasCriticalFail,
+      } })), count: count ?? 0 };
+    },
+  });
+  const results = resultPage?.rows ?? [];
+  const filteredResults = results;
+  const { data: detail, isLoading: detailLoading, isError: detailError } = useQuery({
+    queryKey: ["exam_result_detail", expandedId],
+    enabled: !!expandedId,
+    gcTime: 0,
+    staleTime: 0,
+    queryFn: async () => {
+      if (!expandedId) return null;
+      const { data, error } = await supabase.from("exam_results")
+        .select("id, transcript, ai_score_report, audio_file_url")
+        .eq("id", expandedId).single();
       if (error) throw error;
       return data;
     },
-    refetchInterval: (query) => {
-      const rows = (query.state.data as any[] | undefined) ?? [];
-      return rows.some((r) => r.ai_eval_status === "processing" || r.ai_eval_status === "queued") ? 5000 : false;
-    },
   });
-
-  const filteredResults = results.filter(
-    (result: any) => result.exam_sessions?.clinical_cases?.exam_mode === examMode
-  );
+  useEffect(() => { setPage(0); setExpandedId(null); }, [examMode]);
 
   // Rubric edits in another page/device also recalculate completed results.
   useEffect(() => {
+    const refresh = async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["exam_results_admin"] }),
+        queryClient.invalidateQueries({ queryKey: ["exam_result_detail"] }),
+      ]);
+    };
+    const fallback = createRealtimeFallback(refresh);
     const channel = supabase
       .channel(`rubric-results-${crypto.randomUUID()}`)
-      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "exam_results" }, () => {
-        queryClient.invalidateQueries({ queryKey: ["exam_results_admin"] });
+      .on("postgres_changes", { event: "*", schema: "public", table: "exam_results" }, () => {
+        void fallback.refresh();
       })
-      .subscribe();
-    const refresh = () => queryClient.invalidateQueries({ queryKey: ["exam_results_admin"] });
-    const interval = window.setInterval(refresh, 15000);
-    window.addEventListener("focus", refresh);
+      .subscribe(fallback.onStatus);
+    const onFocus = () => { void fallback.refresh(); };
+    window.addEventListener("focus", onFocus);
+    window.addEventListener("online", onFocus);
     return () => {
       supabase.removeChannel(channel);
-      window.clearInterval(interval);
-      window.removeEventListener("focus", refresh);
+      fallback.dispose();
+      window.removeEventListener("focus", onFocus);
+      window.removeEventListener("online", onFocus);
     };
   }, [queryClient]);
 
   useEffect(() => {
     if (!expandedId) return;
+    let cancelled = false;
     const result = results.find((r: any) => r.id === expandedId);
     if (!result?.audio_file_url || audioUrls[expandedId]) return;
 
@@ -97,11 +129,12 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
       const { data } = await supabase.storage
         .from("exam-audio")
         .createSignedUrl(filePath, 3600);
-      if (data?.signedUrl) {
-        setAudioUrls((prev) => ({ ...prev, [expandedId]: data.signedUrl }));
+      if (!cancelled && data?.signedUrl) {
+        setAudioUrls({ [expandedId]: data.signedUrl });
       }
     };
     generateSignedUrl();
+    return () => { cancelled = true; };
   }, [expandedId, results, audioUrls]);
 
   const evaluateMutation = useMutation({
@@ -131,6 +164,7 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["exam_results_admin"] });
+      queryClient.invalidateQueries({ queryKey: ["exam_result_detail"] });
       toast({ title: "Audio berhasil dihapus" });
     },
     onError: (e: Error) => {
@@ -163,20 +197,22 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
       return { resultId, report: savedRow?.ai_score_report ?? updated };
     },
     onMutate: async ({ resultId, report, itemIndex, newPoints }) => {
-      await queryClient.cancelQueries({ queryKey: ["exam_results_admin"] });
+      await queryClient.cancelQueries({ queryKey: ["exam_result_detail", resultId] });
       const optimistic = applyItemScore(report, itemIndex, newPoints);
-      queryClient.setQueryData(["exam_results_admin"], (rows: any[] | undefined) =>
-        rows?.map((row) => (row.id === resultId ? { ...row, ai_score_report: optimistic } : row))
+      queryClient.setQueryData(["exam_result_detail", resultId], (row: any) =>
+        row ? { ...row, ai_score_report: optimistic } : row
       );
     },
     onSuccess: ({ resultId, report }) => {
-      queryClient.setQueryData(["exam_results_admin"], (rows: any[] | undefined) =>
-        rows?.map((row) => (row.id === resultId ? { ...row, ai_score_report: report } : row))
+      queryClient.setQueryData(["exam_result_detail", resultId], (row: any) =>
+        row ? { ...row, ai_score_report: report } : row
       );
+      queryClient.invalidateQueries({ queryKey: ["exam_results_admin"] });
       toast({ title: "Nilai butir diperbarui" });
     },
     onError: (e: Error) => {
       queryClient.invalidateQueries({ queryKey: ["exam_results_admin"] });
+      queryClient.invalidateQueries({ queryKey: ["exam_result_detail"] });
       toast({ title: "Gagal menyimpan nilai", description: e.message, variant: "destructive" });
     },
   });
@@ -196,6 +232,7 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
       if (error) throw error;
     },
     onSuccess: () => {
+      setExpandedId(null);
       queryClient.invalidateQueries({ queryKey: ["exam_results_admin"] });
       toast({ title: "Hasil ujian berhasil dihapus" });
     },
@@ -237,7 +274,7 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
     }
 
     if (parsed.totalPossible && parsed.totalPossible > 0) {
-      const pct = Math.round((parsed.totalScore! / parsed.totalPossible) * 100);
+      const pct = Math.round(((parsed.totalScore ?? 0) / parsed.totalPossible) * 100);
       return { label: `${pct}% (${parsed.totalScore}/${parsed.totalPossible})`, variant: "default" };
     }
 
@@ -253,7 +290,7 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {isLoading ? (
+        {isError ? <p className="text-destructive">Hasil gagal dimuat. <Button variant="outline" onClick={() => queryClient.invalidateQueries({ queryKey: ["exam_results_admin"] })}>Coba lagi</Button></p> : isLoading ? (
           <p className="text-muted-foreground">Loading...</p>
         ) : filteredResults.length === 0 ? (
           <p className="text-muted-foreground text-center py-8">No exam results yet.</p>
@@ -270,11 +307,12 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredResults.map((r: any) => {
+              {filteredResults.map((summary: any) => {
+                const r = expandedId === summary.id && detail?.id === summary.id ? { ...summary, ...detail } : summary;
                 const scoreDisplay = getOverallDisplay(r.ai_score_report);
                 const parsed = parseScoreReport(r.ai_score_report);
                 return (
-                  <>
+                  <Fragment key={r.id}>
                     <TableRow key={r.id} className="cursor-pointer" onClick={() => setExpandedId(expandedId === r.id ? null : r.id)}>
                       <TableCell className="font-medium whitespace-normal break-words max-w-[120px] sm:max-w-none">
                         {r.profiles?.full_name ?? "—"}
@@ -340,6 +378,7 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
                       <TableRow key={`${r.id}-detail`}>
                         <TableCell colSpan={5} className="bg-muted/30 p-4">
                           <div className="space-y-4">
+                            {detailLoading ? <p className="text-muted-foreground">Memuat rincian...</p> : detailError ? <p className="text-destructive">Rincian gagal dimuat. <Button variant="outline" onClick={() => queryClient.invalidateQueries({ queryKey: ["exam_result_detail", r.id] })}>Coba lagi</Button></p> : detail?.id === r.id && <>
                             {r.audio_file_url && (
                               <div>
                                 <div className="flex items-center gap-2 mb-1">
@@ -400,7 +439,7 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
                                           <span className="flex-1 min-w-0 break-words">{item.item}</span>
                                           <div className="flex items-center gap-1 shrink-0 mt-0.5" title="Klik angka untuk mengubah nilai butir ini">
                                             {scoreChoices(max).map((choice) => (
-                                              <button
+                                              <Button
                                                 key={choice}
                                                 type="button"
                                                 disabled={overrideScoreMutation.isPending}
@@ -416,7 +455,7 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
                                                 aria-label={`Beri nilai ${choice} untuk butir ${idx + 1}`}
                                               >
                                                 {choice}
-                                              </button>
+                                              </Button>
                                             ))}
                                             <span className="text-xs font-mono text-muted-foreground">/{max}</span>
                                           </div>
@@ -457,17 +496,23 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
                               reasoning={parsed.reasoning}
                               tips={parsed.tips}
                             />
+                            </>}
                           </div>
                         </TableCell>
                       </TableRow>
                     )}
-                  </>
+                  </Fragment>
                 );
               })}
             </TableBody>
           </Table>
           </div>
         )}
+        <div className="flex items-center justify-between gap-2 mt-4">
+          <Button variant="outline" disabled={page === 0 || isLoading} onClick={() => { setExpandedId(null); setPage((p) => p - 1); }}>Sebelumnya</Button>
+          <span className="text-sm text-muted-foreground">Halaman {page + 1} / {Math.max(1, Math.ceil((resultPage?.count ?? 0) / EXAM_RESULTS_PAGE_SIZE))}</span>
+          <Button variant="outline" disabled={isLoading || (page + 1) * EXAM_RESULTS_PAGE_SIZE >= (resultPage?.count ?? 0)} onClick={() => { setExpandedId(null); setPage((p) => p + 1); }}>Berikutnya</Button>
+        </div>
       </CardContent>
     </Card>
   );

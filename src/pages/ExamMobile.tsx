@@ -25,6 +25,7 @@ import {
   type ExamRealtimeClient,
 } from "@/lib/examRealtime";
 import { stopExamAudioStream } from "@/lib/examCleanup";
+import { EXAM_AUDIO_CONSTRAINTS, EXAM_FALLBACK_POLL_MS } from "@/lib/examPerformance";
 
 type ExamStep = "gatekeeper" | "reading" | "active" | "next_case" | "timeout_unresolved" | "force_closed" | "completed" | "duplicate_warning";
 
@@ -49,6 +50,13 @@ const ExamMobile = () => {
   const pollIntervalRef = useRef<number | null>(null);
   activeSessionRef.current = activeSessionId;
   audioStreamRef.current = audioStream;
+
+  useEffect(() => {
+    if (!["completed", "force_closed", "duplicate_warning"].includes(step)) return;
+    stopExamAudioStream(audioStreamRef.current);
+    audioStreamRef.current = null;
+    setAudioStream(null);
+  }, [step]);
 
   useEffect(() => {
     return () => {
@@ -174,7 +182,7 @@ const ExamMobile = () => {
         if (tracks.length === 0 || tracks.every(t => t.readyState === "ended")) {
           console.warn("Audio stream tracks ended during reading phase, re-requesting...");
           try {
-            const newStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const newStream = await navigator.mediaDevices.getUserMedia({ audio: EXAM_AUDIO_CONSTRAINTS });
             setAudioStream(newStream);
           } catch (err) {
             console.error("Failed to re-acquire audio:", err);
@@ -349,13 +357,14 @@ const ExamMobile = () => {
     };
   }, [activeSessionId, deploymentId]);
 
-  // Poll even when realtime is healthy (at a slower cadence). This refreshes
-  // the deployment scope and wakes bounded recovery if a websocket event was
-  // delayed or unavailable.
+  // Healthy realtime does not poll; unresolved next-case recovery is bounded separately.
   useEffect(() => {
-    if (!activeSessionId) return;
+    if (!activeSessionId || (realtimeStatus === "SUBSCRIBED" && step !== "timeout_unresolved")) return;
     let cancelled = false;
+    let inFlight = false;
     const poll = async () => {
+      if (inFlight || cancelled) return;
+      inFlight = true;
       try {
         const context = await loadCandidateSequenceContext(activeSessionId);
         if (cancelled) return;
@@ -365,11 +374,13 @@ const ExamMobile = () => {
         }
       } catch (error) {
         if (!cancelled) console.warn("Exam synchronization poll failed:", error);
+      } finally {
+        inFlight = false;
       }
     };
     const pollInterval = window.setInterval(
       () => void poll(),
-      realtimeStatus === "SUBSCRIBED" ? 10000 : 3000
+      EXAM_FALLBACK_POLL_MS
     );
     pollIntervalRef.current = pollInterval;
 

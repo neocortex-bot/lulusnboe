@@ -26,6 +26,7 @@ import {
   STATION_RESET_COUNTDOWN_SECONDS,
 } from "@/lib/stationReset";
 import { firstRpcRow } from "@/lib/examSequence";
+import { createRealtimeFallback } from "@/lib/examPerformance";
 import {
   bindExamRealtime,
   type ExamRealtimeClient,
@@ -347,11 +348,14 @@ const StationDisplay = () => {
         console.warn("Station realtime sequence refresh failed:", error);
       }
     };
+    let disposed = false;
     const refreshSession = async () => {
       const { data } = await supabase.rpc("get_session_by_token", { _token: currentToken });
       const row = firstRpcRow(data);
-      if (row?.id === displayedSessionId) updateFromRow(row);
+      if (!disposed && row?.id === displayedSessionId) updateFromRow(row);
     };
+
+    const fallback = createRealtimeFallback(refreshSession);
 
     const cleanupRealtime = bindExamRealtime(
       supabase as unknown as ExamRealtimeClient,
@@ -367,10 +371,11 @@ const StationDisplay = () => {
           if (table === "exam_sequence_items") {
             void refreshSequence();
           } else if (table === "exam_results") {
-            void refreshSession();
+            void fallback.refresh();
           }
         },
         onStatus: (status, error) => {
+          fallback.onStatus(status);
           if (["CHANNEL_ERROR", "TIMED_OUT", "CLOSED"].includes(status)) {
             console.warn("Station realtime unavailable; polling remains active:", { status, error });
           }
@@ -378,18 +383,13 @@ const StationDisplay = () => {
       }
     );
 
-    const pollInterval = setInterval(async () => {
-      // A token identifies exactly one session; refreshSession ignores stale
-      // responses that arrive after an advance/rebind.
-      await refreshSession();
-    }, 3000);
-
     let cleaned = false;
     const cleanup = () => {
       if (cleaned) return;
       cleaned = true;
+      disposed = true;
       cleanupRealtime();
-      clearInterval(pollInterval);
+      fallback.dispose();
       if (stationSubscriptionCleanupRef.current === cleanup) {
         stationSubscriptionCleanupRef.current = null;
       }

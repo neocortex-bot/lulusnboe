@@ -1,5 +1,12 @@
 # Roadmap
 
+## Optimasi memori ujian (18 Nov 2026)
+- [x] Audio 32 kbps, preferensi mono 16 kHz dengan fallback Safari; buffer dilepas sesudah stop, mikrofon pada akhir rangkaian, indikator suara 10 Hz dan speech preview berbatas sesi.
+- [x] Hasil 20 per halaman, filter mode di server dan ringkasan JSON saja; transkrip/rubrik dimuat saat dibuka dan cache rincian dilepas saat ditutup.
+- [x] Realtime dengan polling cadangan 30 detik tanpa permintaan tumpang tindih di station/penguji/hasil/peserta; reconnect menyegarkan station.
+- [x] Penguncian antrean serial terverifikasi langsung di Supabase; tidak mengubah nilai, soal, maupun penyedia transkripsi. Rekaman Chromium 32 kbps menghasilkan audio nonkosong dan semua track berhenti.
+- [ ] Verifikasi beban beberapa ujian nyata dan kompatibilitas iPhone — akses login pengujian Supabase eksternal dan perangkat iPhone tidak tersedia.
+
 ## Tampilan properti (17 Nov 2026)
 - [x] Ubah countdown modal bersama menjadi 20 detik.
 - [x] Tambahkan override caption media di penguji tanpa mengubah soal; properti teks tetap terlihat.

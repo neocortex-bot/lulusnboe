@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Monitor, MonitorOff, AlertTriangle, CaptionsOff } from "lucide-react";
 import { parseDigitalProperties, PROPERTY_SHOW_EVENT, PROPERTY_ACK_EVENT, PROPERTY_SYNC_EVENT, isMediaPending, isCaptionVisible, withExaminerCaptionOverride, type DigitalProperty } from "@/lib/digitalProperties";
 import { pickActiveExaminerSessions, resolveSelectedSession, examinerPhase, type ExaminerSessionRow } from "@/lib/examinerSessions";
+import { createRealtimeFallback } from "@/lib/examPerformance";
 
 type Prop = string | { name?: string; label?: string; key?: string; value?: string };
 
@@ -42,7 +43,7 @@ const Examiner = () => {
   const { data: rows = [], isLoading, isError, refetch } = useQuery({
     queryKey: ["examiner_sessions", user?.id, isMasterAdmin],
     enabled: !!user,
-    refetchInterval: 15000,
+    staleTime: 30_000,
     queryFn: async () => {
       if (!user) return [];
       let q = supabase.from("exam_sessions")
@@ -89,12 +90,15 @@ const Examiner = () => {
 
   useEffect(() => {
     if (!user) return;
+    const fallback = createRealtimeFallback(async () => { await refetch(); });
     const ch = supabase.channel(`examiner:${user.id}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "exam_sessions", ...(isMasterAdmin ? {} : { filter: `examiner_id=eq.${user.id}` }) },
         () => qc.invalidateQueries({ queryKey: ["examiner_sessions"] }))
-      .subscribe();
-    return () => { void supabase.removeChannel(ch); };
-  }, [user, isMasterAdmin, qc]);
+      .subscribe(fallback.onStatus);
+    const refresh = () => { void fallback.refresh(); };
+    window.addEventListener("online", refresh);
+    return () => { fallback.dispose(); window.removeEventListener("online", refresh); void supabase.removeChannel(ch); };
+  }, [user, isMasterAdmin, qc, refetch]);
 
   const active = useMemo(() => pickActiveExaminerSessions(rows), [rows]);
   const currentId = choosing ? null : resolveSelectedSession(active, selected, previousRef.current);
