@@ -508,11 +508,24 @@ export type Database = {
           status: string
         }[]
       }
+      get_station_sequence_items: {
+        Args: { _station_token: string }
+        Returns: {
+          deployment_id: string
+          sequence_order: number
+          session_id: string
+          station_token: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      is_deployment_participant: {
+        Args: { _deployment_id: string }
         Returns: boolean
       }
       is_master_admin: { Args: { _user_id: string }; Returns: boolean }
