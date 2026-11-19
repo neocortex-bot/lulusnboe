@@ -1,5 +1,10 @@
 # Roadmap
 
+## Pengujian deploy enam soal (19 Nov 2026)
+- [x] Reproduksi di Supabase asli: enam sesi dibuat dalam 0,779 detik; kegagalan penautan meninggalkan enam sesi tanpa urutan. Seluruh data uji dibersihkan.
+- [ ] Jadikan deploy transaksi atomik dengan identitas permintaan stabil; uji kegagalan, retry, dan enam deploy bersamaan.
+- [ ] Verifikasi browser admin asli dan RAM server — sesi login eksternal serta pengukuran RAM belum tersedia.
+
 ## Tahap kedua optimasi aman (19 Nov 2026)
 - [x] Filter mode dan batas 10 sesi per halaman di server, urutan created_at/id stabil; uji halaman berikut, pergantian mode, kegagalan muat, dan halaman menyusut lolos.
 - [x] 201 tes lolos, build OK; permintaan join/filter/range PostgREST diterima (HTTP 200). Akun publik menghasilkan 0 baris sesuai izin; pembacaan sesi berisi data melalui admin asli belum terverifikasi karena akses sesi eksternal tidak tersedia. Tidak mengubah sesi/hasil asli.
