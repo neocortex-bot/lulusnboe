@@ -13,3 +13,4 @@
 - Prefer low-bitrate mono microphone capture with native Safari fallback; release recorder buffers after stop and microphone tracks only at final exit, preserving multi-case recording.- Word by word ditampilkan & dicek AI di detail soal; disimpan di field answer butir rubrik dan tidak dibaca evaluate-exam (rubric-alignment read-only, admin-only).
 
 - Agent fetch and ingest use shared Word by Word preservation by stable rubric ID; keep answers private, alignment read-only, and apply accepted suggestions through case-admin so grading remains independent.
+- Pre-review reads per-item answers from case_answer_keys first with clinical_cases fallback and saves answers only to case_answer_keys, keeping candidate-readable rubric items answer-free.

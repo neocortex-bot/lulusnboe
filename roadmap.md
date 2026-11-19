@@ -1,5 +1,10 @@
 # Roadmap
 
+## Perbaikan Word by Word pre-review (19 Nov 2026)
+- [x] Baca jawaban dari case_answer_keys terlebih dahulu, dengan fallback soal lama; simpan jawaban hanya di tabel khusus admin.
+- [x] 193 tes lolos termasuk editor serta simpan/ingest memakai data uji; build OK. SQL memverifikasi 17/17, 14/14, 10/10 jawaban privat dan nol key answer di clinical_cases; ketiga soal tetap prereview tanpa perubahan data.
+- [ ] Verifikasi simpan/ingest lewat akun admin asli — akses login pengujian Supabase eksternal tidak tersedia; data soal tidak boleh diubah untuk pengujian.
+
 ## Word by Word API (19 Nov 2026)
 - [x] Selaraskan ingest, fetch, dan edit answer dengan ID stabil; cek AI untuk agent tetap read-only.
 - [x] 186 tes lolos; case-admin, ingest-case, rubric-alignment terdeploy; schema ingest dan penolakan kunci salah terverifikasi.

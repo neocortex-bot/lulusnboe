@@ -93,14 +93,21 @@ const PreReview = () => {
         .order("created_at", { ascending: false });
       if (error) throw error;
       // Properti soal disimpan di case_answer_keys (tabel khusus admin)
-      const { data: answerKeys } = await supabase
+      const { data: answerKeys, error: answerKeysError } = await supabase
         .from("case_answer_keys")
         .select("case_id, checklist_rubric");
+      if (answerKeysError) throw answerKeysError;
       const akMap = new Map((answerKeys || []).map((ak: any) => [ak.case_id, ak]));
       return (data || []).map((c: any): DraftCase => {
         const akRaw = akMap.get(c.id)?.checklist_rubric;
         const raw = c.checklist_rubric;
-        const items = Array.isArray(raw?.items) ? raw.items : Array.isArray(raw) ? raw : [];
+        const ccItems = Array.isArray(raw?.items) ? raw.items : Array.isArray(raw) ? raw : [];
+        const akItems = Array.isArray(akRaw?.items) ? akRaw.items : Array.isArray(akRaw) ? akRaw : [];
+        const items = (akItems.length ? akItems : ccItems).map((it: any, idx: number) => ({
+          ...(ccItems[idx] ?? {}),
+          ...it,
+          answer: it.answer ?? ccItems[idx]?.answer ?? "",
+        }));
         const props = Array.isArray(akRaw?.properties) ? akRaw.properties : [];
         return {
           id: c.id,
@@ -125,8 +132,12 @@ const PreReview = () => {
   });
 
   const save = async (d: DraftCase, publish: boolean) => {
-    // Rubrik untuk clinical_cases TIDAK boleh memuat properti soal (bisa dibaca peserta).
-    const rubric = { enabled: true, items: d.items };
+    // Jawaban per butir dan properti hanya disimpan di tabel khusus admin.
+    const rubricFull = { enabled: true, items: d.items };
+    const rubricCandidate = {
+      enabled: true,
+      items: d.items.map(({ answer: _answer, ...rest }) => rest),
+    };
     const properties = d.properties.map((p) => p.trim()).filter(Boolean);
     const payload: any = {
       title: d.title.trim(),
@@ -136,7 +147,7 @@ const PreReview = () => {
       initial_prompt: d.initial_prompt,
       questions_text: d.questions_text,
       answer_key_text: d.answer_key_text,
-      checklist_rubric: rubric,
+      checklist_rubric: rubricCandidate,
       rubric_mode: d.items.length > 0 ? "checklist" : "none",
       status: publish ? "published" : PREREVIEW_STATUS,
       source: "admin",
@@ -160,9 +171,9 @@ const PreReview = () => {
     }
     const { error: akErr } = await supabase
       .from("case_answer_keys")
-      .upsert({ case_id: id, answer_key_text: d.answer_key_text, checklist_rubric: { ...rubric, properties } as any }, { onConflict: "case_id" });
+      .upsert({ case_id: id, answer_key_text: d.answer_key_text, checklist_rubric: { ...rubricFull, properties } as any }, { onConflict: "case_id" });
     if (akErr) throw akErr;
-    return id!;
+    return id;
   };
 
   const saveMut = useMutation({
