@@ -214,6 +214,24 @@ export type Database = {
         }
         Relationships: []
       }
+      exam_deployment_requests: {
+        Row: {
+          created_at: string
+          payload: Json
+          request_id: string
+        }
+        Insert: {
+          created_at?: string
+          payload: Json
+          request_id: string
+        }
+        Update: {
+          created_at?: string
+          payload?: Json
+          request_id?: string
+        }
+        Relationships: []
+      }
       exam_results: {
         Row: {
           ai_eval_error: string | null
@@ -471,6 +489,13 @@ export type Database = {
         Returns: Json
       }
       claim_next_ai_evaluation: { Args: never; Returns: string }
+      deploy_exam_batch: {
+        Args: { _request_id: string; _stations: Json }
+        Returns: {
+          id: string
+          station_token: string
+        }[]
+      }
       get_case_assets_for_display: {
         Args: { _case_id: string }
         Returns: {
