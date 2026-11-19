@@ -1,5 +1,12 @@
 # Roadmap
 
+## Tahap pertama optimasi dan properti digital pre-review (19 Nov 2026)
+- [x] Perbaiki baca/editor/simpan properti digital privat dengan editor bersama; pertahankan Word by Word, ID, poin, dan critical; query kunci hanya untuk draft yang dimuat.
+- [x] 197 tes lolos dan build OK; simpan/ingest data uji mempertahankan kartu digital, jawaban, ID, poin/critical dan properti fisik. SQL asli: 2/2/1 kartu serta 10/17/14 jawaban tetap utuh; ketiga soal sudah published, tidak muncul di prereview. Tidak mengubah data asli.
+- [x] Pemilih deploy hanya memuat id/judul/mode/kategori published untuk mode terpilih, cache terpisah; tes pemilihan dan cache lolos. Ukuran JSON SQL ekuivalen seluruh 199 soal: 2.095.579 → 34.396 byte (~98,4% lebih kecil), bukan pengukuran RAM/jaringan browser.
+- [ ] Verifikasi simpan dengan akun admin pada data asli — Supabase eksternal tidak menyediakan sesi pengujian; simpan/ingest lewat editor diverifikasi hanya dengan data uji.
+- Tahap berikut setelah tahap pertama terverifikasi: ringkasan/paginasi daftar admin dan station, detail penguji, ketahanan antrean AI, lalu pengukuran beban nyata/iPhone; bukan perubahan penilaian.
+
 ## Perbaikan Word by Word pre-review (19 Nov 2026)
 - [x] Baca jawaban dari case_answer_keys terlebih dahulu, dengan fallback soal lama; simpan jawaban hanya di tabel khusus admin.
 - [x] 193 tes lolos termasuk editor serta simpan/ingest memakai data uji; build OK. SQL memverifikasi 17/17, 14/14, 10/10 jawaban privat dan nol key answer di clinical_cases; ketiga soal tetap prereview tanpa perubahan data.

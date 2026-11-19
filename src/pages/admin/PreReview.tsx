@@ -17,12 +17,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Plus, Trash2, Wand2, Send, Save } from "lucide-react";
 import PropertiesEditor from "@/components/admin/PropertiesEditor";
+import DigitalPropertiesEditor from "@/components/admin/DigitalPropertiesEditor";
+import { cleanDigitalProperties, parseDigitalProperties, isMediaPending, type DigitalProperty } from "@/lib/digitalProperties";
 
 // Pre-review cases live in clinical_cases with status = "prereview".
 // They are never deployable (deploy only reads status = "published").
 export const PREREVIEW_STATUS = "prereview";
 
 interface ChecklistItem {
+  id?: string;
   answer: string; // the exact sentence the candidate should say
   text: string; // the checklist criterion
   points: number; // 1-2
@@ -40,6 +43,7 @@ interface DraftCase {
   answer_key_text: string;
   items: ChecklistItem[];
   properties: string[]; // admin-only exam props, never shown to candidates
+  digital_properties: DigitalProperty[];
   updated_at?: string;
 }
 
@@ -53,6 +57,7 @@ const emptyDraft = (): DraftCase => ({
   answer_key_text: "",
   items: [],
   properties: [],
+  digital_properties: [],
 });
 
 const splitSentences = (text: string) =>
@@ -92,10 +97,12 @@ const PreReview = () => {
         .eq("status", PREREVIEW_STATUS)
         .order("created_at", { ascending: false });
       if (error) throw error;
+      if (!data?.length) return [];
       // Properti soal disimpan di case_answer_keys (tabel khusus admin)
       const { data: answerKeys, error: answerKeysError } = await supabase
         .from("case_answer_keys")
-        .select("case_id, checklist_rubric");
+        .select("case_id, checklist_rubric")
+        .in("case_id", data.map(c => c.id));
       if (answerKeysError) throw answerKeysError;
       const akMap = new Map((answerKeys || []).map((ak: any) => [ak.case_id, ak]));
       return (data || []).map((c: any): DraftCase => {
@@ -120,7 +127,9 @@ const PreReview = () => {
           answer_key_text: c.answer_key_text ?? "",
           updated_at: c.updated_at,
           properties: props.map((p: any) => String(p)),
+          digital_properties: parseDigitalProperties(akRaw),
           items: items.map((it: any) => ({
+            ...(it.id ? { id: it.id } : {}),
             answer: it.answer ?? "",
             text: it.text ?? "",
             points: Math.min(2, Math.max(1, Number(it.points) || 2)),
@@ -171,7 +180,7 @@ const PreReview = () => {
     }
     const { error: akErr } = await supabase
       .from("case_answer_keys")
-      .upsert({ case_id: id, answer_key_text: d.answer_key_text, checklist_rubric: { ...rubricFull, properties } as any }, { onConflict: "case_id" });
+      .upsert({ case_id: id, answer_key_text: d.answer_key_text, checklist_rubric: { ...rubricFull, properties, digital_properties: cleanDigitalProperties(d.digital_properties) } as any }, { onConflict: "case_id" });
     if (akErr) throw akErr;
     return id;
   };
@@ -402,6 +411,15 @@ const DraftEditor = ({ initial, busy, onSave, onIngest }: EditorProps) => {
             <Textarea rows={6} value={d.questions_text} onChange={(e) => set("questions_text", e.target.value)} placeholder={"1. ...\n2. ..."} />
           </div>
           <PropertiesEditor properties={d.properties} onChange={(v) => set("properties", v)} />
+          <section className="space-y-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-sm font-semibold">Properti Digital</h2>
+              {d.digital_properties.some(isMediaPending) && (
+                <Badge variant="destructive">{d.digital_properties.filter(isMediaPending).length} butuh media asli (PR admin)</Badge>
+              )}
+            </div>
+            <DigitalPropertiesEditor items={d.digital_properties} onChange={(v) => set("digital_properties", v)} caseId={d.id} />
+          </section>
         </TabsContent>
 
         <TabsContent value="jawaban" className="space-y-3 pt-2">

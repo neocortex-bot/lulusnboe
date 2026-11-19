@@ -161,30 +161,17 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
   });
 
   const { data: cases = [] } = useQuery({
-    queryKey: ["clinical_cases"],
+    queryKey: ["clinical_cases", "deployment_picker", examMode],
     queryFn: async () => {
-      // Fetch all fields with source and status for filtering/preview
+      // The picker needs no scenario, private answers, rubric, or media.
       const { data, error } = await supabase
         .from("clinical_cases")
-        .select("*")
+        .select("id, title, exam_mode, category")
         .eq("status", "published") // ONLY publishable cases
+        .eq("exam_mode", examMode)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      
-      // Merge with case_answer_keys for complete data
-      const { data: answerKeys } = await supabase
-        .from("case_answer_keys")
-        .select("case_id, answer_key_text, checklist_rubric");
-      
-      const akMap = new Map(
-        (answerKeys || []).map((answerKey) => [answerKey.case_id, answerKey])
-      );
-      
-      return (data || []).map((clinicalCase) => ({
-        ...clinicalCase,
-        answer_key_text: clinicalCase.answer_key_text || akMap.get(clinicalCase.id)?.answer_key_text,
-        checklist_rubric: clinicalCase.checklist_rubric || akMap.get(clinicalCase.id)?.checklist_rubric,
-      }));
+      return data ?? [];
     },
   });
 
