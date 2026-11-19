@@ -1,5 +1,11 @@
 # Roadmap
 
+## Tahap kedua optimasi aman (19 Nov 2026)
+- [x] Filter mode dan batas 10 sesi per halaman di server, urutan created_at/id stabil; uji halaman berikut, pergantian mode, kegagalan muat, dan halaman menyusut lolos.
+- [x] 201 tes lolos, build OK; permintaan join/filter/range PostgREST diterima (HTTP 200). Akun publik menghasilkan 0 baris sesuai izin; pembacaan sesi berisi data melalui admin asli belum terverifikasi karena akses sesi eksternal tidak tersedia. Tidak mengubah sesi/hasil asli.
+- [ ] Tahan pengubahan daftar admin ke ringkasan: editor lama bergantung pada rubrik/kunci lengkap dan memiliki jalur simpan yang perlu audit privasi serta metadata sebelum dipisahkan.
+- [ ] Tahan detail penguji dan antrean AI sampai alur akun/ujian nyata dapat diverifikasi; akses sesi Supabase eksternal tidak tersedia.
+
 ## Tahap pertama optimasi dan properti digital pre-review (19 Nov 2026)
 - [x] Perbaiki baca/editor/simpan properti digital privat dengan editor bersama; pertahankan Word by Word, ID, poin, dan critical; query kunci hanya untuk draft yang dimuat.
 - [x] 197 tes lolos dan build OK; simpan/ingest data uji mempertahankan kartu digital, jawaban, ID, poin/critical dan properti fisik. SQL asli: 2/2/1 kartu serta 10/17/14 jawaban tetap utuh; ketiga soal sudah published, tidak muncul di prereview. Tidak mengubah data asli.

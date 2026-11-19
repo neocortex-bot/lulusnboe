@@ -16,3 +16,4 @@
 - Pre-review reads per-item answers from case_answer_keys first with clinical_cases fallback and saves answers only to case_answer_keys, keeping candidate-readable rubric items answer-free.
 - Pre-review digital properties must use the shared digital editor/parser/cleaner and remain in case_answer_keys so saving a draft preserves private media without duplicating station behavior.
 - Deployment case pickers use mode-scoped summary queries under a distinct clinical_cases cache key so admin details never inflate picker memory or collide with its cache.
+- Deployed session lists filter the joined case mode and paginate in PostgREST with exact counts and deterministic ordering; never load all sessions to slice in the browser.

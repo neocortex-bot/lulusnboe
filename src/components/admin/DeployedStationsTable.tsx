@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Copy, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 
-const PAGE_SIZE = 10;
+export const PAGE_SIZE = 10;
 
 interface DeployedStationsTableProps {
   examMode: string;
@@ -19,30 +19,31 @@ const DeployedStationsTable = ({ examMode }: DeployedStationsTableProps) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const { data: stationsResult, isLoading } = useQuery({
+  const { data: stationsResult, isLoading, isError } = useQuery({
     queryKey: ["deployed_stations", examMode, page],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const from = page * PAGE_SIZE;
+      const { data, error, count } = await supabase
         .from("exam_sessions")
-        .select("id, station_token, status, created_at, clinical_cases(title, exam_mode), profiles!exam_sessions_current_candidate_id_fkey(full_name, nim)")
-        .order("created_at", { ascending: false });
+        .select("id, station_token, status, created_at, clinical_cases!inner(title, exam_mode), profiles!exam_sessions_current_candidate_id_fkey(full_name, nim)", { count: "exact" })
+        .eq("clinical_cases.exam_mode", examMode)
+        .order("created_at", { ascending: false })
+        .order("id", { ascending: false })
+        .range(from, from + PAGE_SIZE - 1);
 
       if (error) throw error;
-      const matchingSessions = (data || []).filter(
-        (session: any) => session.clinical_cases?.exam_mode === examMode
-      );
-      const from = page * PAGE_SIZE;
-      return {
-        sessions: matchingSessions.slice(from, from + PAGE_SIZE),
-        total: matchingSessions.length,
-      };
+      return { sessions: data ?? [], total: count ?? 0 };
     },
+    placeholderData: (previous, previousQuery) => previousQuery?.queryKey[1] === examMode ? previous : undefined,
   });
 
   useEffect(() => setPage(0), [examMode]);
 
   const sessions = stationsResult?.sessions || [];
   const totalPages = Math.ceil((stationsResult?.total || 0) / PAGE_SIZE);
+  useEffect(() => {
+    if (stationsResult && page > 0 && page >= totalPages) setPage(Math.max(0, totalPages - 1));
+  }, [page, stationsResult, totalPages]);
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
@@ -105,6 +106,8 @@ const DeployedStationsTable = ({ examMode }: DeployedStationsTableProps) => {
       <CardContent>
         {isLoading ? (
           <p className="text-muted-foreground">Loading...</p>
+        ) : isError ? (
+          <p className="text-destructive text-center py-8">Daftar station gagal dimuat. Coba muat ulang.</p>
         ) : sessions.length === 0 ? (
           <p className="text-muted-foreground text-center py-8">Belum ada station yang di-deploy.</p>
         ) : (
@@ -172,11 +175,11 @@ const DeployedStationsTable = ({ examMode }: DeployedStationsTableProps) => {
 
             {totalPages > 1 && (
               <div className="flex items-center justify-center gap-2 pt-4">
-                <Button variant="outline" size="sm" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>
+                <Button aria-label="Halaman sebelumnya" variant="outline" size="sm" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
                 <span className="text-sm text-muted-foreground">{page + 1} / {totalPages}</span>
-                <Button variant="outline" size="sm" disabled={page >= totalPages - 1} onClick={() => setPage((p) => p + 1)}>
+                <Button aria-label="Halaman berikutnya" variant="outline" size="sm" disabled={page >= totalPages - 1} onClick={() => setPage((p) => p + 1)}>
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>
