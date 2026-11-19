@@ -11,3 +11,5 @@
 - Keep case edit permissions separate from case deletion permissions; enforce edits through server-side admin roles so collaborative editing does not broaden permanent deletion access.
 - Keep exam results paginated with summary-only list queries and one short-lived detail query; use single-flight fallback polling only when realtime is unavailable to bound concurrent exam load.
 - Prefer low-bitrate mono microphone capture with native Safari fallback; release recorder buffers after stop and microphone tracks only at final exit, preserving multi-case recording.- Word by word ditampilkan & dicek AI di detail soal; disimpan di field answer butir rubrik dan tidak dibaca evaluate-exam (rubric-alignment read-only, admin-only).
+
+- Agent fetch and ingest use shared Word by Word preservation by stable rubric ID; keep answers private, alignment read-only, and apply accepted suggestions through case-admin so grading remains independent.

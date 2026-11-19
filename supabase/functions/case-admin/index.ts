@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { z } from "npm:zod@3.23.8";
 import { getRubricQualityError } from "./rubric-validation.ts";
 import { mergeProperties } from "./properties.ts";
+import { preserveWordByWord, publicRubricItems, wordByWordCoverage } from "../_shared/case-word-by-word.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -10,8 +11,9 @@ const corsHeaders = {
 };
 
 const RubricItem = z.object({
-  text: z.string().min(10).max(500),
-  points: z.number().int().min(1).max(5),
+  id: z.string().uuid().optional(),
+  text: z.string().min(5).max(500),
+  points: z.number().int().min(1).max(2),
   isCritical: z.boolean(),
   // Word by word (agar mendapatkan poin ini) — admin-only, disimpan di case_answer_keys
   answer: z.string().max(4000).optional(),
@@ -72,7 +74,8 @@ const SCHEMA_DOC = {
     title: "10-200 char, unik", status: "prereview|draft|published|archived",
     exam_mode: "oral_board|osce|panel_exam", reading_time_seconds: "5-900", time_limit_seconds: "30-1800",
     initial_prompt: "skenario", questions_text: ">=20 char", answer_key_text: ">=100 char",
-    checklist_rubric: "{items:[{text,points 1-5,isCritical,answer?}]} — ganti seluruh rubrik",
+    checklist_rubric: "{items:[{id?,text,points 1-2,isCritical,answer?}]} — ganti seluruh rubrik",
+    word_by_word: "Isi answer per butir; field yang tidak dikirim dipertahankan, answer kosong menghapusnya. ID stabil wajib dipertahankan saat edit teks. Cek AI read-only: POST rubric-alignment dengan {case_id}, X-Agent-Api-Key; terima saran melalui rubric_ops update (answer/text), bukan otomatis.",
     rubric_ops: "[{op:'add',item,index?}|{op:'update',index,item:{...sebagian}}|{op:'remove',index}|{op:'move',from,to}] — index 0-based",
     properties: "string[] admin-only (properti fisik) -> disimpan di clinical_cases.properties DAN case_answer_keys.checklist_rubric.properties; tidak dikirim = tidak diubah", category: "string bebas maks 100 char -> clinical_cases.category (atau null utk mengosongkan)", media_notes: "array", dry_run: "true = validasi & preview tanpa simpan",
     digital_properties: "[{label, value, media_url?, media_type?: image|video|audio, needs_media: bool, show_caption?: bool (default true; false = hanya media tampil, hanya berlaku bila media_url ada)}] -> case_answer_keys.checklist_rubric.digital_properties — ganti seluruh daftar; needs_media=true tanpa media_url = 'Butuh media asli' (PR admin). Ambil dulu via GET lalu kirim ulang lengkap agar tidak hilang.",
@@ -129,14 +132,17 @@ Deno.serve(async (req) => {
     const { data, error } = await supabase.from("clinical_cases").select("*").eq("id", caseId).maybeSingle();
     if (error) throw new Error(error.message);
     if (!data) return null;
-    const { data: ak } = await supabase
+    const { data: ak, error: akError } = await supabase
       .from("case_answer_keys").select("answer_key_text, checklist_rubric").eq("case_id", caseId).maybeSingle();
+    if (akError) throw new Error(akError.message);
     const akR = (ak?.checklist_rubric ?? {}) as { items?: RubricItemT[]; properties?: string[]; digital_properties?: unknown[] };
     const ccR = (data.checklist_rubric ?? {}) as { items?: RubricItemT[] };
-    const items = (akR.items?.length ? akR.items : ccR.items) ?? [];
+    const items = (Array.isArray(akR.items) ? akR.items : ccR.items) ?? [];
     return {
       ...data,
       answer_key_text: ak?.answer_key_text ?? data.answer_key_text ?? null,
+      checklist_rubric: { ...akR, items },
+      word_by_word: wordByWordCoverage(items),
       rubric_items: items.map((it, index) => ({ index, ...it })),
       properties: mergeProperties((data as Record<string, unknown>).properties, akR.properties),
       digital_properties: (akR.digital_properties ?? []).map((p) => {
@@ -210,6 +216,7 @@ Deno.serve(async (req) => {
       newItems = r;
     }
     if (newItems) {
+      newItems = preserveWordByWord(newItems, current.rubric_items);
       if (newItems.length > 0) {
         const err = getRubricQualityError(newItems);
         if (err) return json(400, { error: err });
@@ -217,7 +224,7 @@ Deno.serve(async (req) => {
       // Tabel kandidat: tanpa jawaban word-by-word
       patch.checklist_rubric = {
         enabled: newItems.length > 0,
-        items: newItems.map(({ answer: _a, ...rest }) => rest),
+        items: publicRubricItems(newItems),
       };
       patch.rubric_mode = newItems.length > 0 ? "checklist" : "none";
     }

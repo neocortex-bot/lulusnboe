@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { z } from "https://esm.sh/zod@3.23.8";
+import { z } from "npm:zod@3.23.8";
+import { preserveWordByWord, publicRubricItems, wordByWordCoverage } from "../_shared/case-word-by-word.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -8,8 +9,9 @@ const corsHeaders = {
 };
 
 const RubricItem = z.object({
+  id: z.string().uuid().optional(),
   text: z.string().min(5).max(500),
-  answer: z.string().max(1500).optional(), // word-by-word ucapan peserta untuk butir ini
+  answer: z.string().max(4000).optional(), // word-by-word ucapan peserta untuk butir ini
   points: z.number().int().min(1).max(2),
   isCritical: z.boolean(),
 });
@@ -57,8 +59,9 @@ const SCHEMA_DOC = {
     initial_prompt: "string >=400 chars; must contain >=3 of RIWAYAT/PEMERIKSAAN/TUGAS/EKG/LAB",
     questions_text: "string >=300 chars; >=5 numbered tasks; must NOT reveal rubric items",
     answer_key_text: "string >=800 chars; expected candidate verbalisation, numbers, thresholds",
-    checklist_rubric: "{ items: [{ text, points 1-2 (skala 0-1-2), isCritical }] } — OPSIONAL dan FLEKSIBEL. Bila dikirim: minimal 3 butir (maks 100), >=1 critical, total points >=6 → rubric_mode='checklist'. Boleh rubrik fokus 3-4 butir maupun rubrik rinci puluhan butir atomik. Bila dikosongkan/tidak dikirim → rubric_mode='none' (tanpa daftar tilik, penilaian berbasis answer key)",
+    checklist_rubric: "{ items: [{ id? UUID, text, answer? string maks 4000 char (Word by Word admin-only), points 1-2 (skala 0-1-2), isCritical }] } — OPSIONAL dan FLEKSIBEL. Bila dikirim: minimal 3 butir (maks 100), >=1 critical, total points >=6 → rubric_mode='checklist'. Boleh rubrik fokus 3-4 butir maupun rubrik rinci puluhan butir atomik. Bila dikosongkan/tidak dikirim → rubric_mode='none' (tanpa daftar tilik, penilaian berbasis answer key)",
     media_notes: "[{ description, category: case_media|examination|additional_info, trigger_keywords: [] }] — informational only, media uploaded manually",
+    word_by_word: "Disimpan hanya di case_answer_keys.checklist_rubric.items[].answer; boleh kosong tanpa menghambat evaluasi. Fetch/edit melalui case-admin; cek AI read-only POST rubric-alignment {case_id} dengan X-Agent-Api-Key; saran diterima melalui PATCH case-admin rubric_ops. Tidak memengaruhi penilaian ujian.",
     created_by_email: "optional admin email to own the case",
   },
   quality_gates: [
@@ -131,7 +134,7 @@ Deno.serve(async (req) => {
     return json(400, { error: "questions_text harus berisi pertanyaan bernomor (1., 2., ...)" });
   }
 
-  const items = data.checklist_rubric?.items ?? [];
+  const items = preserveWordByWord(data.checklist_rubric?.items ?? []);
   const rubricMode = items.length > 0 ? "checklist" : "none";
   const criticalCount = items.filter((i) => i.isCritical).length;
   const totalPoints = items.reduce((s, i) => s + i.points, 0);
@@ -202,7 +205,8 @@ Deno.serve(async (req) => {
       initial_prompt: data.initial_prompt,
       questions_text: data.questions_text,
       answer_key_text: data.answer_key_text,
-      checklist_rubric: rubric,
+      checklist_rubric: { ...rubric, items: publicRubricItems(items) },
+      properties: data.properties,
       category: data.category ?? null,
       created_by: createdBy,
       // prereview = muncul di /prereview untuk diedit admin; draft = alur lama
@@ -221,7 +225,7 @@ Deno.serve(async (req) => {
     answer_key_text: data.answer_key_text,
     checklist_rubric: { ...rubric, properties: data.properties },
   });
-  if (akErr) console.error(`[ingest-case] answer key sync failed: ${akErr.message}`);
+  if (akErr) return json(500, { error: "Answer key sync failed; do not re-ingest this case. Repair through case-admin.", id: inserted.id, answer_key_synced: false });
 
   console.log(
     `[ingest-case] Inserted "${inserted.title}" id=${inserted.id} items=${items.length} points=${totalPoints}`,
@@ -241,6 +245,7 @@ Deno.serve(async (req) => {
     critical_items: criticalCount,
     total_points: totalPoints,
     answer_key_synced: !akErr,
+    word_by_word: wordByWordCoverage(items),
     media_to_upload_manually: data.media_notes,
   });
 });

@@ -1,5 +1,10 @@
 # Roadmap
 
+## Word by Word API (19 Nov 2026)
+- [x] Selaraskan ingest, fetch, dan edit answer dengan ID stabil; cek AI untuk agent tetap read-only.
+- [x] 186 tes lolos; case-admin, ingest-case, rubric-alignment terdeploy; schema ingest dan penolakan kunci salah terverifikasi.
+- [ ] Fetch/edit/cek AI dengan kunci case-admin yang valid — kunci yang tersedia hanya diterima ingest-case, case-admin mengembalikan 401; tidak mengubah soal aktif.
+
 ## Verifikasi rekaman dan ujian bersamaan (18 Nov 2026)
 - [x] Enam perekam hook aplikasi bersamaan di Chromium dengan mikrofon sintetis, dua putaran masing-masing 12 detik: 12 audio berhasil didekode, mikrofon tetap hidup antarsoal dan semuanya berhenti pada akhir; tanpa error browser. Heap JS harness 3,41 → 3,80–3,84 MiB per konteks, bukan pengukuran RAM ujian penuh.
 - [x] Tes jalur Safari/iPhone: MP4 tanpa timeslice dan fallback opsi bitrate; 10 tes terarah lolos. Ini simulasi API, bukan verifikasi Safari/iPhone fisik.
