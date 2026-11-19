@@ -17,3 +17,4 @@
 - Pre-review digital properties must use the shared digital editor/parser/cleaner and remain in case_answer_keys so saving a draft preserves private media without duplicating station behavior.
 - Deployment case pickers use mode-scoped summary queries under a distinct clinical_cases cache key so admin details never inflate picker memory or collide with its cache.
 - Deployed session lists filter the joined case mode and paginate in PostgREST with exact counts and deterministic ordering; never load all sessions to slice in the browser.
+- Deploy all selected PCs/questions through one admin-authorized, invoker-security transaction with a stable request ID so failure rolls back every session and retries cannot duplicate a deployment.

@@ -2,8 +2,9 @@
 
 ## Pengujian deploy enam soal (19 Nov 2026)
 - [x] Reproduksi di Supabase asli: enam sesi dibuat dalam 0,779 detik; kegagalan penautan meninggalkan enam sesi tanpa urutan. Seluruh data uji dibersihkan.
-- [ ] Jadikan deploy transaksi atomik dengan identitas permintaan stabil; uji kegagalan, retry, dan enam deploy bersamaan.
-- [ ] Verifikasi browser admin asli dan RAM server — sesi login eksternal serta pengukuran RAM belum tersedia.
+- [x] Deploy transaksi atomik, SECURITY INVOKER dan izin admin; enam permintaan serentak × enam soal menghasilkan 36 sesi dalam 1,57–1,78 detik per permintaan. Enam retry bersamaan memakai ID sesi yang sama; benturan soal keenam membatalkan seluruh sesi baru; akses anonim ditolak.
+- [x] Browser dengan akun admin sementara pada Supabase asli: pilih enam soal, deploy, baca enam station dalam modal sukses. Data uji serta akun sementara dibersihkan; 202 tes lolos dan build OK.
+- [ ] Ukur RAM server dan enam ujian penuh sampai penilaian — pengukuran RAM server tidak tersedia; tes ini hanya deploy, bukan jaminan kapasitas ujian penuh.
 
 ## Tahap kedua optimasi aman (19 Nov 2026)
 - [x] Filter mode dan batas 10 sesi per halaman di server, urutan created_at/id stabil; uji halaman berikut, pergantian mode, kegagalan muat, dan halaman menyusut lolos.

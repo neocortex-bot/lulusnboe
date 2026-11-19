@@ -3,6 +3,7 @@ import CategoryFilter from "./CategoryFilter";
 import { ALL, matchesCategory, uniqueCategories } from "@/lib/caseCategory";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 import { generateBookingCode } from "@/lib/bookingCode";
 import {
   getDeploymentValidationError,
@@ -99,6 +100,7 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
     },
   });
   const [deployedStations, setDeployedStations] = useState<DeployedStationToken[]>([]);
+  const [pendingDeploy, setPendingDeploy] = useState<{ requestId: string; key: string; stations: Record<string, unknown>[]; results: DeployedStationToken[] } | null>(null);
   const [showResults, setShowResults] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -237,67 +239,33 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
       });
       if (validationError) throw new Error(validationError);
 
-      const deployed: DeployedStationToken[] = [];
-      const batchTokens = new Set<string>();
-
-      for (let pc = 0; pc < pcCount; pc++) {
-        const deploymentId = crypto.randomUUID();
-        const questions = selectedCases.map((clinicalCase, questionIndex) => {
-          let token = generateBookingCode();
-          while (batchTokens.has(token)) token = generateBookingCode();
-          batchTokens.add(token);
-          return {
-            token,
-            clinicalCase,
-            questionNumber: questionIndex + 1,
-          };
-        });
-
-        // pcCount means physical PCs. Each PC receives one token/session per
-        // selected question, so total tokens = pcCount × selectedCases.length.
-        const { data: sessions, error: sessionError } = await supabase
-          .from("exam_sessions")
-          .insert(questions.map(({ token, clinicalCase }) => ({
-            case_id: clinicalCase.id,
-            station_token: token,
-            status: "waiting",
-            show_results_to_candidate_override: showResultsToCandidateOverride,
-            examiner_id: examinerId || null,
-            show_examiner_panel: showExaminerPanel,
-          })))
-          .select("id, station_token");
-        if (sessionError) throw sessionError;
-
-        const sessionByToken = new Map(
-          (sessions ?? []).map((session) => [session.station_token, session.id])
-        );
-        if (sessionByToken.size !== questions.length) {
-          throw new Error("Tidak semua sesi soal berhasil dibuat");
+      const key = JSON.stringify([selectedCases.map((c) => c.id), pcCount, showResultsToCandidateOverride, examinerId, showExaminerPanel]);
+      let request = pendingDeploy?.key === key ? pendingDeploy : null;
+      if (!request) {
+        const stations: Record<string, unknown>[] = [];
+        const results: DeployedStationToken[] = [];
+        const batchTokens = new Set<string>();
+        for (let pc = 0; pc < pcCount; pc++) {
+          const deploymentId = crypto.randomUUID();
+          selectedCases.forEach((clinicalCase, questionIndex) => {
+            let token = generateBookingCode();
+            while (batchTokens.has(token)) token = generateBookingCode();
+            batchTokens.add(token);
+            stations.push({ deployment_id: deploymentId, station_token: token, case_id: clinicalCase.id, sequence_order: questionIndex + 1, show_results_to_candidate_override: showResultsToCandidateOverride, examiner_id: examinerId || null, show_examiner_panel: showExaminerPanel });
+            results.push({ token, pcNumber: pc + 1, questionNumber: questionIndex + 1, questionTotal: selectedCases.length, caseTitle: clinicalCase.title });
+          });
         }
-
-        const sequenceItems = questions.map(({ token, clinicalCase, questionNumber }) => ({
-          deployment_id: deploymentId,
-          station_token: token,
-          case_id: clinicalCase.id,
-          sequence_order: questionNumber,
-          session_id: sessionByToken.get(token),
-        }));
-
-        const { error: seqError } = await supabase.from("exam_sequence_items").insert(sequenceItems);
-        if (seqError) throw seqError;
-
-        deployed.push(...questions.map(({ token, clinicalCase, questionNumber }) => ({
-          token,
-          pcNumber: pc + 1,
-          questionNumber,
-          questionTotal: selectedCases.length,
-          caseTitle: clinicalCase.title,
-        })));
+        request = { requestId: crypto.randomUUID(), key, stations, results };
+        setPendingDeploy(request);
       }
-
-      return deployed;
+      // Retrying the same request returns the same sessions instead of duplicating them.
+      const { data, error } = await supabase.rpc("deploy_exam_batch", { _request_id: request.requestId, _stations: request.stations as Json });
+      if (error) throw error;
+      if ((data ?? []).length !== request.stations.length) throw new Error("Deploy belum lengkap; coba lagi tanpa mengubah pilihan");
+      return request.results;
     },
     onSuccess: (stations) => {
+      setPendingDeploy(null);
       queryClient.invalidateQueries({ queryKey: ["exam_sessions"] });
       queryClient.invalidateQueries({ queryKey: ["deployed_stations"] });
       setDeployedStations(stations);
