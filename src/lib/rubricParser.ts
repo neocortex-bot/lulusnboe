@@ -8,6 +8,8 @@ export interface RubricItem {
   text: string;
   points: number;
   isCritical: boolean;
+  /** Word by word (kalimat yang perlu diucapkan peserta) — hanya acuan admin, tidak dipakai penilaian. */
+  answer?: string;
 }
 
 export function newRubricItemId(): string {
@@ -57,5 +59,6 @@ function normalizeItem(item: any): RubricItem {
     text: item.text || item.item_text || String(item),
     points: item.points ?? item.point_value ?? 10,
     isCritical: item.isCritical ?? item.is_critical ?? item.critical ?? false,
+    ...(typeof item.answer === "string" && item.answer.trim() ? { answer: item.answer } : {}),
   };
 }

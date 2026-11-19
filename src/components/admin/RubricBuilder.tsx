@@ -12,6 +12,7 @@ export interface RubricItem {
   text: string;
   points: number;
   isCritical: boolean;
+  answer?: string;
 }
 
 export interface RubricData {

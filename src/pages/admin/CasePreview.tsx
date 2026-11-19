@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import RubricBuilder, { type RubricData } from "@/components/admin/RubricBuilder";
+import RubricWordByWordSection from "@/components/admin/RubricWordByWordSection";
 import AssetUploader from "@/components/admin/AssetUploader";
 import PropertiesEditor from "@/components/admin/PropertiesEditor";
 import DigitalPropertiesEditor, { DigitalMediaPreview } from "@/components/admin/DigitalPropertiesEditor";
@@ -710,6 +711,13 @@ const CasePreview = () => {
                 />
               </CardContent>
             </Card>
+
+            <RubricWordByWordSection
+              caseId={caseRow.id}
+              items={rubricData.items}
+              canEdit={canEdit}
+              onApplied={(items) => setRubricData((d) => ({ ...d, items }))}
+            />
 
             {caseRow.source === "agent_api" && caseRow.status === "published" && canEdit && (
               <Card>
