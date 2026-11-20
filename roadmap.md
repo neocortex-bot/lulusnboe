@@ -1,8 +1,9 @@
 # Roadmap
 
 ## Kedaluwarsa sesi menunggu (20 Nov 2026)
-- [ ] Batasi sesi QR/deploy yang tidak dipakai selama 15 menit; lindungi sesi membaca, ujian aktif, dan soal berikut dalam rangkaian.
-- [ ] Uji batas waktu, klaim bersamaan, dan rangkaian soal; verifikasi penerapan server tanpa mengubah hasil ujian.
+- [x] Kedaluwarsa dihitung server setelah 15 menit, tanpa cron/polling tambahan; klaim kedaluwarsa ditolak termasuk update langsung. Sesi membaca/aktif terlindungi; soal berikut mendapat waktu dari hasil terakhir dan terlindungi selama rangkaian aktif. Data sesi tetap disimpan, bukan dihapus.
+- [x] 210 tes aplikasi lolos; SQL transaksional menguji sebelum/tepat 15 menit, membaca, rangkaian aktif, hasil terakhir, dan penolakan klaim langsung; semua fixture di-rollback. Browser station asli menampilkan Sesi Kedaluwarsa tanpa QR; build OK. Tidak ada peringatan keamanan baru; 29 temuan lama tidak diubah.
+- [ ] Klaim peserta bersamaan melalui akun nyata dan pengukuran RAM server — sesi login eksternal dan pengukuran RAM tidak tersedia; bukan jaminan kapasitas enam ujian penuh.
 
 ## Vignette dan pertanyaan pada hasil (20 Nov 2026)
 - [x] Tambahkan bagian bersama yang tertutup awalnya di atas hasil admin dan hasil peserta yang diizinkan; muat vignette/pertanyaan hanya saat panah dibuka.
