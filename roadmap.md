@@ -1,5 +1,9 @@
 # Roadmap
 
+## Kedaluwarsa sesi menunggu (20 Nov 2026)
+- [ ] Batasi sesi QR/deploy yang tidak dipakai selama 15 menit; lindungi sesi membaca, ujian aktif, dan soal berikut dalam rangkaian.
+- [ ] Uji batas waktu, klaim bersamaan, dan rangkaian soal; verifikasi penerapan server tanpa mengubah hasil ujian.
+
 ## Vignette dan pertanyaan pada hasil (20 Nov 2026)
 - [x] Tambahkan bagian bersama yang tertutup awalnya di atas hasil admin dan hasil peserta yang diizinkan; muat vignette/pertanyaan hanya saat panah dibuka.
 - [x] 14 tes lolos: buka/tutup, muat sesuai ID hasil, retry, daftar admin tetap ringkas, peserta tanpa izin tidak memuat soal; build OK. Tampilan browser dan alur akun asli belum terverifikasi: harness browser gagal merender, sesi akun Supabase eksternal tidak tersedia.
