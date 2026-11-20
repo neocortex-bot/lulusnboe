@@ -27,12 +27,13 @@ import {
 } from "@/lib/stationReset";
 import { firstRpcRow } from "@/lib/examSequence";
 import { createRealtimeFallback } from "@/lib/examPerformance";
+import { scheduleWaitingExpiry } from "@/lib/sessionExpiry";
 import {
   bindExamRealtime,
   type ExamRealtimeClient,
 } from "@/lib/examRealtime";
 
-type StationState = "loading" | "waiting" | "active" | "completed_screen" | "sequence_complete" | "advance_error";
+type StationState = "loading" | "waiting" | "expired" | "active" | "completed_screen" | "sequence_complete" | "advance_error";
 
 interface SessionData {
   id: string;
@@ -40,6 +41,7 @@ interface SessionData {
   status: string;
   session_start_time: string | null;
   show_examiner_panel?: boolean | null;
+  expires_at?: string | null;
 }
 
 interface CaseData {
@@ -143,7 +145,7 @@ const StationDisplay = () => {
 
   // Resolve sequence order against the session actually displayed, not cached UI order.
   useEffect(() => {
-    if (!currentToken || state === "sequence_complete") return;
+    if (!currentToken || state === "sequence_complete" || state === "expired") return;
 
     let cancelled = false;
     const displayedSessionId = session?.id ?? null;
@@ -181,7 +183,8 @@ const StationDisplay = () => {
       if (error || !row) { setState("loading"); return; }
       const sessionRow = row as SessionData;
       setSession(sessionRow);
-      if (sessionRow.status === "active") setState("active");
+      if (sessionRow.status === "expired") setState("expired");
+      else if (sessionRow.status === "active") setState("active");
       else if (sessionRow.status === "completed" || sessionRow.status === "force_closed") {
         setState("completed_screen");
       }
@@ -192,6 +195,21 @@ const StationDisplay = () => {
       cancelled = true;
     };
   }, [currentToken]);
+
+  useEffect(() => {
+    if (state !== "waiting" || !currentToken) return;
+    let cancelled = false;
+    const cleanup = scheduleWaitingExpiry(session?.expires_at, async () => {
+      const { data, error } = await supabase.rpc("get_session_by_token", { _token: currentToken });
+      const row = firstRpcRow(data);
+      if (cancelled || error || !row) return;
+      setSession(row);
+      if (row.status === "expired") setState("expired");
+      else if (row.status === "active") setState("active");
+      else if (["completed", "force_closed"].includes(row.status)) setState("completed_screen");
+    });
+    return () => { cancelled = true; cleanup(); };
+  }, [state, currentToken, session?.expires_at]);
 
   // After exam completes, advance sequence or regenerate same case
   const handleSessionCompleted = useCallback(async (
@@ -317,10 +335,10 @@ const StationDisplay = () => {
   // session id and deployment id dependencies guarantee cleanup/rebind after
   // advance, so the listener never remains attached only to the old question.
   useEffect(() => {
-    if (!session?.id) return;
+    if (!session?.id || session.status === "expired") return;
     const displayedSessionId = session.id;
 
-    const updateFromRow = (updated: Pick<SessionData, "status" | "session_start_time"> & { show_examiner_panel?: boolean | null }) => {
+    const updateFromRow = (updated: Pick<SessionData, "status" | "session_start_time"> & { show_examiner_panel?: boolean | null; expires_at?: string | null }) => {
       if (
         regeneratingRef.current ||
         displayedSessionRef.current !== displayedSessionId
@@ -330,8 +348,10 @@ const StationDisplay = () => {
         status: updated.status,
         session_start_time: updated.session_start_time,
         show_examiner_panel: updated.show_examiner_panel ?? prev.show_examiner_panel,
+        expires_at: updated.expires_at ?? prev.expires_at,
       } : prev);
-      if (updated.status === "active") setState("active");
+      if (updated.status === "expired") setState("expired");
+      else if (updated.status === "active") setState("active");
       else if (updated.status === "completed" || updated.status === "force_closed") {
         setState("completed_screen");
       }
@@ -396,7 +416,7 @@ const StationDisplay = () => {
     };
     stationSubscriptionCleanupRef.current = cleanup;
     return cleanup;
-  }, [session?.id, currentToken, resolveSequenceState, sequenceInfo?.deploymentId]);
+  }, [session?.id, session?.status, currentToken, resolveSequenceState, sequenceInfo?.deploymentId]);
 
   const resetStationForNextCandidate = useCallback(async () => {
     if (!stationResetGuardRef.current.tryStart()) return;
@@ -719,6 +739,17 @@ const StationDisplay = () => {
           <div className="text-6xl">⚠️</div>
           <h1 className="text-3xl font-bold text-foreground">Soal Berikutnya Belum Siap</h1>
           <p className="text-xl text-muted-foreground">{advanceError}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (state === "expired") {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background p-6">
+        <div className="text-center space-y-4 max-w-xl">
+          <h1 className="text-3xl font-bold text-foreground">Sesi Kedaluwarsa</h1>
+          <p className="text-xl text-muted-foreground">Tidak ada peserta yang memulai ujian selama 15 menit. Silakan deploy ulang.</p>
         </div>
       </div>
     );

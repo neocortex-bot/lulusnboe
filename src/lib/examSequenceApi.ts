@@ -116,7 +116,7 @@ export async function claimCandidateSession(
         }
       }
 
-      if (["duplicate", "already_claimed", "session_not_found", "forbidden", "session_unavailable"].includes(lastReason)) {
+      if (["duplicate", "already_claimed", "session_not_found", "forbidden", "session_unavailable", "session_expired"].includes(lastReason)) {
         return result;
       }
     } catch (error) {

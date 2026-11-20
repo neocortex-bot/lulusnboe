@@ -107,6 +107,14 @@ const ExamMobile = () => {
         const result = await claimCandidateSession(sessionId, user.id);
 
         if (!result.success) {
+          if (result.reason === 'session_expired') {
+            stream.getTracks().forEach(track => track.stop());
+            setAudioStream(null);
+            setValidating(false);
+            toast.error("Sesi kedaluwarsa setelah 15 menit tidak digunakan. Minta admin deploy ulang.");
+            navigate('/exam', { replace: true });
+            return;
+          }
           if (result.reason === 'duplicate') {
             setStep("duplicate_warning");
             return;
@@ -135,7 +143,7 @@ const ExamMobile = () => {
         setValidating(false);
       }
     },
-    [sessionId, user]
+    [sessionId, user, navigate]
   );
 
   const handleReadingComplete = useCallback(
