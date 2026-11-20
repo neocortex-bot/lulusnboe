@@ -1,5 +1,9 @@
 # Roadmap
 
+## Vignette dan pertanyaan pada hasil (20 Nov 2026)
+- [x] Tambahkan bagian bersama yang tertutup awalnya di atas hasil admin dan hasil peserta yang diizinkan; muat vignette/pertanyaan hanya saat panah dibuka.
+- [x] 14 tes lolos: buka/tutup, muat sesuai ID hasil, retry, daftar admin tetap ringkas, peserta tanpa izin tidak memuat soal; build OK. Tampilan browser dan alur akun asli belum terverifikasi: harness browser gagal merender, sesi akun Supabase eksternal tidak tersedia.
+
 ## Pengujian deploy enam soal (19 Nov 2026)
 - [x] Reproduksi di Supabase asli: enam sesi dibuat dalam 0,779 detik; kegagalan penautan meninggalkan enam sesi tanpa urutan. Seluruh data uji dibersihkan.
 - [x] Deploy transaksi atomik, SECURITY INVOKER dan izin admin; enam permintaan serentak × enam soal menghasilkan 36 sesi dalam 1,57–1,78 detik per permintaan. Enam retry bersamaan memakai ID sesi yang sama; benturan soal keenam membatalkan seluruh sesi baru; akses anonim ditolak.

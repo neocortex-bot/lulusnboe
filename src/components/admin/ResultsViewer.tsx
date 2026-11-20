@@ -10,6 +10,7 @@ import { ClipboardCheck, Play, ChevronDown, ChevronUp, Loader2, AlertTriangle, T
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Json } from "@/integrations/supabase/types";
 import DetailedFeedbackDisplay from "@/components/exam/DetailedFeedbackDisplay";
+import ResultCasePrompt from "@/components/exam/ResultCasePrompt";
 import { invokeExamAi } from "@/lib/examAi";
 import { applyItemScore, findReportItemIndex, scoreChoices, type ScoreReport as RubricScoreReport } from "@/lib/rubricScore";
 import { EXAM_RESULTS_PAGE_SIZE, resultPageRange, createRealtimeFallback } from "@/lib/examPerformance";
@@ -379,6 +380,7 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
                         <TableCell colSpan={5} className="bg-muted/30 p-4">
                           <div className="space-y-4">
                             {detailLoading ? <p className="text-muted-foreground">Memuat rincian...</p> : detailError ? <p className="text-destructive">Rincian gagal dimuat. <Button variant="outline" onClick={() => queryClient.invalidateQueries({ queryKey: ["exam_result_detail", r.id] })}>Coba lagi</Button></p> : detail?.id === r.id && <>
+                            <ResultCasePrompt key={r.id} resultId={r.id} />
                             {r.audio_file_url && (
                               <div>
                                 <div className="flex items-center gap-2 mb-1">

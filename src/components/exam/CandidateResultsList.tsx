@@ -10,6 +10,7 @@ import DetailedFeedbackDisplay from "@/components/exam/DetailedFeedbackDisplay";
 import type { Json } from "@/integrations/supabase/types";
 import { canCandidateViewResultDetails } from "@/lib/resultVisibility";
 import ModelAnswerPanel from "@/components/exam/ModelAnswerPanel";
+import ResultCasePrompt from "@/components/exam/ResultCasePrompt";
 
 interface ScoreItem {
   item: string;
@@ -164,6 +165,7 @@ const CandidateResultsList = () => {
 
               {showResults && isExpanded && (
                 <div className="border-t border-border p-4 bg-muted/30 space-y-4">
+                  <ResultCasePrompt key={r.id} resultId={r.id} />
                   <ModelAnswerPanel
                     resultId={r.id}
                     cached={(r.ai_score_report as any)?.modelAnswer}
