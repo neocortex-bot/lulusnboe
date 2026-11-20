@@ -496,6 +496,7 @@ export type Database = {
           station_token: string
         }[]
       }
+      exam_waiting_deadline: { Args: { _session_id: string }; Returns: string }
       get_case_assets_for_display: {
         Args: { _case_id: string }
         Returns: {
@@ -540,6 +541,13 @@ export type Database = {
           sequence_order: number
           session_id: string
           station_token: string
+        }[]
+      }
+      get_station_waiting_state: {
+        Args: { _token: string }
+        Returns: {
+          expires_at: string
+          status: string
         }[]
       }
       has_role: {
