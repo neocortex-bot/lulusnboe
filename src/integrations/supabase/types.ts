@@ -129,6 +129,7 @@ export type Database = {
           exam_mode: string
           id: string
           initial_prompt: string
+          is_nboe: boolean
           properties: string[]
           questions_text: string
           reading_time_seconds: number
@@ -150,6 +151,7 @@ export type Database = {
           exam_mode?: string
           id?: string
           initial_prompt?: string
+          is_nboe?: boolean
           properties?: string[]
           questions_text?: string
           reading_time_seconds?: number
@@ -171,6 +173,7 @@ export type Database = {
           exam_mode?: string
           id?: string
           initial_prompt?: string
+          is_nboe?: boolean
           properties?: string[]
           questions_text?: string
           reading_time_seconds?: number

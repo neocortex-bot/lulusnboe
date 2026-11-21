@@ -40,6 +40,7 @@ import { DigitalProperty, parseDigitalProperties, cleanDigitalProperties, isMedi
 import parseRubricData, { withRubricItemIds } from "@/lib/rubricParser";
 import { canDeleteCase, canEditCase, isRubricEditable } from "@/lib/casePermissions";
 import { useAuth } from "@/contexts/AuthContext";
+import NboeCaseToggle from "@/components/admin/NboeCaseToggle";
 
 
 interface CaseRow {
@@ -419,6 +420,7 @@ const CasePreview = () => {
             </>
           )}
 
+          {id && <NboeCaseToggle caseId={id} canEdit={canEdit} />}
         </div>
       </div>
 

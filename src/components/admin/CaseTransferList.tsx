@@ -7,6 +7,7 @@ import { Search, Plus, ChevronUp, ChevronDown, X } from "lucide-react";
 interface CaseItem {
   id: string;
   title: string;
+  is_nboe?: boolean;
 }
 
 interface CaseTransferListProps {
@@ -83,7 +84,7 @@ const CaseTransferList = ({
                 className="h-auto min-h-10 w-full justify-start rounded-none whitespace-normal px-3 py-2 text-sm text-left border-b border-border last:border-0"
               >
                 <Plus className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                <span className="min-w-0 break-words">{c.title}</span>
+                <div className="min-w-0 break-words">{c.title}{c.is_nboe && <Badge variant="secondary" className="ml-2 text-xs">Soal NBOE</Badge>}</div>
               </Button>
             ))
           )}
@@ -92,12 +93,12 @@ const CaseTransferList = ({
 
       {/* Selected cases */}
       <div className="space-y-2">
-        <p className="text-sm font-medium text-foreground">
+        <div className="text-sm font-medium text-foreground">
           Urutan Ujian
           {selectedCases.length > 0 && (
             <Badge variant="secondary" className="ml-2">{selectedCases.length}</Badge>
           )}
-        </p>
+        </div>
         <div className="border border-border rounded-md min-h-[6rem] max-h-56 overflow-y-auto">
           {selectedCases.length === 0 ? (
             <p className="text-muted-foreground text-sm p-3 text-center">
@@ -110,7 +111,7 @@ const CaseTransferList = ({
                 className="flex items-center gap-1.5 px-3 py-2 text-sm border-b border-border last:border-0 bg-muted/30"
               >
                 <span className="font-mono text-xs text-muted-foreground w-5 shrink-0">{i + 1}.</span>
-                <span className="min-w-0 flex-1 break-words">{c.title}</span>
+                <div className="min-w-0 flex-1 break-words">{c.title}{(cases.find(item => item.id === c.id) ?? c).is_nboe && <Badge variant="secondary" className="ml-2 text-xs">Soal NBOE</Badge>}</div>
                 {selectedCases.length > 1 && (
                   <>
                     <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveCase(i, -1)} disabled={i === 0}>

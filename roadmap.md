@@ -1,5 +1,9 @@
 # Roadmap
 
+## Penanda Soal NBOE (21 Nov 2026)
+- [x] Centang tersimpan di detail soal di samping Edit; label di tabel soal dan pilihan/urutan deploy, tanpa mengubah rubrik atau aturan ujian. Soal lama default false, tidak otomatis ditandai.
+- [x] 228 tes lolos, build OK; browser 394/1110 px dengan data contoh memverifikasi simpan → buka ulang → tabel → urutan deploy. Penyimpanan akun asli belum terverifikasi pada Supabase eksternal; kolom default terverifikasi di 208 soal, tidak ada data asli diubah. 29 temuan keamanan lama tidak diubah; tidak ada temuan baru.
+
 ## Sesi membaca penguji tertinggal (21 Nov 2026)
 - [x] Tampilkan hanya sesi yang sudah dimulai peserta dan menugaskan akun yang masuk sebagai penguji, termasuk admin utama; gunakan pesan kosong yang diminta. Tidak mengubah struktur/status/nilai sesi; migrasi waktu klaim dibatalkan sebelum berjalan.
 - [x] Kedua sesi L77X55/RF45LQ tidak memiliki penguji dan tidak lagi masuk daftar; pertahankan sesi membaca baru yang telah diklaim serta sesi tunggal/pilihan ruangan.

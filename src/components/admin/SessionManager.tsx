@@ -168,7 +168,7 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
       // The picker needs no scenario, private answers, rubric, or media.
       const { data, error } = await supabase
         .from("clinical_cases")
-        .select("id, title, exam_mode, category")
+        .select("id, title, exam_mode, category, is_nboe")
         .eq("status", "published") // ONLY publishable cases
         .eq("exam_mode", examMode)
         .order("created_at", { ascending: false });

@@ -1,0 +1,2 @@
+ALTER TABLE public.clinical_cases ADD COLUMN is_nboe boolean NOT NULL DEFAULT false;
+COMMENT ON COLUMN public.clinical_cases.is_nboe IS 'Admin-managed NBOE case label shown in the case list and deployment picker; does not affect exam or grading rules.';

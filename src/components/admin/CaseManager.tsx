@@ -32,6 +32,7 @@ interface ClinicalCase {
   show_results_to_candidate: boolean;
   status?: string;
   category?: string | null;
+  is_nboe?: boolean;
   source?: string;
   rubric_mode?: string;
   created_by?: string | null;
@@ -193,6 +194,7 @@ const CaseManager = () => {
                 <TableRow key={c.id}>
                   <TableCell className="font-medium">
                     {c.title}
+                    {c.is_nboe && <Badge variant="secondary" className="ml-2 text-xs">Soal NBOE</Badge>}
                     {c.category && <Badge variant="outline" className="ml-2 text-xs">{toCategoryLabel(c.category)}</Badge>}
                   </TableCell>
                   <TableCell>

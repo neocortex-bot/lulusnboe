@@ -18,6 +18,7 @@
 - Pre-review reads per-item answers from case_answer_keys first with clinical_cases fallback and saves answers only to case_answer_keys, keeping candidate-readable rubric items answer-free.
 - Pre-review digital properties must use the shared digital editor/parser/cleaner and remain in case_answer_keys so saving a draft preserves private media without duplicating station behavior.
 - Deployment case pickers use mode-scoped summary queries under a distinct clinical_cases cache key so admin details never inflate picker memory or collide with its cache.
+- Store the NBOE marker on clinical_cases; its standalone toggle updates only the marker and a separate cache, avoiding rubric writes or resetting unsaved detail edits. Include the marker in deployment summaries.
 - Deployed session lists filter the joined case mode and paginate in PostgREST with exact counts and deterministic ordering; never load all sessions to slice in the browser.
 - Deploy all selected PCs/questions through one admin-authorized, invoker-security transaction with a stable request ID so failure rolls back every session and retries cannot duplicate a deployment.
 - Use a shared collapsed result-case prompt in admin and allowed candidate results; fetch only vignette/questions through the selected result when opened, never answer keys or full case lists.
