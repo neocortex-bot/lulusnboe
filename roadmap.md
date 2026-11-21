@@ -1,5 +1,9 @@
 # Roadmap
 
+## Filter dan warna label NBOE (21 Nov 2026)
+- [x] Filter checkbox pada pemilih deploy menampilkan hanya soal NBOE tanpa mengubah pilihan atau urutan ujian; 4 tes dan browser 394/1110 px dengan data uji lolos.
+- [x] Label Soal NBOE lime green dengan teks hitam di tabel dan pemilih deploy; 4 tes lolos dan browser 394/1110 px memverifikasi tampilan dengan data uji, build OK.
+
 ## Formulir properti digital (21 Nov 2026)
 - [x] Ganti media lama di formulir dengan editor properti digital bersama dan centang cepat NBOE; pertahankan jawaban privat serta metadata rubrik.
 - [x] 24 tes lolos; browser 394/1110 px memverifikasi tambah/edit/simpan/buka ulang dan penanda NBOE dengan data uji, tanpa overflow atau error runtime. Simpan akun asli belum terverifikasi karena sesi Supabase eksternal tidak tersedia.

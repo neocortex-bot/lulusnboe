@@ -20,6 +20,7 @@
 - Deployment case pickers use mode-scoped summary queries under a distinct clinical_cases cache key so admin details never inflate picker memory or collide with its cache.
 - Store the NBOE marker on clinical_cases; its standalone toggle updates only the marker and a separate cache, avoiding rubric writes or resetting unsaved detail edits. Include the marker in deployment summaries.
 - CaseForm uses the shared digital-property editor/parser/cleaner and preserves private rubric metadata; reuse the standalone NBOE toggle on existing cases so marker edits never overwrite unsaved fields.
+- Render NBOE badges with the shared nboe variant and semantic CSS tokens so unrelated badge styles remain unchanged.
 - Deployed session lists filter the joined case mode and paginate in PostgREST with exact counts and deterministic ordering; never load all sessions to slice in the browser.
 - Deploy all selected PCs/questions through one admin-authorized, invoker-security transaction with a stable request ID so failure rolls back every session and retries cannot duplicate a deployment.
 - Use a shared collapsed result-case prompt in admin and allowed candidate results; fetch only vignette/questions through the selected result when opened, never answer keys or full case lists.

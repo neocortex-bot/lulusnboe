@@ -96,7 +96,7 @@ const CaseTransferList = ({
                 className="h-auto min-h-10 w-full justify-start rounded-none whitespace-normal px-3 py-2 text-sm text-left border-b border-border last:border-0"
               >
                 <Plus className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                <div className="min-w-0 break-words">{c.title}{c.is_nboe && <Badge variant="secondary" className="ml-2 text-xs">Soal NBOE</Badge>}</div>
+                <div className="min-w-0 break-words">{c.title}{c.is_nboe && <Badge variant="nboe" className="ml-2 text-xs">Soal NBOE</Badge>}</div>
               </Button>
             ))
           )}
@@ -123,7 +123,7 @@ const CaseTransferList = ({
                 className="flex items-center gap-1.5 px-3 py-2 text-sm border-b border-border last:border-0 bg-muted/30"
               >
                 <span className="font-mono text-xs text-muted-foreground w-5 shrink-0">{i + 1}.</span>
-                <div className="min-w-0 flex-1 break-words">{c.title}{(cases.find(item => item.id === c.id) ?? c).is_nboe && <Badge variant="secondary" className="ml-2 text-xs">Soal NBOE</Badge>}</div>
+                <div className="min-w-0 flex-1 break-words">{c.title}{(cases.find(item => item.id === c.id) ?? c).is_nboe && <Badge variant="nboe" className="ml-2 text-xs">Soal NBOE</Badge>}</div>
                 {selectedCases.length > 1 && (
                   <>
                     <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveCase(i, -1)} disabled={i === 0}>
