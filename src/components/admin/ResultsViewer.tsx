@@ -130,9 +130,8 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
       const { data } = await supabase.storage
         .from("exam-audio")
         .createSignedUrl(filePath, 3600);
-      if (!cancelled && data?.signedUrl) {
-        setAudioUrls({ [expandedId]: data.signedUrl });
-      }
+      if (cancelled) return;
+      setAudioUrls({ [expandedId]: data?.signedUrl || AUDIO_MISSING });
     };
     generateSignedUrl();
     return () => { cancelled = true; };
@@ -400,10 +399,12 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
                                     Hapus Audio
                                   </Button>
                                 </div>
-                                {audioUrls[r.id] ? (
-                                  <audio controls src={audioUrls[r.id]} className="w-full max-w-md" />
+                                {audioUrls[r.id] === AUDIO_MISSING ? (
+                                  <p className="text-sm text-muted-foreground">File audio tidak ditemukan atau mungkin sudah dihapus.</p>
+                                ) : audioUrls[r.id] ? (
+                                  <audio controls src={audioUrls[r.id]} onError={() => setAudioUrls({ [r.id]: AUDIO_MISSING })} className="w-full max-w-md" />
                                 ) : (
-                                  <p className="text-sm text-muted-foreground">Loading audio...</p>
+                                  <p className="text-sm text-muted-foreground">Memuat audio...</p>
                                 )}
                               </div>
                             )}
@@ -519,5 +520,7 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
     </Card>
   );
 };
+
+const AUDIO_MISSING = "__missing__";
 
 export default ResultsViewer;
