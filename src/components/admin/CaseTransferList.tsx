@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { Search, Plus, ChevronUp, ChevronDown, X } from "lucide-react";
 
 interface CaseItem {
@@ -26,10 +28,13 @@ const CaseTransferList = ({
   disabled = false,
 }: CaseTransferListProps) => {
   const [search, setSearch] = useState("");
+  const [nboeOnly, setNboeOnly] = useState(false);
+  const nboeFilterId = useId();
 
   const availableCases = cases.filter(
     (c) =>
       !selectedCases.some((s) => s.id === c.id) &&
+      (!nboeOnly || c.is_nboe === true) &&
       c.title.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -53,7 +58,14 @@ const CaseTransferList = ({
     <div className="grid min-w-0 grid-cols-1 md:grid-cols-2 gap-4 [&>div]:min-w-0">
       {/* Available cases */}
       <div className="space-y-2">
-        <p className="text-sm font-medium text-foreground">Pilih Case</p>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="text-sm font-medium text-foreground">Pilih Case</p>
+          <div className="flex items-center gap-2">
+            <Checkbox id={nboeFilterId} checked={nboeOnly} disabled={disabled}
+              onCheckedChange={(checked) => setNboeOnly(checked === true)} />
+            <Label htmlFor={nboeFilterId} className="text-sm">Soal NBOE</Label>
+          </div>
+        </div>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -69,7 +81,7 @@ const CaseTransferList = ({
             <p className="text-muted-foreground text-sm p-3 text-center">
               {cases.length === 0
                 ? emptyStateMessage ?? "Belum ada case."
-                : search.trim()
+                : search.trim() || nboeOnly
                   ? "Tidak ditemukan."
                   : "Semua case tersedia sudah dipilih."}
             </p>
