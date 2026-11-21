@@ -4,7 +4,7 @@
 - Preserve direct OpenAI transcription until the owner explicitly requests a provider migration; report its billing errors separately.
 - Persist exact rubric evidence quotes in grading reports; transcript highlighting must not infer correctness from isolated keyword overlap.
 - Examiner session phases use session_start_time as the answering start; active claimed sessions without it are reading, so examiners must not filter them out.
-- Examiner room eligibility excludes elapsed answering timers without mutating sessions; exactly one room overrides chooser state, while multiple rooms support explicit back/selection, preventing stale sessions or picker state from blocking entry.
+- Examiner rooms query only candidate-claimed active sessions assigned to the current examiner, including master admins; exclude elapsed answering timers without mutating sessions. Exactly one room overrides chooser state; multiple rooms support explicit back/selection.
 - Property display uses station receipt acknowledgements and reconnect sync; examiner controls must not report delivery solely from a successful broadcast send. Station modal dismissal acknowledges displayed:false with the matching request ID to clear examiner intent and prevent stale reopening.
 - Use the shared PropertyDisplay modal for examiner-sent and self-practice properties so dismissal, countdown, and caption handling stay consistent.
 - Apply examiner caption overrides to broadcast payloads only, including the currently displayed media and reconnect intent; never modify saved case properties.

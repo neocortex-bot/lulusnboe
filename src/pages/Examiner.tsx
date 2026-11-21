@@ -25,7 +25,7 @@ function useNow() {
 }
 
 const Examiner = () => {
-  const { user, isMasterAdmin } = useAuth();
+  const { user } = useAuth();
   const qc = useQueryClient();
   const now = useNow();
   const [selected, setSelected] = useState<string | null>(null);
@@ -41,15 +41,16 @@ const Examiner = () => {
   const chRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
 
   const { data: rows = [], isLoading, isError, refetch } = useQuery({
-    queryKey: ["examiner_sessions", user?.id, isMasterAdmin],
+    queryKey: ["examiner_sessions", "assigned_started", user?.id],
     enabled: !!user,
     staleTime: 30_000,
     queryFn: async () => {
       if (!user) return [];
-      let q = supabase.from("exam_sessions")
+      const q = supabase.from("exam_sessions")
         .select("id, status, session_start_time, created_at, case_id, current_candidate_id, examiner_id, station_token")
-        .eq("status", "active");
-      if (!isMasterAdmin) q = q.eq("examiner_id", user.id);
+        .eq("status", "active")
+        .eq("examiner_id", user.id)
+        .not("current_candidate_id", "is", null);
       const { data, error } = await q;
       if (error) throw error;
       const sessions = data ?? [];
@@ -92,7 +93,7 @@ const Examiner = () => {
     if (!user) return;
     const fallback = createRealtimeFallback(async () => { await refetch(); });
     const ch = supabase.channel(`examiner:${user.id}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "exam_sessions", ...(isMasterAdmin ? {} : { filter: `examiner_id=eq.${user.id}` }) },
+      .on("postgres_changes", { event: "*", schema: "public", table: "exam_sessions", filter: `examiner_id=eq.${user.id}` },
         () => qc.invalidateQueries({ queryKey: ["examiner_sessions"] }))
       .subscribe(fallback.onStatus);
     const refresh = () => { void fallback.refresh(); };
@@ -107,9 +108,9 @@ const Examiner = () => {
       document.removeEventListener("visibilitychange", onVisible);
       void supabase.removeChannel(ch);
     };
-  }, [user, isMasterAdmin, qc, refetch]);
+  }, [user, qc, refetch]);
 
-  const active = useMemo(() => pickActiveExaminerSessions(rows, now), [rows, now]);
+  const active = useMemo(() => user ? pickActiveExaminerSessions(rows, now, user.id) : [], [rows, now, user?.id]);
   const currentId = resolveSelectedSession(active, selected, previousRef.current, choosing);
   const current = active.find((s) => s.id === currentId);
   useEffect(() => {
@@ -228,7 +229,7 @@ const Examiner = () => {
         {!current && (
           <>
             <p className="text-sm text-muted-foreground">
-              {active.length === 0 && !isLoading && !isError ? "Belum ada peserta yang memulai ujian pada soal yang Anda uji." : active.length ? "Pilih sesi ujian." : ""}
+              {active.length === 0 && !isLoading && !isError ? "Tidak ada ujian yang sedang berlangsung di mana Anda sebagai penguji." : active.length ? "Pilih sesi ujian." : ""}
             </p>
             {active.map((s) => {
               const ph = phase(s);

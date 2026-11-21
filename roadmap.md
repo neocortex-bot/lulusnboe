@@ -1,9 +1,9 @@
 # Roadmap
 
 ## Sesi membaca penguji tertinggal (21 Nov 2026)
-- [ ] Tambahkan waktu klaim server agar sesi membaca lama dapat dibedakan dari klaim baru pada deployment lama; jangan mengubah status/nilai sesi lama.
-- [ ] Keluarkan dua sesi membaca terbengkalai dan uji perlindungan sesi membaca baru serta sesi tunggal/pilihan ruangan.
-- [ ] Verifikasi data Supabase, tes regresi, dan tampilan; ujian nyata melalui akun eksternal belum dapat diverifikasi.
+- [x] Tampilkan hanya sesi yang sudah dimulai peserta dan menugaskan akun yang masuk sebagai penguji, termasuk admin utama; gunakan pesan kosong yang diminta. Tidak mengubah struktur/status/nilai sesi; migrasi waktu klaim dibatalkan sebelum berjalan.
+- [x] Kedua sesi L77X55/RF45LQ tidak memiliki penguji dan tidak lagi masuk daftar; pertahankan sesi membaca baru yang telah diklaim serta sesi tunggal/pilihan ruangan.
+- [x] Supabase menunjukkan nol sesi active yang memiliki penguji dan peserta. 225 tes lolos, build OK; browser 394/1110 px dengan data contoh memverifikasi kosong → mulai → pilih/kembali. Ujian nyata melalui akun eksternal belum dapat diverifikasi.
 
 ## Pemilihan sesi penguji (21 Nov 2026)
 - [x] Abaikan sesi menunggu/selesai dan sesi menjawab yang waktunya habis tanpa mengubah data ujian; pertahankan sesi membaca. Segarkan daftar saat kembali ke halaman penguji.

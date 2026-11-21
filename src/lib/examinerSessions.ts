@@ -4,15 +4,17 @@ export interface ExaminerSessionRow {
   session_start_time: string | null;
   created_at: string;
   current_candidate_id?: string | null;
+  examiner_id?: string | null;
   deployment_id?: string | null;
   case?: { time_limit_seconds?: number } | null;
 }
 
 /** Reading stays eligible; elapsed answering sessions must not block live rooms. */
-export function pickActiveExaminerSessions<T extends ExaminerSessionRow>(rows: T[], now = Date.now()): T[] {
+export function pickActiveExaminerSessions<T extends ExaminerSessionRow>(rows: T[], now = Date.now(), examinerId?: string): T[] {
   return rows
     .filter((r) => {
-      if (r.status !== "active" || (!r.current_candidate_id && !r.session_start_time)) return false;
+      if (r.status !== "active" || !r.current_candidate_id) return false;
+      if (examinerId !== undefined && r.examiner_id !== examinerId) return false;
       if (!r.session_start_time) return true;
       const start = Date.parse(r.session_start_time);
       const limit = r.case?.time_limit_seconds;

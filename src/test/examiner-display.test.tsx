@@ -4,8 +4,8 @@ import Examiner from "@/pages/Examiner";
 import PropertyDisplay from "@/components/station/PropertyDisplay";
 import { PROPERTY_ACK_EVENT, PROPERTY_SHOW_EVENT, PROPERTY_SYNC_EVENT } from "@/lib/digitalProperties";
 
-const mock = vi.hoisted(() => ({ rows: [] as any[], channels: [] as any[], send: vi.fn(), invalid: vi.fn() }));
-vi.mock("@/contexts/AuthContext", () => ({ useAuth: () => ({ user: { id: "admin" }, isMasterAdmin: false }) }));
+const mock = vi.hoisted(() => ({ rows: [] as any[], channels: [] as any[], send: vi.fn(), invalid: vi.fn(), master: false }));
+vi.mock("@/contexts/AuthContext", () => ({ useAuth: () => ({ user: { id: "admin" }, isMasterAdmin: mock.master }) }));
 vi.mock("@tanstack/react-query", () => ({
   useQuery: () => ({ data: mock.rows, isLoading: false, isError: false, refetch: vi.fn() }),
   useQueryClient: () => ({ invalidateQueries: mock.invalid }),
@@ -18,12 +18,31 @@ vi.mock("@/integrations/supabase/client", () => ({ supabase: {
     mock.channels.push(ch); return ch;
   }, removeChannel: vi.fn(),
 } }));
-const session = (id: string) => ({ id, status: "active", current_candidate_id: id, session_start_time: null, created_at: "2026-10-22T03:00:00Z", candidate: id, station_token: id, properties: [], digital: [{ label: "EKG", value: "Normal" }], case: { title: "Soal", time_limit_seconds: 360 } });
+const session = (id: string) => ({ id, status: "active", examiner_id: "admin", current_candidate_id: id, session_start_time: null, created_at: "2026-10-22T03:00:00Z", candidate: id, station_token: id, properties: [], digital: [{ label: "EKG", value: "Normal" }], case: { title: "Soal", time_limit_seconds: 360 } });
 
-beforeEach(() => { mock.rows = [session("Peserta A")]; mock.channels = []; mock.send.mockReset(); mock.send.mockResolvedValue("ok"); });
+beforeEach(() => { mock.master = false; mock.rows = [session("Peserta A")]; mock.channels = []; mock.send.mockReset(); mock.send.mockResolvedValue("ok"); });
 afterEach(() => { cleanup(); vi.useRealTimers(); });
 
 describe("examiner delivery and session transitions", () => {
+  it("does not open unassigned or other examiners' sessions for the master admin", () => {
+    mock.master = true;
+    mock.rows = [
+      { ...session("L77X55"), examiner_id: null, created_at: "2026-11-20T02:49:15Z" },
+      { ...session("RF45LQ"), examiner_id: null, created_at: "2026-11-04T03:24:29Z" },
+      { ...session("Penguji lain"), examiner_id: "other-admin" },
+    ];
+    render(<Examiner />);
+    expect(mock.channels.some(ch => ch.name.startsWith("session:"))).toBe(false);
+    expect(screen.queryByRole("button", { name: /L77X55|RF45LQ|Penguji lain/ })).not.toBeInTheDocument();
+  });
+  it("does not open an assigned station until the participant starts the exam", () => {
+    mock.rows = [{ ...session("Belum mulai"), status: "waiting", current_candidate_id: null }];
+    const view = render(<Examiner />);
+    expect(mock.channels.some(ch => ch.name.startsWith("session:"))).toBe(false);
+    mock.rows = [session("Peserta A")];
+    view.rerender(<Examiner />);
+    expect(screen.getByRole("heading", { name: "Peserta A" })).toBeInTheDocument();
+  });
   it("overrides captions on displayed media, reconnects with the override, and restores the author's setting", async () => {
     const row = session("Peserta A");
     row.digital = [{ label: "EKG", value: "Normal", media_url: "/ekg.png", show_caption: true } as any];

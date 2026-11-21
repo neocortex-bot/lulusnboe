@@ -1,9 +1,21 @@
 import { describe, it, expect } from "vitest";
 import { pickActiveExaminerSessions, resolveSelectedSession, examinerPhase } from "@/lib/examinerSessions";
 
-const row = (id: string, status: string, start: string | null) => ({ id, status, session_start_time: start, created_at: "" });
+const row = (id: string, status: string, start: string | null) => ({ id, status, session_start_time: start, created_at: "", current_candidate_id: "candidate-1" });
 
 describe("examiner sessions", () => {
+  it("requires a participant claim even if an answering timestamp exists", () => {
+    expect(pickActiveExaminerSessions([{ ...row("unclaimed", "active", "2026-11-21T08:36:00Z"), current_candidate_id: null }])).toEqual([]);
+  });
+  it("only includes sessions assigned to the logged-in examiner", () => {
+    const sessions = [
+      { ...row("mine", "active", null), examiner_id: "admin-1" },
+      { ...row("unassigned", "active", null), examiner_id: null },
+      { ...row("other", "active", null), examiner_id: "admin-2" },
+      { ...row("not-started", "waiting", null), examiner_id: "admin-1", current_candidate_id: null },
+    ];
+    expect(pickActiveExaminerSessions(sessions, Date.now(), "admin-1").map(s => s.id)).toEqual(["mine"]);
+  });
   it("shows only started active sessions, newest first", () => {
     const out = pickActiveExaminerSessions([
       row("w", "waiting", null), row("a", "active", "2026-01-01T01:00"), row("c", "completed", "2026-01-01T03:00"), row("b", "active", "2026-01-01T02:00"),
