@@ -1,5 +1,9 @@
 # Roadmap
 
+## Formulir properti digital (21 Nov 2026)
+- [x] Ganti media lama di formulir dengan editor properti digital bersama dan centang cepat NBOE; pertahankan jawaban privat serta metadata rubrik.
+- [x] 24 tes lolos; browser 394/1110 px memverifikasi tambah/edit/simpan/buka ulang dan penanda NBOE dengan data uji, tanpa overflow atau error runtime. Simpan akun asli belum terverifikasi karena sesi Supabase eksternal tidak tersedia.
+
 ## Penanda Soal NBOE (21 Nov 2026)
 - [x] Centang tersimpan di detail soal di samping Edit; label di tabel soal dan pilihan/urutan deploy, tanpa mengubah rubrik atau aturan ujian. Soal lama default false, tidak otomatis ditandai.
 - [x] 228 tes lolos, build OK; browser 394/1110 px dengan data contoh memverifikasi simpan → buka ulang → tabel → urutan deploy. Penyimpanan akun asli belum terverifikasi pada Supabase eksternal; kolom default terverifikasi di 208 soal, tidak ada data asli diubah. 29 temuan keamanan lama tidak diubah; tidak ada temuan baru.

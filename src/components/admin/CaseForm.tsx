@@ -9,9 +9,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Monitor, Tag } from "lucide-react";
 import RubricBuilder, { type RubricData } from "./RubricBuilder";
 import sharedParseRubricData, { withRubricItemIds } from "@/lib/rubricParser";
-import AssetUploader from "./AssetUploader";
+import DigitalPropertiesEditor from "./DigitalPropertiesEditor";
+import NboeCaseToggle from "./NboeCaseToggle";
+import { parseDigitalProperties, cleanDigitalProperties } from "@/lib/digitalProperties";
 import PropertiesEditor from "./PropertiesEditor";
 
 interface CaseFormProps {
@@ -26,6 +30,7 @@ interface CaseFormProps {
     questions_text?: string;
     answer_key_text?: string;
     show_results_to_candidate?: boolean;
+    is_nboe?: boolean;
   } | null;
   onClose: () => void;
 }
@@ -42,6 +47,8 @@ const CaseForm = ({ existingCase, onClose }: CaseFormProps) => {
   const [readingTimeSeconds, setReadingTimeSeconds] = useState(existingCase?.reading_time_seconds ?? 120);
   const [questionsText, setQuestionsText] = useState(existingCase?.questions_text ?? "");
   const [answerKeyText, setAnswerKeyText] = useState(existingCase?.answer_key_text ?? "");
+  const [isNboe, setIsNboe] = useState(false);
+  const [digitalProps, setDigitalProps] = useState(() => parseDigitalProperties(existingCase?.checklist_rubric));
   const [showResultsToCandidate, setShowResultsToCandidate] = useState(
     existingCase?.show_results_to_candidate ?? false
   );
@@ -51,7 +58,7 @@ const CaseForm = ({ existingCase, onClose }: CaseFormProps) => {
   // Properti soal: admin-only, disimpan di case_answer_keys (tidak pernah ke peserta)
   const [properties, setProperties] = useState<string[]>(
     Array.isArray((existingCase?.checklist_rubric as any)?.properties)
-      ? (existingCase!.checklist_rubric as any).properties.map((p: any) => String(p))
+      ? (existingCase?.checklist_rubric as any).properties.map((p: any) => String(p))
       : []
   );
 
@@ -60,6 +67,8 @@ const CaseForm = ({ existingCase, onClose }: CaseFormProps) => {
 
   const mutation = useMutation({
     mutationFn: async () => {
+      const items = withRubricItemIds(rubricData.items);
+      const publicItems = items.map(({ answer: _answer, ...item }) => item);
       const casePayload = {
         title,
         exam_mode: examMode,
@@ -71,7 +80,7 @@ const CaseForm = ({ existingCase, onClose }: CaseFormProps) => {
         // Keep answer_key_text and checklist_rubric on clinical_cases for backward compat
         // but the authoritative source is now case_answer_keys
         answer_key_text: answerKeyText,
-        checklist_rubric: { ...rubricData, items: withRubricItemIds(rubricData.items) } as any,
+        checklist_rubric: { ...rubricData, items: publicItems } as any,
         // Deteksi mode penilaian: daftar tilik aktif hanya bila enabled & ada items
         rubric_mode: rubricData.enabled && rubricData.items.length > 0 ? "checklist" : "none",
       };
@@ -85,7 +94,7 @@ const CaseForm = ({ existingCase, onClose }: CaseFormProps) => {
         const { data: authData } = await supabase.auth.getUser();
         const { data, error } = await supabase
           .from("clinical_cases")
-          .insert({ ...casePayload, created_by: authData.user?.id ?? null })
+          .insert({ ...casePayload, is_nboe: isNboe, created_by: authData.user?.id ?? null })
           .select("id")
           .single();
         if (error) throw error;
@@ -101,23 +110,24 @@ const CaseForm = ({ existingCase, onClose }: CaseFormProps) => {
               case_id: caseId,
               answer_key_text: answerKeyText,
               checklist_rubric: {
+                ...(existingCase?.checklist_rubric && !Array.isArray(existingCase.checklist_rubric) ? existingCase.checklist_rubric : {}),
                 ...rubricData,
-                items: withRubricItemIds(rubricData.items),
+                items,
                 properties: properties.map((p) => p.trim()).filter(Boolean),
-                digital_properties: (existingCase?.checklist_rubric as any)?.digital_properties ?? [],
+                digital_properties: cleanDigitalProperties(digitalProps),
               } as any,
             },
             { onConflict: "case_id" }
           );
         if (akError) {
-          console.error("Failed to save answer keys:", akError);
-          // Don't throw — the case itself was saved
+          throw akError;
         }
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["clinical_cases"] });
-      toast({ title: existingCase ? "Case updated" : "Case created" });
+      queryClient.invalidateQueries({ queryKey: ["clinical_case_preview", existingCase?.id] });
+      toast({ title: existingCase ? "Soal diperbarui" : "Soal dibuat" });
       onClose();
     },
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
@@ -131,13 +141,22 @@ const CaseForm = ({ existingCase, onClose }: CaseFormProps) => {
       }}
       className="space-y-4"
     >
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
+        <span className="inline-flex items-center gap-2 text-sm font-medium"><Tag className="h-4 w-4 text-muted-foreground" /> Penanda soal</span>
+        {existingCase ? <NboeCaseToggle caseId={existingCase.id} canEdit /> : (
+          <div className="flex items-center gap-2">
+            <Checkbox id="new-case-nboe" checked={isNboe} onCheckedChange={(checked) => setIsNboe(checked === true)} />
+            <Label htmlFor="new-case-nboe">Soal NBOE</Label>
+          </div>
+        )}
+      </div>
       <div className="space-y-2">
-        <Label htmlFor="title">Title</Label>
+        <Label htmlFor="title">Judul Soal</Label>
         <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
       </div>
 
       <div className="space-y-2">
-        <Label>Exam Mode</Label>
+        <Label>Mode Ujian</Label>
         <Select value={examMode} onValueChange={setExamMode}>
           <SelectTrigger><SelectValue /></SelectTrigger>
           <SelectContent>
@@ -224,23 +243,20 @@ const CaseForm = ({ existingCase, onClose }: CaseFormProps) => {
 
       <PropertiesEditor properties={properties} onChange={setProperties} />
 
-      {existingCase?.id && (
-        <>
-          <Separator />
-          <div className="space-y-2">
-            <Label className="text-base font-semibold">Media Assets</Label>
-            <p className="text-xs text-muted-foreground">
-              Upload gambar/video yang akan tampil saat kandidat meminta pemeriksaan tertentu.
-            </p>
-            <AssetUploader caseId={existingCase.id} />
-          </div>
-        </>
-      )}
+      <Separator />
+      <section className="min-w-0 space-y-4" aria-labelledby="case-form-digital-title">
+        <div className="flex items-center gap-3">
+          <Monitor className="h-5 w-5 shrink-0 text-primary" />
+          <h2 id="case-form-digital-title" className="text-base font-semibold">Properti Digital</h2>
+          <span className="text-sm tabular-nums text-muted-foreground">{digitalProps.length}</span>
+        </div>
+        <DigitalPropertiesEditor items={digitalProps} onChange={setDigitalProps} caseId={existingCase?.id} />
+      </section>
 
       <div className="flex justify-end gap-2 pt-4">
-        <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
+        <Button type="button" variant="outline" onClick={onClose}>Batal</Button>
         <Button type="submit" disabled={mutation.isPending}>
-          {mutation.isPending ? "Saving..." : existingCase ? "Update" : "Create"}
+          {mutation.isPending ? "Menyimpan..." : existingCase ? "Simpan Perubahan" : "Buat Soal"}
         </Button>
       </div>
     </form>
