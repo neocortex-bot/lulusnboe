@@ -11,7 +11,7 @@ const AssetRenderer = ({ url, type }: AssetRendererProps) => {
           src={url}
           autoPlay
           controls
-          className="max-h-[60vh] rounded-xl shadow-lg"
+          className="max-w-full max-h-[60dvh] rounded-xl shadow-lg"
         />
       </div>
     );
@@ -22,7 +22,7 @@ const AssetRenderer = ({ url, type }: AssetRendererProps) => {
       <img
         src={url}
         alt="Clinical asset"
-        className="max-h-[60vh] rounded-xl shadow-lg object-contain"
+        className="max-w-full max-h-[60dvh] rounded-xl shadow-lg object-contain"
       />
     </div>
   );

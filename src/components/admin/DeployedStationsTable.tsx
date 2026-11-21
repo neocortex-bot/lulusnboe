@@ -112,7 +112,7 @@ const DeployedStationsTable = ({ examMode }: DeployedStationsTableProps) => {
           <p className="text-muted-foreground text-center py-8">Belum ada station yang di-deploy.</p>
         ) : (
           <>
-            <Table>
+            <Table className="min-w-[640px] [&_td:nth-child(4)]:whitespace-nowrap">
               <TableHeader>
                 <TableRow>
                   <TableHead>Kode Station</TableHead>

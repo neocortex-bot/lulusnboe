@@ -58,11 +58,11 @@ export default function SoalPreviewPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-3xl px-4 py-6 space-y-4">
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <Button variant="ghost" size="sm" asChild>
             <Link to="/prereview"><ArrowLeft className="mr-1 h-4 w-4" />Pre-review</Link>
           </Button>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Button size="sm" onClick={handleImport} disabled={importing}>
               <Send className="mr-1 h-4 w-4" />
               {importing ? "Menyimpan..." : "Masukkan ke Pre-review"}
@@ -82,7 +82,7 @@ export default function SoalPreviewPage() {
         {/* ===== Tampilan peserta ===== */}
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-base">
+            <CardTitle className="flex flex-wrap items-center gap-2 text-base">
               <Stethoscope className="h-4 w-4" /> Skenario klinik
             </CardTitle>
           </CardHeader>
@@ -93,7 +93,7 @@ export default function SoalPreviewPage() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-base">
+            <CardTitle className="flex flex-wrap items-center gap-2 text-base">
               <ClipboardList className="h-4 w-4" /> Instruksi kandidat
             </CardTitle>
           </CardHeader>
@@ -132,7 +132,7 @@ export default function SoalPreviewPage() {
             {soal.keySections?.map((sec, si) => (
               <Card key={si}>
                 <CardHeader className="pb-2">
-                  <CardTitle className="flex items-center gap-2 text-base">
+                  <CardTitle className="flex flex-wrap items-center gap-2 text-base">
                     <KeyRound className="h-4 w-4" /> {sec.title}
                   </CardTitle>
                 </CardHeader>
@@ -158,7 +158,7 @@ export default function SoalPreviewPage() {
 
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-base">
+                <CardTitle className="flex flex-wrap items-center gap-2 text-base">
                   <Package className="h-4 w-4" /> Properti soal (disiapkan penguji, tidak ditampilkan ke peserta)
                 </CardTitle>
               </CardHeader>
@@ -173,7 +173,7 @@ export default function SoalPreviewPage() {
 
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-base">
+                <CardTitle className="flex flex-wrap items-center gap-2 text-base">
                   <Target className="h-4 w-4" /> Kunci jawaban lengkap — word by word (dari awal sampai selesai)
                   <Badge variant="secondary" className="ml-auto">
                     ± {Math.round(soal.fullAnswer.reduce((s, a) => s + estimateSpeakSeconds(a.text), 0) / 60)} menit
@@ -195,7 +195,7 @@ export default function SoalPreviewPage() {
 
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-base">
+                <CardTitle className="flex flex-wrap items-center gap-2 text-base">
                   <Target className="h-4 w-4" /> Daftar tilik ⇄ Word by Word
                   <Badge variant="secondary" className="ml-auto">Total {totalPoin} poin</Badge>
                 </CardTitle>
@@ -203,7 +203,7 @@ export default function SoalPreviewPage() {
               <CardContent className="space-y-3">
                 {soal.tilik.map((t, i) => (
                   <div key={i} className="rounded-md border p-3 text-sm">
-                    <div className="flex items-start justify-between gap-2">
+                    <div className="flex flex-wrap items-start justify-between gap-2">
                       <p className="font-medium">
                         {i + 1}. {t.dt}
                       </p>

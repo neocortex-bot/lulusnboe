@@ -9,7 +9,7 @@ interface Props {
 
 const CategoryFilter = ({ categories, value, onChange }: Props) => (
   <Select value={value} onValueChange={onChange}>
-    <SelectTrigger className="w-56">
+    <SelectTrigger className="min-w-0 w-full max-w-56 sm:w-56">
       <SelectValue placeholder="Kategori" />
     </SelectTrigger>
     <SelectContent>

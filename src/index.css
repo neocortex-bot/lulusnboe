@@ -103,7 +103,10 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    overflow-wrap: anywhere;
   }
+  #root { min-width: 0; width: 100%; }
+  img, video, audio { max-width: 100%; }
   .rubric-highlight {
     background-color: hsl(var(--rubric-highlight));
     color: hsl(var(--foreground));

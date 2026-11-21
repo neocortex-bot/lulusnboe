@@ -50,7 +50,7 @@ const CountdownTimer = ({
         isUrgent ? "text-destructive animate-pulse" : "text-foreground"
       } ${className}`}
     >
-      <span className="text-7xl font-bold tabular-nums">
+      <span className="text-4xl sm:text-7xl font-bold tabular-nums">
         {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
       </span>
     </div>

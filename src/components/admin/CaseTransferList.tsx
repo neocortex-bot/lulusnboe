@@ -49,7 +49,7 @@ const CaseTransferList = ({
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid min-w-0 grid-cols-1 md:grid-cols-2 gap-4 [&>div]:min-w-0">
       {/* Available cases */}
       <div className="space-y-2">
         <p className="text-sm font-medium text-foreground">Pilih Case</p>
@@ -74,15 +74,17 @@ const CaseTransferList = ({
             </p>
           ) : (
             availableCases.map((c) => (
-              <button
+              <Button
+                type="button"
+                variant="ghost"
                 key={c.id}
                 onClick={() => addCase(c)}
                 disabled={disabled}
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-muted/50 transition-colors border-b border-border last:border-0"
+                className="h-auto min-h-10 w-full justify-start rounded-none whitespace-normal px-3 py-2 text-sm text-left border-b border-border last:border-0"
               >
                 <Plus className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                <span className="truncate">{c.title}</span>
-              </button>
+                <span className="min-w-0 break-words">{c.title}</span>
+              </Button>
             ))
           )}
         </div>
@@ -108,7 +110,7 @@ const CaseTransferList = ({
                 className="flex items-center gap-1.5 px-3 py-2 text-sm border-b border-border last:border-0 bg-muted/30"
               >
                 <span className="font-mono text-xs text-muted-foreground w-5 shrink-0">{i + 1}.</span>
-                <span className="flex-1 truncate">{c.title}</span>
+                <span className="min-w-0 flex-1 break-words">{c.title}</span>
                 {selectedCases.length > 1 && (
                   <>
                     <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveCase(i, -1)} disabled={i === 0}>

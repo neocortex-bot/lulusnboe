@@ -14,27 +14,27 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b bg-card px-6 py-4 flex items-center justify-between">
-        <div>
+      <header className="border-b bg-card px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="min-w-0 flex-1">
           <h1 className="text-xl font-bold text-foreground">Admin Dashboard</h1>
           <p className="text-sm text-muted-foreground">{user?.email}</p>
         </div>
-        <Button variant="outline" size="sm" onClick={signOut}>
+        <Button variant="outline" size="sm" className="shrink-0" onClick={signOut}>
           <LogOut className="h-4 w-4 mr-2" /> Sign Out
         </Button>
       </header>
 
-      <main className="container mx-auto p-6">
+      <main className="container mx-auto min-w-0 p-4 sm:p-6">
         <Tabs defaultValue="cases">
-          <TabsList className="mb-6">
-            <TabsTrigger value="cases" className="gap-2">
-              <BookOpen className="h-4 w-4" /> Exam Details
+          <TabsList className="mb-6 grid w-full grid-cols-3 sm:inline-flex sm:w-auto">
+            <TabsTrigger value="cases" className="gap-0 px-1 text-xs sm:gap-2 sm:px-3 sm:text-sm">
+              <BookOpen className="hidden h-4 w-4 sm:block" /> Exam Details
             </TabsTrigger>
-            <TabsTrigger value="participants" className="gap-2">
-              <Users className="h-4 w-4" /> Participants
+            <TabsTrigger value="participants" className="gap-0 px-1 text-xs sm:gap-2 sm:px-3 sm:text-sm">
+              <Users className="hidden h-4 w-4 sm:block" /> Participants
             </TabsTrigger>
-            <TabsTrigger value="sessions" className="gap-2">
-              <Radio className="h-4 w-4" /> Sessions
+            <TabsTrigger value="sessions" className="gap-0 px-1 text-xs sm:gap-2 sm:px-3 sm:text-sm">
+              <Radio className="hidden h-4 w-4 sm:block" /> Sessions
             </TabsTrigger>
           </TabsList>
           <TabsContent value="cases">

@@ -1,3 +1,4 @@
+- Keep responsive constraints in shared UI primitives, contain wide tables in local scrolling regions, and stack station panels below desktop widths; this keeps narrow screens usable without changing exam logic.
 - Keep exam AI authorization and rubric normalization in shared server-only helpers so evaluation and ideal answers enforce the same access rules.
 - Use streamed exam AI responses with a shared browser reader so long generation remains connected and safe errors reach every caller.
 - Preserve direct OpenAI transcription until the owner explicitly requests a provider migration; report its billing errors separately.

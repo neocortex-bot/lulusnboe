@@ -370,8 +370,8 @@ const CasePreview = () => {
           <Button variant="outline" size="icon" onClick={() => navigate("/admin")}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <div className="min-w-0">
-            <h1 className="text-xl md:text-2xl font-bold text-foreground truncate">{title}</h1>
+          <div className="min-w-0 flex-1 basis-[calc(100%-4rem)] sm:basis-auto">
+            <h1 className="text-xl md:text-2xl font-bold text-foreground break-words">{title}</h1>
             <div className="flex flex-wrap items-center gap-2 mt-1">
               <span className="px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
                 {caseRow.source === "agent_api" ? "AI Agent" : "Admin"}
@@ -568,7 +568,7 @@ const CasePreview = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between rounded-lg border border-border p-4">
+                <div className="flex items-center justify-between gap-3 rounded-lg border border-border p-4">
                   <div className="space-y-0.5">
                     <Label>Tampilkan Nilai ke Peserta</Label>
                     <p className="text-xs text-muted-foreground">

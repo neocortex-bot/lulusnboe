@@ -283,7 +283,7 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex flex-wrap items-center gap-2">
             <Rocket className="h-5 w-5" />
             Deploy Session {modeLabel}
           </CardTitle>
@@ -297,7 +297,7 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
             errorMessage={candidatesError ? "Daftar peserta gagal dimuat." : undefined}
           />
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <span className="text-sm font-medium">Kategori:</span>
             <CategoryFilter categories={categories} value={categoryFilter} onChange={setCategoryFilter} />
           </div>
@@ -316,8 +316,8 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
                 Akan dibuat {pcCount * selectedCases.length} kode station ({pcCount} PC × {selectedCases.length} soal).
                 Setiap soal memiliki kode dan URL sendiri.
               </p>
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2">
                   <Monitor className="h-4 w-4 text-muted-foreground" />
                   <label className="text-sm font-medium">Jumlah PC/Monitor:</label>
                   <div className="flex items-center gap-1">
@@ -441,7 +441,7 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
               historyLoading ||
               historyUnavailable
             }
-            className="w-full sm:w-auto"
+            className="h-auto min-h-10 w-full whitespace-normal sm:w-auto"
           >
             <Rocket className="h-4 w-4 mr-2" />
             Deploy {pcCount * selectedCases.length} Station {modeLabel}

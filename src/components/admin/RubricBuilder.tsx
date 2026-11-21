@@ -59,7 +59,7 @@ const RubricBuilder = ({ data, onChange, disabled = false }: RubricBuilderProps)
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <Label>Penilaian Berdasarkan Daftar Tilik</Label>
         <Switch
           checked={data.enabled}
@@ -80,12 +80,12 @@ const RubricBuilder = ({ data, onChange, disabled = false }: RubricBuilderProps)
       {data.enabled && (
         <div className="space-y-3 rounded-md border border-border p-3">
           {/* Add new item */}
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Input
               value={newText}
               onChange={(e) => setNewText(e.target.value)}
               placeholder="Tambah item daftar tilik..."
-              className="flex-1"
+              className="min-w-0 basis-full sm:basis-0 flex-1"
               onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addItem())}
               disabled={disabled}
             />
@@ -114,10 +114,10 @@ const RubricBuilder = ({ data, onChange, disabled = false }: RubricBuilderProps)
           {data.items.length > 0 ? (
             <ul className="space-y-2">
               {data.items.map((item, i) => (
-                <li key={i} className="flex items-center gap-2 rounded-md bg-muted px-3 py-2 text-sm">
-                  <span className="text-muted-foreground font-mono text-xs w-6">{i + 1}.</span>
-                  <span className="flex-1">{item.text}</span>
-                  <span className="text-xs font-semibold text-foreground bg-background px-2 py-0.5 rounded">
+                <li key={i} className="flex flex-wrap items-start gap-2 rounded-md bg-muted px-3 py-2 text-sm">
+                  <span className="text-muted-foreground font-mono text-xs w-6 shrink-0">{i + 1}.</span>
+                  <span className="min-w-0 flex-1 basis-[calc(100%-2.5rem)] sm:basis-0">{item.text}</span>
+                  <span className="shrink-0 text-xs font-semibold text-foreground bg-background px-2 py-0.5 rounded">
                     {item.points} pts
                   </span>
                   <div className="flex items-center gap-1">
@@ -148,7 +148,7 @@ const RubricBuilder = ({ data, onChange, disabled = false }: RubricBuilderProps)
 
           {/* Total */}
           {data.items.length > 0 && (
-            <div className="flex items-center justify-between text-sm border-t border-border pt-2">
+            <div className="flex items-center justify-between gap-3 text-sm border-t border-border pt-2">
               <span className="text-muted-foreground">Total Poin</span>
               <span className="font-bold text-foreground">{totalPoints} pts</span>
             </div>

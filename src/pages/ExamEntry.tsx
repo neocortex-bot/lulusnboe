@@ -48,9 +48,9 @@ const ExamEntry = () => {
 
   return (
     <div className="min-h-screen bg-background p-4 max-w-2xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground truncate">{user.email}</p>
-        <Button variant="ghost" size="sm" onClick={handleLogout}>
+      <div className="flex min-w-0 items-center justify-between gap-2">
+        <p className="text-sm min-w-0 text-muted-foreground truncate">{user.email}</p>
+        <Button variant="ghost" size="sm" className="shrink-0" onClick={handleLogout}>
           <LogOut className="h-4 w-4 mr-1" />
           Logout
         </Button>

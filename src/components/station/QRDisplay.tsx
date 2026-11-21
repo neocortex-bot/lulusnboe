@@ -11,9 +11,9 @@ const QRDisplay = ({ sessionId, sequenceLabel, stationToken }: QRDisplayProps) =
   const url = `${window.location.origin}/exam/${sessionId}`;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-background gap-8 p-8">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-background gap-5 sm:gap-8 p-4 sm:p-8">
       {stationToken && (
-        <div className="font-mono text-5xl font-bold tracking-[0.3em] text-foreground">
+        <div className="font-mono text-3xl sm:text-5xl font-bold text-foreground">
           {stationToken}
         </div>
       )}
@@ -22,11 +22,11 @@ const QRDisplay = ({ sessionId, sequenceLabel, stationToken }: QRDisplayProps) =
           {sequenceLabel}
         </Badge>
       )}
-      <h1 className="text-4xl font-bold text-foreground tracking-tight">
+      <h1 className="text-2xl sm:text-4xl font-bold text-foreground text-center">
         Scan to Begin Exam
       </h1>
-      <div className="bg-white p-8 rounded-2xl shadow-lg">
-        <QRCodeSVG value={url} size={320} level="H" />
+      <div className="w-full max-w-96 bg-card p-4 sm:p-8 rounded-lg shadow-lg">
+        <QRCodeSVG value={url} size={320} level="H" className="h-auto w-full" />
       </div>
       <p className="text-muted-foreground text-lg max-w-md text-center">
         Open the camera on your phone and scan this QR code to start your examination session.

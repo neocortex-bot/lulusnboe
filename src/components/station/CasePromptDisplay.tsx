@@ -29,17 +29,17 @@ const CasePromptDisplay = ({ prompt, questionsText, compact, heading = "Silahkan
   }
 
   return (
-    <div className="flex flex-col gap-6 p-8 max-w-4xl mx-auto">
-      <h2 className="text-3xl font-bold text-foreground">{heading}</h2>
-      <div className="bg-card border border-border rounded-xl p-8">
-        <p className="text-xl leading-relaxed text-card-foreground whitespace-pre-wrap">
+    <div className="flex min-w-0 w-full flex-col gap-4 sm:gap-6 p-0 sm:p-4 lg:p-8 max-w-4xl mx-auto">
+      <h2 className="text-2xl sm:text-3xl font-bold text-foreground">{heading}</h2>
+      <div className="bg-card border border-border rounded-lg p-4 sm:p-6 lg:p-8">
+        <p className="text-base sm:text-xl leading-relaxed text-card-foreground whitespace-pre-wrap">
           {prompt}
         </p>
       </div>
       {questionsText && (
-        <div className="bg-card border border-primary/30 rounded-xl p-8">
+        <div className="bg-card border border-primary/30 rounded-lg p-4 sm:p-6 lg:p-8">
           <h3 className="text-lg font-semibold text-primary mb-3">Soal / Pertanyaan</h3>
-          <p className="text-xl leading-relaxed text-card-foreground whitespace-pre-wrap">
+          <p className="text-base sm:text-xl leading-relaxed text-card-foreground whitespace-pre-wrap">
             {questionsText}
           </p>
         </div>

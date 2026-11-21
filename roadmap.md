@@ -1,5 +1,9 @@
 # Roadmap
 
+## Pemeriksaan responsif semua halaman (21 Nov 2026)
+- [x] Audit halaman publik, admin, penguji, peserta, station, tabel dan modal pada ponsel/tablet/desktop; perbaikan hanya presentasi.
+- [x] Verifikasi 145 layar dengan data contoh pada 320, 390, 768, 1109 dan 1440 px; tidak ada overflow halaman atau error runtime. Pemeriksaan akun/ujian asli tidak tersedia pada Supabase eksternal, dan iPhone fisik belum diuji. Satu tes paginasi sempat gagal saat suite penuh, lalu 4 tes paginasi lolos saat dijalankan ulang.
+
 ## Pilih prompt 53/53 (21 Nov 2026)
 - [x] Prompt kompetensi v4 dan format masukan dikembalikan sesuai pilihan pengguna (hasil kalibrasi 53/53); nilai lama/manual tidak diganti, nilai terakhir tetap 43 dan transkrip 3467 karakter.
 - [x] 48 tes regresi dan 1 kontrol AI langsung transkrip terinterupsi/berbahaya lolos. Source server terverifikasi memakai clinical-competency-v4-2026-11-21, bukan v6. Hasil evaluasi berikutnya tidak dijamin selalu 53; versi sebelumnya tersimpan di riwayat kode.

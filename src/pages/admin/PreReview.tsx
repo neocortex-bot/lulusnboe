@@ -227,8 +227,8 @@ const PreReview = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+        <div className="container mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex min-w-0 items-center gap-3">
             <Link to="/admin">
               <Button variant="ghost" size="icon" title="Kembali ke admin">
                 <ArrowLeft className="h-4 w-4" />
@@ -260,7 +260,7 @@ const PreReview = () => {
                 Belum ada draft. Klik "Soal Baru" untuk mulai.
               </p>
             ) : (
-              <Table>
+              <Table className="min-w-[720px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Judul</TableHead>
@@ -369,9 +369,9 @@ const DraftEditor = ({ initial, busy, onSave, onIngest }: EditorProps) => {
   const total = d.items.reduce((s, i) => s + i.points, 0);
 
   return (
-    <div className="space-y-4">
+    <div className="min-w-0 space-y-4">
       <Tabs defaultValue="soal">
-        <TabsList className="grid grid-cols-3 w-full">
+        <TabsList className="grid grid-cols-3 w-full items-stretch">
           <TabsTrigger value="soal">1. Soal</TabsTrigger>
           <TabsTrigger value="jawaban">2. Jawaban Kata per Kata</TabsTrigger>
           <TabsTrigger value="tilik">3. Daftar Tilik ({d.items.length})</TabsTrigger>
@@ -447,7 +447,7 @@ const DraftEditor = ({ initial, busy, onSave, onIngest }: EditorProps) => {
             <p className="text-sm text-muted-foreground">
               Setiap butir terikat ke satu kalimat jawaban. Lengkap = 2 poin, kurang lengkap = 1 poin. Total {total} poin.
             </p>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button type="button" variant="outline" size="sm" onClick={generateFromAnswer}>
                 <Wand2 className="h-4 w-4 mr-2" /> Buat dari kalimat jawaban
               </Button>
@@ -465,7 +465,7 @@ const DraftEditor = ({ initial, busy, onSave, onIngest }: EditorProps) => {
             <p className="text-center text-muted-foreground py-6">Belum ada butir daftar tilik.</p>
           ) : (
             <div className="rounded-md border overflow-x-auto">
-              <Table>
+              <Table className="min-w-[720px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-10">#</TableHead>
@@ -536,7 +536,7 @@ const DraftEditor = ({ initial, busy, onSave, onIngest }: EditorProps) => {
         </div>
       )}
 
-      <div className="flex justify-end gap-2 border-t pt-4">
+      <div className="flex flex-col sm:flex-row sm:justify-end gap-2 border-t pt-4">
         <Button variant="outline" disabled={busy} onClick={() => onSave(d)}>
           <Save className="h-4 w-4 mr-2" /> Simpan draft
         </Button>

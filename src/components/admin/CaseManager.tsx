@@ -140,9 +140,9 @@ const CaseManager = () => {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-col items-start gap-3 lg:flex-row lg:items-center lg:justify-between">
         <CardTitle>Clinical Cases</CardTitle>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Link to="/prereview" className="relative inline-block">
             <Button variant="outline" size="sm">Pre-review Soal</Button>
             {prereviewCount > 0 && (
@@ -176,7 +176,7 @@ const CaseManager = () => {
             Belum ada soal {examGroup === "oral_board" ? "Oral Board" : "Panel"}.
           </p>
         ) : (
-          <Table>
+          <Table className="min-w-[720px]">
             <TableHeader>
               <TableRow>
                 <TableHead>Title</TableHead>

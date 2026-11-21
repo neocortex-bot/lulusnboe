@@ -143,15 +143,15 @@ const CandidateResultsList = () => {
           return (
             <div key={r.id} className="rounded-lg border border-border overflow-hidden">
               <Button variant="ghost"
-                className="w-full h-auto whitespace-normal flex items-center justify-between gap-3 p-4 text-left hover:bg-muted/50 transition-colors"
+                className="w-full h-auto whitespace-normal flex flex-col items-start sm:flex-row sm:items-center justify-between gap-3 p-4 text-left hover:bg-muted/50 transition-colors"
                 onClick={() => showResults && setExpandedId(isExpanded ? null : r.id)}
                 disabled={!showResults}
               >
-                <div className="space-y-1">
+                <div className="min-w-0 space-y-1">
                   <p className="font-medium">{caseTitle}</p>
                   <p className="text-xs text-muted-foreground">{date}</p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex shrink-0 flex-wrap items-center gap-2">
                   {showResults ? (
                     <>
                       <Badge variant={scoreDisplay.variant}>{scoreDisplay.label}</Badge>
@@ -193,7 +193,7 @@ const CandidateResultsList = () => {
                   {parsed.items.length > 0 && (
                     <div>
                       <h4 className="text-sm font-normal mb-2">Rubrik Penilaian</h4>
-                      <div className="space-y-1">
+                      <div className="min-w-0 space-y-1">
                         {parsed.items.map((item, idx) => {
                           // Single source of truth: the evaluation report. Scoring
                           // per rubric line is 2 (fully mentioned), 1 (mentioned
@@ -211,7 +211,7 @@ const CandidateResultsList = () => {
                             ? `Kutipan: "${item.evidenceQuote}"`
                             : (item.comment || label);
                           return (
-                            <div key={idx} className={`flex items-start gap-2 text-sm ${mentioned ? "" : "text-muted-foreground"}`}>
+                            <div key={idx} className={`flex flex-wrap items-start gap-2 text-sm ${mentioned ? "" : "text-muted-foreground"}`}>
                               <Badge variant={coverage === "full" ? "default" : coverage === "partial" ? "secondary" : "destructive"} className="text-xs shrink-0">
                                 {label}
                               </Badge>
@@ -223,9 +223,9 @@ const CandidateResultsList = () => {
                                 exclusive: combining font-normal with font-bold
                                 lets font-normal win and the emphasis disappears.
                               */}
-                              <span className={`flex-1 ${mentioned ? "font-normal" : "font-bold italic"}`}>{item.item}</span>
+                              <span className={`min-w-0 basis-full sm:basis-0 flex-1 ${mentioned ? "font-normal" : "font-bold italic"}`}>{item.item}</span>
                               <span className="text-xs font-mono text-muted-foreground shrink-0">{earned}/{max} poin</span>
-                              <span className="text-muted-foreground text-xs">{reason}</span>
+                              <span className="w-full text-muted-foreground text-xs">{reason}</span>
                             </div>
                           );
                         })}
@@ -236,7 +236,7 @@ const CandidateResultsList = () => {
                           </div>
                         )}
                         {parsed.score != null && (
-                          <div className="flex items-center justify-between text-base font-bold border-t border-border pt-3 mt-3">
+                          <div className="flex flex-wrap items-center justify-between gap-2 text-base font-bold border-t border-border pt-3 mt-3">
                             <span>Nilai Akhir</span>
                             <Badge variant={parsed.score >= 68 && !parsed.hasCriticalFail ? "default" : "destructive"} className="text-base px-3 py-1">
                               {parsed.score}/100 — {parsed.passStatus || (parsed.score >= 68 ? "LULUS" : "TIDAK LULUS")}

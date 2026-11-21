@@ -119,7 +119,7 @@ export default function RubricWordByWordSection({ caseId, items, canEdit, onAppl
           </ol>
         )}
         {canEdit && items.length > 0 && (
-          <Button onClick={runCheck} className="gap-2" variant="outline">
+          <Button onClick={runCheck} className="h-auto min-h-10 max-w-full whitespace-normal gap-2" variant="outline">
             <Sparkles className="h-4 w-4" /> Cek kesesuaian rubrik dan word by word
           </Button>
         )}

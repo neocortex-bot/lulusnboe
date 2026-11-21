@@ -20,6 +20,7 @@ import PropertyDisplay from "@/components/station/PropertyDisplay";
 import CountdownTimer from "@/components/station/CountdownTimer";
 import StationReadyNextCandidate from "@/components/station/StationReadyNextCandidate";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   createStationResetGuard,
   startStationResetCountdown,
@@ -816,8 +817,8 @@ const StationDisplay = () => {
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header: Badge + large timer */}
       {isReadingPhase && caseData && session && (
-        <div className="flex items-center justify-center py-4 border-b border-border bg-card">
-          <div className="flex items-center gap-6">
+        <div className="flex flex-wrap items-center justify-center px-4 py-4 border-b border-border bg-card">
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6">
             {sequenceInfo && sequenceInfo.total > 1 && (
               <Badge className="text-lg px-4 py-1" variant="secondary">
                 Ujian {sequenceInfo.currentOrder} / {sequenceInfo.total}
@@ -829,8 +830,8 @@ const StationDisplay = () => {
         </div>
       )}
       {session?.session_start_time && caseData && (
-        <div className="flex items-center justify-center py-4 border-b border-border bg-card">
-          <div className="flex items-center gap-6">
+        <div className="flex flex-wrap items-center justify-center px-4 py-4 border-b border-border bg-card">
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6">
             {sequenceInfo && sequenceInfo.total > 1 && (
               <Badge className="text-lg px-4 py-1" variant="secondary">
                 Ujian {sequenceInfo.currentOrder} / {sequenceInfo.total}
@@ -850,12 +851,12 @@ const StationDisplay = () => {
         <PropertyDisplay key={`${session?.id}:${propertyDisplayKey}`} property={shownProperty} onDismiss={dismissProperty} />
       )}
       {/* Main content area */}
-      <div className="flex-1 flex min-h-0">
-        <div className={selfPractice ? "flex min-h-0 w-2/3" : "flex min-h-0 flex-1"}>
+      <div className="flex-1 flex flex-col lg:flex-row min-w-0 min-h-0">
+        <div className={selfPractice ? "flex flex-col xl:flex-row min-w-0 min-h-0 w-full lg:w-2/3" : "flex flex-col lg:flex-row min-w-0 min-h-0 flex-1"}>
         {hasMediaContent ? (
           <>
             {/* Sidebar: case info + questions (always visible) */}
-            <div className="w-[340px] shrink-0 border-r border-border bg-muted/30 overflow-y-auto">
+            <div className="w-full lg:w-[340px] lg:max-w-[45%] shrink-0 border-b lg:border-b-0 lg:border-r border-border bg-muted/30 overflow-y-auto">
               {caseData && (
                 <CasePromptDisplay
                   title={caseData.title}
@@ -867,7 +868,7 @@ const StationDisplay = () => {
               )}
             </div>
             {/* Main display area: active asset or case media */}
-            <div className="flex-1 flex items-center justify-center p-8">
+            <div className="min-w-0 flex-1 flex items-center justify-center p-4 lg:p-8">
               {activeAsset ? (
                 <AssetRenderer url={activeAsset.asset_url} type={activeAsset.asset_type} />
               ) : (
@@ -881,7 +882,7 @@ const StationDisplay = () => {
           </>
         ) : (
           /* Full width: no media, show case prompt centered */
-          <div className="flex-1 flex flex-col items-center justify-center p-8">
+          <div className="min-w-0 flex-1 flex flex-col items-center justify-center p-4 lg:p-8">
             {caseData && (
               <CasePromptDisplay
                 title={caseData.title}
@@ -894,7 +895,7 @@ const StationDisplay = () => {
         )}
         </div>
         {selfPractice && (
-          <aside aria-label="Panel properti latihan mandiri" className="flex w-1/3 shrink-0 flex-col gap-3 overflow-y-auto border-l border-border bg-muted/30 p-4">
+          <aside aria-label="Panel properti latihan mandiri" className="flex w-full lg:w-1/3 min-w-0 shrink-0 flex-col gap-3 overflow-y-auto border-t lg:border-t-0 lg:border-l border-border bg-muted/30 p-4">
             <h2 className="text-lg font-semibold text-foreground">Properti Soal</h2>
             <p className="text-sm text-muted-foreground">
               Latihan mandiri: ketuk pemeriksaan untuk menampilkannya, ketuk lagi untuk menutup.
@@ -902,7 +903,8 @@ const StationDisplay = () => {
             {selfPracticeProps.map((prop, idx) => {
               const isOpen = shownProperty === prop;
               return (
-                <button
+                <Button
+                  variant="outline"
                   key={`${prop.label}-${idx}`}
                   type="button"
                   onClick={() => {
@@ -912,10 +914,10 @@ const StationDisplay = () => {
                     setShownProperty(prop);
                   }}
                   aria-pressed={isOpen}
-                  className={`rounded-lg border px-4 py-3 text-left text-base font-medium transition-colors ${isOpen ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:bg-accent"}`}
+                  className={`h-auto min-h-12 whitespace-normal justify-start rounded-lg border px-4 py-3 text-left text-base font-medium transition-colors ${isOpen ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:bg-accent"}`}
                 >
                   {prop.label || prop.value}
-                </button>
+                </Button>
               );
             })}
           </aside>
@@ -935,7 +937,7 @@ const ReadingCountdown = ({ seconds }: { seconds: number }) => {
     return () => clearInterval(id);
   }, [seconds, start]);
   return (
-    <span className={`font-mono text-7xl font-bold tabular-nums ${left <= 10 ? "text-destructive animate-pulse" : "text-foreground"}`}>
+    <span className={`font-mono text-5xl sm:text-7xl font-bold tabular-nums ${left <= 10 ? "text-destructive animate-pulse" : "text-foreground"}`}>
       {String(Math.floor(left / 60)).padStart(2, "0")}:{String(left % 60).padStart(2, "0")}
     </span>
   );

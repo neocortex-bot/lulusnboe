@@ -385,7 +385,7 @@ const ExamActiveView = ({
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* Header with timer + end button */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-border bg-card">
         <CountdownTimer
           sessionStartTime={sessionStartTime}
           timeLimitSeconds={timeLimitSeconds}

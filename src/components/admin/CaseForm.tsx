@@ -183,7 +183,7 @@ const CaseForm = ({ existingCase, onClose }: CaseFormProps) => {
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="readingTime">Waktu Baca (detik)</Label>
           <Input
@@ -206,7 +206,7 @@ const CaseForm = ({ existingCase, onClose }: CaseFormProps) => {
         </div>
       </div>
 
-      <div className="flex items-center justify-between rounded-lg border border-border p-4">
+      <div className="flex items-center justify-between gap-3 rounded-lg border border-border p-4">
         <div className="space-y-0.5">
           <Label htmlFor="showResults">Tampilkan Nilai ke Peserta</Label>
           <p className="text-xs text-muted-foreground">

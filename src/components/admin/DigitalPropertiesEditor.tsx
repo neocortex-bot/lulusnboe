@@ -17,9 +17,9 @@ interface Props {
 
 export const DigitalMediaPreview = ({ p }: { p: DigitalProperty }) => {
   if (!p.media_url) return null;
-  if (p.media_type === "video") return <video src={p.media_url} controls className="max-h-48 rounded-md" />;
+  if (p.media_type === "video") return <video src={p.media_url} controls className="max-w-full max-h-48 rounded-md" />;
   if (p.media_type === "audio") return <audio src={p.media_url} controls className="w-full" />;
-  return <img src={p.media_url} alt={p.label} className="max-h-48 rounded-md object-contain" />;
+  return <img src={p.media_url} alt={p.label} className="max-w-full max-h-48 rounded-md object-contain" />;
 };
 
 const DigitalPropertiesEditor = ({ items, onChange, caseId }: Props) => {
@@ -47,7 +47,7 @@ const DigitalPropertiesEditor = ({ items, onChange, caseId }: Props) => {
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-xs text-muted-foreground">
           Nilai/gambar/video/suara yang diperlihatkan penguji ke layar station bila peserta memintanya.
         </p>
@@ -59,8 +59,8 @@ const DigitalPropertiesEditor = ({ items, onChange, caseId }: Props) => {
       {items.map((p, i) => (
         <div key={i} className={`space-y-2 rounded-md border p-3 ${isMediaPending(p) ? "border-destructive bg-destructive/5" : "border-border"}`}>
           <div className="flex items-center gap-2">
-            <Input value={p.label} onChange={(e) => set(i, { label: e.target.value })} placeholder="Nama pemeriksaan, mis. Tekanan darah / EKG" />
-            <Button type="button" variant="ghost" size="icon" onClick={() => onChange(items.filter((_, idx) => idx !== i))}>
+            <Input className="min-w-0" value={p.label} onChange={(e) => set(i, { label: e.target.value })} placeholder="Nama pemeriksaan, mis. Tekanan darah / EKG" />
+            <Button type="button" variant="ghost" size="icon" className="shrink-0" onClick={() => onChange(items.filter((_, idx) => idx !== i))}>
               <Trash2 className="h-4 w-4" />
             </Button>
           </div>

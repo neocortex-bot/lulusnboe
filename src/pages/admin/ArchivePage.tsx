@@ -74,7 +74,7 @@ const ArchivePage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b bg-card px-6 py-4 flex items-center gap-4">
+      <header className="border-b bg-card px-4 sm:px-6 py-4 flex items-center gap-4">
         <Link to="/admin">
           <Button variant="ghost" size="icon" title="Kembali ke Admin">
             <ArrowLeft className="h-4 w-4" />
@@ -88,7 +88,7 @@ const ArchivePage = () => {
         </div>
       </header>
 
-      <main className="container mx-auto p-6">
+      <main className="container mx-auto p-4 sm:p-6">
         <Card>
           <CardHeader>
             <CardTitle>Soal Terarsip ({cases.length})</CardTitle>
@@ -99,7 +99,7 @@ const ArchivePage = () => {
             ) : cases.length === 0 ? (
               <p className="text-muted-foreground text-center py-8">Arsip kosong. Tidak ada soal yang dihapus.</p>
             ) : (
-              <Table>
+              <Table className="min-w-[600px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Judul</TableHead>

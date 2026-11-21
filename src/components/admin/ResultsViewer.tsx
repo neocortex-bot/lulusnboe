@@ -297,8 +297,8 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
           <p className="text-muted-foreground text-center py-8">No exam results yet.</p>
         ) : (
           <div className="overflow-x-auto -mx-2 px-2">
-          <Table>
-            <TableHeader>
+          <Table className="block sm:table">
+            <TableHeader className="hidden sm:table-header-group">
               <TableRow>
                 <TableHead>Candidate</TableHead>
                 <TableHead className="hidden sm:table-cell">Case</TableHead>
@@ -307,33 +307,33 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
+            <TableBody className="block space-y-3 sm:table-row-group sm:space-y-0">
               {filteredResults.map((summary: any) => {
                 const r = expandedId === summary.id && detail?.id === summary.id ? { ...summary, ...detail } : summary;
                 const scoreDisplay = getOverallDisplay(r.ai_score_report);
                 const parsed = parseScoreReport(r.ai_score_report);
                 return (
                   <Fragment key={r.id}>
-                    <TableRow key={r.id} className="cursor-pointer" onClick={() => setExpandedId(expandedId === r.id ? null : r.id)}>
-                      <TableCell className="font-medium whitespace-normal break-words max-w-[120px] sm:max-w-none">
+                    <TableRow key={r.id} className="grid grid-cols-2 gap-3 rounded-md border p-3 sm:table-row sm:rounded-none sm:border-0 sm:border-b sm:p-0 cursor-pointer" onClick={() => setExpandedId(expandedId === r.id ? null : r.id)}>
+                      <TableCell className="col-span-2 block p-0 sm:table-cell sm:p-4 font-medium whitespace-normal break-words">
                         {r.profiles?.full_name ?? "—"}
                         <span className="block sm:hidden text-xs font-normal text-muted-foreground break-words">
                           {r.exam_sessions?.clinical_cases?.title ?? ""}
                         </span>
                       </TableCell>
                       <TableCell className="hidden sm:table-cell whitespace-normal break-words max-w-[220px]">{r.exam_sessions?.clinical_cases?.title ?? "—"}</TableCell>
-                      <TableCell>
+                      <TableCell className="block p-0 sm:table-cell sm:p-4">
                         <Badge variant={r.exam_sessions?.status === "completed" ? "default" : "secondary"}>
                           {r.exam_sessions?.status ?? "—"}
                         </Badge>
                       </TableCell>
-                      <TableCell className="whitespace-normal">
+                      <TableCell className="block p-0 sm:table-cell sm:p-4 whitespace-normal">
                         <Badge variant={scoreDisplay.variant} className="whitespace-normal text-center">{scoreDisplay.label}</Badge>
                         {r.ai_eval_status === "error" && (
                           <p className="text-[11px] text-destructive mt-1 max-w-[180px]" title={r.ai_eval_error ?? ""}>Evaluasi gagal: {r.ai_eval_error ?? "coba lagi"}</p>
                         )}
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="col-span-2 block p-0 sm:table-cell sm:p-4 text-right">
                         <div className="flex flex-wrap items-center justify-end gap-2">
                         <TooltipProvider>
                           <Tooltip>
@@ -376,14 +376,14 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
                       </TableCell>
                     </TableRow>
                     {expandedId === r.id && (
-                      <TableRow key={`${r.id}-detail`}>
-                        <TableCell colSpan={5} className="bg-muted/30 p-4">
+                      <TableRow key={`${r.id}-detail`} className="block sm:table-row">
+                        <TableCell colSpan={5} className="block sm:table-cell bg-muted/30 p-3 sm:p-4">
                           <div className="space-y-4">
                             {detailLoading ? <p className="text-muted-foreground">Memuat rincian...</p> : detailError ? <p className="text-destructive">Rincian gagal dimuat. <Button variant="outline" onClick={() => queryClient.invalidateQueries({ queryKey: ["exam_result_detail", r.id] })}>Coba lagi</Button></p> : detail?.id === r.id && <>
                             <ResultCasePrompt key={r.id} resultId={r.id} />
                             {r.audio_file_url && (
                               <div>
-                                <div className="flex items-center gap-2 mb-1">
+                                <div className="flex flex-wrap items-center gap-2 mb-1">
                                   <h4 className="text-sm font-semibold">Audio Recording</h4>
                                   <Button
                                     variant="outline"
@@ -433,12 +433,12 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
                                     const statusVariant = coverage === "full" ? "default" : coverage === "partial" ? "secondary" : "destructive";
                                     return (
                                       <div key={idx} className="rounded-md border border-border bg-background p-2 text-sm space-y-1">
-                                        <div className="flex items-start gap-2">
+                                        <div className="flex flex-wrap items-start gap-2">
                                           <Badge variant={statusVariant} className="text-xs shrink-0 mt-0.5">
                                             {statusLabel}
                                           </Badge>
                                           {item.isCritical && <AlertTriangle className="h-3.5 w-3.5 text-destructive shrink-0 mt-1" />}
-                                          <span className="flex-1 min-w-0 break-words">{item.item}</span>
+                                          <span className="flex-1 min-w-0 basis-[calc(100%-5rem)] sm:basis-0 break-words">{item.item}</span>
                                           <div className="flex items-center gap-1 shrink-0 mt-0.5" title="Klik angka untuk mengubah nilai butir ini">
                                             {scoreChoices(max).map((choice) => (
                                               <Button
@@ -477,7 +477,7 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
                                     </div>
                                   )}
                                   {parsed.score != null && (
-                                    <div className="flex items-center justify-between text-base font-bold border-t border-border pt-3 mt-3">
+                                    <div className="flex flex-wrap items-center justify-between gap-2 text-base font-bold border-t border-border pt-3 mt-3">
                                       <span>Nilai Akhir</span>
                                       <Badge variant={parsed.passStatus === "BELUM DINILAI" ? "outline" : parsed.score >= 68 && !parsed.hasCriticalFail ? "default" : "destructive"} className="text-base px-3 py-1">
                                         {parsed.score}/100 — {parsed.passStatus || (parsed.score >= 68 ? "LULUS" : "TIDAK LULUS")}
@@ -510,7 +510,7 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
           </Table>
           </div>
         )}
-        <div className="flex items-center justify-between gap-2 mt-4">
+        <div className="flex flex-wrap items-center justify-between gap-2 mt-4">
           <Button variant="outline" disabled={page === 0 || isLoading} onClick={() => { setExpandedId(null); setPage((p) => p - 1); }}>Sebelumnya</Button>
           <span className="text-sm text-muted-foreground">Halaman {page + 1} / {Math.max(1, Math.ceil((resultPage?.count ?? 0) / EXAM_RESULTS_PAGE_SIZE))}</span>
           <Button variant="outline" disabled={isLoading || (page + 1) * EXAM_RESULTS_PAGE_SIZE >= (resultPage?.count ?? 0)} onClick={() => { setExpandedId(null); setPage((p) => p + 1); }}>Berikutnya</Button>

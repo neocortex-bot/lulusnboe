@@ -108,7 +108,7 @@ const ParticipantList = () => {
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" /> Participants
           </CardTitle>
@@ -151,7 +151,7 @@ const ParticipantList = () => {
         ) : participants.length === 0 ? (
           <p className="text-muted-foreground text-center py-8">No candidates registered yet.</p>
         ) : (
-          <Table>
+          <Table className="min-w-[560px]">
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>

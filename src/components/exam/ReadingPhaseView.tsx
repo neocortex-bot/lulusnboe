@@ -96,7 +96,7 @@ const ReadingPhaseView = ({ sessionId, onReadingComplete }: ReadingPhaseViewProp
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-card">
+      <div className="flex items-center justify-between gap-3 px-4 sm:px-6 py-4 border-b border-border bg-card">
         <div className="flex items-center gap-2">
           <BookOpen className="h-5 w-5 text-primary" />
           <span className="font-semibold text-foreground">Waktu Membaca</span>
@@ -106,7 +106,7 @@ const ReadingPhaseView = ({ sessionId, onReadingComplete }: ReadingPhaseViewProp
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6 space-y-4">
+      <div className="flex-1 min-w-0 overflow-y-auto p-4 sm:p-6 space-y-4">
         <h1 className="text-2xl font-bold text-foreground">Silahkan Soal Dibaca</h1>
         <div className="prose prose-sm max-w-none text-foreground whitespace-pre-wrap">
           {caseData.initial_prompt}
