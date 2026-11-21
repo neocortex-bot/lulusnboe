@@ -61,6 +61,46 @@ describe("examiner delivery and session transitions", () => {
     expect(screen.getByRole("button", { name: /Peserta A/ })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Peserta B/ })).toBeInTheDocument();
   });
+  it("auto-opens the running exam among old waiting, completed and elapsed sessions", () => {
+    mock.rows = [
+      { ...session("Lama"), session_start_time: new Date(Date.now() - 360000).toISOString() },
+      { ...session("Menunggu"), status: "waiting" },
+      { ...session("Selesai"), status: "completed" },
+      session("Peserta A"),
+    ];
+    render(<Examiner />);
+    expect(screen.getByRole("heading", { name: "Peserta A" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Lama|Menunggu|Selesai/ })).not.toBeInTheDocument();
+  });
+  it("leaves the room picker automatically when only one exam remains, then allows back again", () => {
+    mock.rows = [session("Peserta A"), session("Peserta B")];
+    const view = render(<Examiner />);
+    fireEvent.click(screen.getByRole("button", { name: /Peserta A/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Sesi lain/ }));
+    mock.rows = [session("Peserta B")];
+    view.rerender(<Examiner />);
+    expect(screen.getByRole("heading", { name: "Peserta B" })).toBeInTheDocument();
+    mock.rows = [session("Peserta B"), session("Peserta C")];
+    view.rerender(<Examiner />);
+    expect(screen.getByRole("heading", { name: "Peserta B" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /Sesi lain/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Peserta C/ }));
+    expect(screen.getByRole("heading", { name: "Peserta C" })).toBeInTheDocument();
+  });
+  it("switches to the remaining reading session when the selected answering timer expires", async () => {
+    vi.useFakeTimers();
+    mock.rows = [
+      { ...session("Peserta A"), session_start_time: new Date(Date.now() - 359000).toISOString() },
+      session("Peserta B"),
+    ];
+    render(<Examiner />);
+    fireEvent.click(screen.getByRole("button", { name: /Peserta A/ }));
+    await act(async () => { vi.advanceTimersByTime(1000); });
+    expect(screen.getByRole("heading", { name: "Peserta B" })).toBeInTheDocument();
+    expect(mock.send).toHaveBeenCalledWith(expect.objectContaining({
+      event: PROPERTY_SHOW_EVENT, payload: expect.objectContaining({ property: null }),
+    }));
+  });
   it("marks a property shown only after station acknowledgement and confirms hiding", async () => {
     render(<Examiner />);
     const button = screen.getByRole("button", { name: /EKG/ });

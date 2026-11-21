@@ -13,6 +13,22 @@ describe("examiner sessions", () => {
   it("auto-picks when exactly one is active", () => {
     expect(resolveSelectedSession([row("a", "active", "x")], null)).toBe("a");
   });
+  it("excludes an elapsed answering session even when its saved status is active", () => {
+    const now = Date.parse("2026-11-21T08:30:00Z");
+    const out = pickActiveExaminerSessions([
+      { ...row("elapsed", "active", "2026-11-21T08:24:00Z"), case: { time_limit_seconds: 360 } },
+      { ...row("running", "active", "2026-11-21T08:29:00Z"), case: { time_limit_seconds: 360 } },
+      { ...row("waiting", "waiting", null), created_at: "2026-01-01T00:00:00Z" },
+      { ...row("reading", "active", null), current_candidate_id: "p1", created_at: "2026-01-01T00:00:00Z" },
+    ], now);
+    expect(out.map(s => s.id)).toEqual(["running", "reading"]);
+  });
+  it("auto-opens the only remaining session even after returning to the room picker", () => {
+    expect(resolveSelectedSession([row("remaining", "active", "x")], "ended", null, true)).toBe("remaining");
+  });
+  it("keeps the room picker open with two sessions despite a previous selection", () => {
+    expect(resolveSelectedSession([row("a", "active", "x"), row("b", "active", "y")], "a", null, true)).toBeNull();
+  });
   it("requires a choice when more than one is active", () => {
     expect(resolveSelectedSession([row("a", "active", "x"), row("b", "active", "y")], null)).toBeNull();
   });

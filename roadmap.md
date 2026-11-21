@@ -1,5 +1,10 @@
 # Roadmap
 
+## Pemilihan sesi penguji (21 Nov 2026)
+- [x] Abaikan sesi menunggu/selesai dan sesi menjawab yang waktunya habis tanpa mengubah data ujian; pertahankan sesi membaca. Segarkan daftar saat kembali ke halaman penguji.
+- [x] Satu sesi otomatis dibuka; beberapa sesi dapat dipilih dan tombol kembali tidak mengunci pemilihan saat tinggal satu sesi.
+- [x] 221 tes lolos, build OK; browser 394/1280 px dengan data contoh memverifikasi buka otomatis, pilih/kembali, dan tinggal satu sesi tanpa error runtime. Akun asli Supabase eksternal tidak tersedia untuk verifikasi ujian nyata.
+
 ## Pemeriksaan responsif semua halaman (21 Nov 2026)
 - [x] Audit halaman publik, admin, penguji, peserta, station, tabel dan modal pada ponsel/tablet/desktop; perbaikan hanya presentasi.
 - [x] Verifikasi 145 layar dengan data contoh pada 320, 390, 768, 1109 dan 1440 px; tidak ada overflow halaman atau error runtime. Pemeriksaan akun/ujian asli tidak tersedia pada Supabase eksternal, dan iPhone fisik belum diuji. Satu tes paginasi sempat gagal saat suite penuh, lalu 4 tes paginasi lolos saat dijalankan ulang.

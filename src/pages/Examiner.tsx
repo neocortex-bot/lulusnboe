@@ -96,19 +96,33 @@ const Examiner = () => {
         () => qc.invalidateQueries({ queryKey: ["examiner_sessions"] }))
       .subscribe(fallback.onStatus);
     const refresh = () => { void fallback.refresh(); };
+    const onVisible = () => { if (document.visibilityState === "visible") refresh(); };
     window.addEventListener("online", refresh);
-    return () => { fallback.dispose(); window.removeEventListener("online", refresh); void supabase.removeChannel(ch); };
+    window.addEventListener("focus", refresh);
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      fallback.dispose();
+      window.removeEventListener("online", refresh);
+      window.removeEventListener("focus", refresh);
+      document.removeEventListener("visibilitychange", onVisible);
+      void supabase.removeChannel(ch);
+    };
   }, [user, isMasterAdmin, qc, refetch]);
 
-  const active = useMemo(() => pickActiveExaminerSessions(rows), [rows]);
-  const currentId = choosing ? null : resolveSelectedSession(active, selected, previousRef.current);
+  const active = useMemo(() => pickActiveExaminerSessions(rows, now), [rows, now]);
+  const currentId = resolveSelectedSession(active, selected, previousRef.current, choosing);
   const current = active.find((s) => s.id === currentId);
   useEffect(() => {
     if (current) {
       previousRef.current = current;
       setSelected(current.id);
+      setChoosing(false);
+    } else if (active.length === 0) {
+      previousRef.current = null;
+      setSelected(null);
+      setChoosing(false);
     }
-  }, [current]);
+  }, [current, active.length]);
 
   // Channel ke layar station untuk sesi terpilih
   useEffect(() => {
