@@ -269,7 +269,7 @@ const CaseManager = () => {
           <DialogHeader>
             <DialogTitle>{editingCase ? "Edit Case" : "Create New Case"}</DialogTitle>
           </DialogHeader>
-          <CaseForm existingCase={editingCase} onClose={handleFormClose} />
+          <CaseForm existingCase={editingCase} categories={categories} onClose={handleFormClose} />
         </DialogContent>
       </Dialog>
 

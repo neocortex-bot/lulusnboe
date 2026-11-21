@@ -15,6 +15,7 @@ import RubricBuilder, { type RubricData } from "./RubricBuilder";
 import sharedParseRubricData, { withRubricItemIds } from "@/lib/rubricParser";
 import DigitalPropertiesEditor from "./DigitalPropertiesEditor";
 import NboeCaseToggle from "./NboeCaseToggle";
+import CategoryPicker from "./CategoryPicker";
 import { parseDigitalProperties, cleanDigitalProperties } from "@/lib/digitalProperties";
 import PropertiesEditor from "./PropertiesEditor";
 
@@ -31,7 +32,9 @@ interface CaseFormProps {
     answer_key_text?: string;
     show_results_to_candidate?: boolean;
     is_nboe?: boolean;
+    category?: string | null;
   } | null;
+  categories?: string[];
   onClose: () => void;
 }
 
@@ -39,7 +42,8 @@ function parseRubricData(raw: any): RubricData {
   return sharedParseRubricData(raw);
 }
 
-const CaseForm = ({ existingCase, onClose }: CaseFormProps) => {
+const CaseForm = ({ existingCase, categories = [], onClose }: CaseFormProps) => {
+  const [category, setCategory] = useState<string | null>(existingCase?.category ?? null);
   const [title, setTitle] = useState(existingCase?.title ?? "");
   const [examMode, setExamMode] = useState(existingCase?.exam_mode ?? "oral_board");
   const [initialPrompt, setInitialPrompt] = useState(existingCase?.initial_prompt ?? "");
@@ -71,6 +75,7 @@ const CaseForm = ({ existingCase, onClose }: CaseFormProps) => {
       const publicItems = items.map(({ answer: _answer, ...item }) => item);
       const casePayload = {
         title,
+        category,
         exam_mode: examMode,
         initial_prompt: initialPrompt,
         time_limit_seconds: timeLimitSeconds,
@@ -153,6 +158,11 @@ const CaseForm = ({ existingCase, onClose }: CaseFormProps) => {
       <div className="space-y-2">
         <Label htmlFor="title">Judul Soal</Label>
         <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Kategori</Label>
+        <CategoryPicker categories={categories} value={category} onChange={setCategory} />
       </div>
 
       <div className="space-y-2">
