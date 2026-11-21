@@ -25,7 +25,7 @@ const DeployedStationsTable = ({ examMode }: DeployedStationsTableProps) => {
       const from = page * PAGE_SIZE;
       const { data, error, count } = await supabase
         .from("exam_sessions")
-        .select("id, station_token, status, created_at, clinical_cases!inner(title, exam_mode), profiles!exam_sessions_current_candidate_id_fkey(full_name, nim)", { count: "exact" })
+        .select("id, station_token, status, created_at, session_start_time, clinical_cases!inner(title, exam_mode), profiles!exam_sessions_current_candidate_id_fkey(full_name, nim)", { count: "exact" })
         .eq("clinical_cases.exam_mode", examMode)
         .order("created_at", { ascending: false })
         .order("id", { ascending: false })
@@ -142,7 +142,13 @@ const DeployedStationsTable = ({ examMode }: DeployedStationsTableProps) => {
                       )}
                     </TableCell>
                     <TableCell>
-                      <Badge variant={statusColor(s.status)}>{s.status}</Badge>
+                      {(() => {
+                        const expired = s.status === "waiting" && !s.profiles && !s.session_start_time &&
+                          Date.now() - new Date(s.created_at).getTime() > 15 * 60 * 1000;
+                        return expired
+                          ? <Badge variant="outline" className="text-muted-foreground">kedaluwarsa</Badge>
+                          : <Badge variant={statusColor(s.status)}>{s.status}</Badge>;
+                      })()}
                     </TableCell>
                     <TableCell className="text-right space-x-1">
                       <Button
