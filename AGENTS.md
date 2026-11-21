@@ -20,3 +20,6 @@
 - Deploy all selected PCs/questions through one admin-authorized, invoker-security transaction with a stable request ID so failure rolls back every session and retries cannot duplicate a deployment.
 - Use a shared collapsed result-case prompt in admin and allowed candidate results; fetch only vignette/questions through the selected result when opened, never answer keys or full case lists.
 - Derive waiting-session expiration on the server and reject expired claims with a row trigger; station screens use one deadline wake-up and detach realtime after expiration, protecting active reading/exams and recently completed sequence steps without perpetual cleanup polling.
+
+- Keep evaluation prompt policy in the server-only grading-prompt module, judge clinical core competence rather than recital of supporting details, and record its version in new reports; this permits read-only calibration without rewriting case rubrics or historical grades.
+- Interpret noisy transcripts inside the grading call while retaining raw transcripts and raw evidence quotes; never repair safety-sensitive numbers or invent interrupted answers from the answer key.

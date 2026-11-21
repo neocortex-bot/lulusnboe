@@ -2,10 +2,7 @@ import { getExamAiContext, json, corsHeaders, parseRubric, safeUpstreamError } f
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { getOpenAIConfig, openAIChat, openAIJson } from "../_shared/openai.ts";
 import { itemCoverageShare, quoteSupportedByTranscript } from "../_shared/transcript-match.ts";
-import { scoreSchema } from "./score-schema.ts";
-
-interface RubricItem { text: string; points: number; isCritical: boolean; }
-interface RubricData { enabled: boolean; items: RubricItem[]; }
+import { buildEvaluationPrompt, buildUserContent, coveragePoints } from "./grading-prompt.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -70,7 +67,7 @@ async function evaluateResult(supabase: any, result_id: string) {
       .select("case_id, session_start_time").eq("id", result.session_id).single();
     if (!sessionData) throw new Error("Sesi ujian tidak ditemukan.");
     const [caseResult, answerKeyResult] = await Promise.all([
-      supabase.from("clinical_cases").select("title, questions_text, time_limit_seconds").eq("id", sessionData.case_id).single(),
+      supabase.from("clinical_cases").select("title, initial_prompt, questions_text, time_limit_seconds").eq("id", sessionData.case_id).single(),
       supabase.from("case_answer_keys").select("answer_key_text, checklist_rubric").eq("case_id", sessionData.case_id).maybeSingle(),
     ]);
     if (caseResult.error) throw new Error("Soal ujian tidak ditemukan.");
@@ -108,40 +105,7 @@ async function evaluateResult(supabase: any, result_id: string) {
     const rubricData = { enabled: items.length > 0, items };
     const answerKey = answerKeys?.answer_key_text || "";
     const questions = clinicalCase?.questions_text || "";
-    const systemPrompt = buildSystemPrompt(rubricData, answerKey, questions) + `
-Untuk SETIAP butir rubrik, isi field "coverage" dengan salah satu:
-- "full"    = butir BENAR-BENAR disebut sesuai rubrik (boleh beda kata, yang penting maknanya kena dan lengkap)
-- "partial" = butir DISEBUT tetapi belum lengkap / hanya sebagian / masih kabur
-- "none"    = butir TIDAK disebut sama sekali
-Passed = true hanya bila coverage "full" atau "partial" (coverage "none" -> passed=false).
-Sesuaikan "passed" dengan "coverage": full/partial => true, none => false.
-
-PENILAIAN BUTIR (tiap butir maksimal 2 poin):
-- "full"    -> disebutkan lengkap (SEMUA sub-syarat butir terpenuhi) => dapat 2 poin
-- "partial" -> disebutkan namun tidak lengkap => dapat 1 poin
-- "none"    -> tidak disebut => 0 poin
-Isi field "points" dengan poin yang DIDAPAT (2, 1, atau 0), bukan poin maksimal. Butir yang hanya "partial" TIDAK boleh diberi 2 poin.
-
-ATURAN PENTING — BUTIR YANG MEMUAT BEBERAPA SUB-SYARAT:
-Satu butir rubrik sering memuat 3-6 syarat yang dipisahkan tanda koma, "serta", "atau",
-"termasuk", atau titik dua. Butir seperti itu BUKAN all-or-nothing. Nilai berdasarkan
-BERAPA BANYAK sub-syarat yang benar-benar disebut:
-- Semua sub-syarat disebut                   -> "full"    (2 poin)
-- SEBAGIAN sub-syarat disebut (>=1 tapi <semua) -> "partial" (1 poin)
-- Tidak satu pun sub-syarat disebut          -> "none"    (0 poin)
-JANGAN memberi "none" hanya karena satu sub-syarat terlewat padahal peserta sudah
-menyebut sub-syarat lain yang jelas. Contoh: rubrik "HFrEF dengan LVEF <=35%, NYHA II-III,
-GDMT optimal >=3 bulan, harapan hidup >1 tahun" — peserta yang menyebut "LVEF <35% dan
-GDMT optimal minimal 3 bulan" WAJIB mendapat "partial" (1 poin), bukan "none", karena
-2 dari 4 sub-syarat sudah disebut dengan benar.
-
-Setiap butir rubrik WAJIB muncul di "items" dengan urutan dan teks yang persis sama seperti rubrik. Jangan menambah atau mengurangi butir.
-
-Untuk setiap butir dengan coverage "full" atau "partial", evidenceQuote WAJIB berupa POTONGAN PERSIS dari transkrip (salin apa adanya, termasuk salah eja/tanpa tanda baca) yang membuktikan butir tersebut disebut. JANGAN memperbaiki ejaan atau menyusun ulang kalimat saat mengutip. Untuk coverage "none", evidenceQuote="".
-Jangan gunakan Markdown bold pada teks jawaban. Batasi uraian tiap topik menjadi 2-4 kalimat.
-
-Balas HANYA dengan satu objek JSON (tanpa pagar kode, tanpa teks lain) dengan skema:
-${JSON.stringify(scoreSchema)}`;
+    const systemPrompt = buildEvaluationPrompt(rubricData, answerKey, questions);
     const userContent = buildUserContent(clinicalCase, rubricData, answerKey, questions, transcript);
       const scoreReport: any = await openAIJson(
         openai,
@@ -157,8 +121,8 @@ ${JSON.stringify(scoreSchema)}`;
       //   2 = mentioned fully (the rubric point is really covered)
       //   1 = mentioned but incomplete
       //   0 = not mentioned (shown bold+italic so the candidate knows to say it)
-      // The rubric is the source of truth: it must match the case, and we do not
-      // hand out the full 2 for a vague or partial mention.
+      // Full means clinically adequate core competency, not recital of every
+      // supporting detail. A genuinely partial answer still earns only 1.
       const FULL_POINTS = 2;
       scoreReport.items = (rubricData.enabled ? rubricData.items : assessed).map((item: any, index: number) => {
         const evaluated = assessed[index];
@@ -218,7 +182,7 @@ ${JSON.stringify(scoreSchema)}`;
         if (coverage === "none" && !saysAbsent && quoteOk) coverage = "partial";
 
         const passed = coverage !== "none";
-        const points = coverage === "full" ? FULL_POINTS : coverage === "partial" ? 1 : 0;
+        const points = coveragePoints(coverage);
         return {
           item: item.text ?? item.item,
           points,
@@ -227,7 +191,7 @@ ${JSON.stringify(scoreSchema)}`;
           passed,
           coverage,
           evidenceQuote: coverage !== "none" && quoteOk ? quote : "",
-          comment: note || (coverage === "full" ? "Disebut lengkap." : coverage === "partial" ? "Disebut namun belum lengkap." : "Tidak disebutkan."),
+          comment: note || (coverage === "full" ? "Kompetensi inti terpenuhi." : coverage === "partial" ? "Disebut namun belum lengkap." : "Tidak disebutkan."),
         };
       });
       // `points` is the earned score, `maxPoints` the ceiling, so totals are
@@ -243,6 +207,7 @@ ${JSON.stringify(scoreSchema)}`;
           return kept ?? item;
         });
       }
+      scoreReport.gradingPromptVersion = "clinical-competency-raw-v6-2026-11-21";
       scoreReport.totalPossible = scoreReport.items.reduce((sum: number, item: any) => sum + (item.maxPoints ?? 2), 0);
       scoreReport.totalScore = scoreReport.items.reduce((sum: number, item: any) => sum + (item.points ?? 0), 0);
       if (rubricData.enabled) scoreReport.score = scoreReport.totalPossible > 0 ? Math.round(scoreReport.totalScore / scoreReport.totalPossible * 100) : 0;
@@ -253,127 +218,4 @@ ${JSON.stringify(scoreSchema)}`;
       const { error } = await supabase.from("exam_results").update({ transcript, ai_score_report: scoreReport }).eq("id", result_id);
       if (error) throw new Error("Laporan AI gagal disimpan.");
   return { success: true, score_report: scoreReport };
-}
-
-function buildSystemPrompt(rubricData: RubricData, answerKey: string, questions: string): string {
-  const hasRubric = rubricData.enabled && rubricData.items.length > 0;
-  const hasAnswerKey = answerKey.trim().length > 0;
-
-  let prompt = `You are an objective medical examiner evaluating a candidate's oral exam transcript.
-
-IMPORTANT — SOURCE OF THE TEXT:
-The "Candidate Transcript" is an AUTOMATIC SPEECH-TO-TEXT TRANSCRIPT (OpenAI Whisper)
-of the candidate speaking aloud, not typed text. It therefore contains:
-- missing punctuation, run-on sentences and inconsistent capitalisation;
-- misspelled or phonetically-spelled medical terms (e.g. "neprilisin" for "neprilysin",
-  "angiotensin renin" for "angiotensin receptor", "afeblok" for "AV block");
-- filler words, repetition, false starts and truncated words.
-You MUST judge the CLINICAL MEANING, not the spelling. A term counts as mentioned when
-it is recognisably the same term despite transcription errors, and a concept counts as
-explained when the candidate's intent is clear. NEVER fail a rubric item purely because
-of spelling, grammar or punctuation. Only fail it when the concept is genuinely absent,
-wrong, or contradicted.
-
-SCORING RULES:
-- Score range: 0-100
-- Score >= 68 = "LULUS" (pass), Score < 68 = "TIDAK LULUS" (fail)
-- Score 100 ONLY if ALL critical points from the answer key are correctly and thoroughly explained
-- If any rubric item marked as "isCritical" is failed, the candidate automatically gets "TIDAK LULUS" regardless of score
-`;
-
-  if (hasAnswerKey) {
-    prompt += `
-You will receive the QUESTIONS and the ANSWER KEY (correct answers). Compare the candidate's transcript against the answer key to determine accuracy and completeness.
-`;
-  }
-
-  if (hasRubric) {
-    prompt += `
-You will also receive a weighted checklist rubric. Each rubric item has:
-- "text": the expected action/phrase
-- "points": the weight/score for this item
-- "isCritical": if true, failing this item means automatic TIDAK LULUS
-
-Evaluate each rubric item against the transcript.
-`;
-  }
-
-  prompt += `
-IMPORTANT: You must provide DETAILED per-topic/per-question analysis. Break down your evaluation into logical clinical topics (e.g. Anamnesis, Pemeriksaan Fisik, Diagnosis, Tatalaksana, Edukasi Pasien, etc.) based on the questions and answer key provided.
-
-For EACH topic, you must:
-1. Summarize what the candidate actually said
-2. Compare it against the expected answer
-3. Identify specific gaps (points missed or incomplete)
-4. Identify misconceptions (incorrect understanding or wrong statements)
-5. Give a per-topic score (0-100)
-6. Write detailed feedback text explaining the evaluation
-
-Return a JSON object with these fields:
-{
-  "items": [
-    { "item": "checklist/evaluation point", "passed": boolean, "comment": "brief explanation", "points": number, "isCritical": boolean }
-  ],
-  "totalScore": number,
-  "totalPossible": number,
-  "score": number,
-  "passStatus": "LULUS" | "TIDAK LULUS",
-  "hasCriticalFail": boolean,
-  "reasoning": "Ringkasan keseluruhan penilaian dalam Bahasa Indonesia. Jelaskan mengapa nilai ini diberikan dengan merujuk bagian spesifik dari jawaban kandidat dibandingkan kunci jawaban.",
-  "detailedFeedback": [
-    {
-      "topic": "Nama topik klinis (e.g. 'Anamnesis', 'Diagnosis Banding', 'Tatalaksana')",
-      "questionRef": "Referensi pertanyaan terkait jika ada (e.g. 'Pertanyaan 1')",
-      "candidateAnswer": "Ringkasan singkat apa yang dijawab peserta untuk topik ini",
-      "expectedAnswer": "Ringkasan singkat jawaban yang benar dari kunci jawaban untuk topik ini",
-      "gaps": ["Poin spesifik yang terlewat atau tidak lengkap"],
-      "misconceptions": ["Kesalahan pemahaman konsep yang terdeteksi, jika ada"],
-      "score": number (0-100 per topik),
-      "feedbackText": "Penjelasan detail evaluasi per topik dalam Bahasa Indonesia. Jelaskan apa yang benar, apa yang salah, dan bagaimana seharusnya."
-    }
-  ],
-  "overallStrengths": ["Kekuatan utama kandidat yang sudah baik (dalam Bahasa Indonesia)"],
-  "overallWeaknesses": ["Kelemahan utama kandidat secara keseluruhan (dalam Bahasa Indonesia)"],
-  "prioritizedImprovements": ["Saran perbaikan diurutkan dari yang paling kritis dan mendesak (dalam Bahasa Indonesia)"],
-  "tips": "Ringkasan saran perbaikan umum dalam Bahasa Indonesia"
-}
-
-RULES:
-- "score" is a 0-100 percentage reflecting overall answer quality
-- "passStatus" must be "LULUS" if score >= 68 and no critical fails, otherwise "TIDAK LULUS"
-- ALL text fields (reasoning, tips, feedbackText, gaps, misconceptions, strengths, weaknesses, improvements) MUST be in Bahasa Indonesia
-- "detailedFeedback" must have at least one entry per major clinical topic covered in the questions/answer key
-- Be specific and concrete — avoid vague statements like "kurang lengkap". Instead say exactly WHAT was missing.
-- "gaps" should list the SPECIFIC points from the answer key that the candidate missed
-- "misconceptions" should only include things the candidate said that are factually WRONG, not just incomplete
-
-Only return valid JSON, no other text.`;
-
-  return prompt;
-}
-
-function buildUserContent(
-  clinicalCase: any,
-  rubricData: RubricData,
-  answerKey: string,
-  questions: string,
-  transcript: string | null
-): string {
-  let content = `Case: ${clinicalCase?.title}\n\n`;
-
-  if (questions.trim()) {
-    content += `PERTANYAAN (Questions):\n${questions}\n\n`;
-  }
-
-  if (answerKey.trim()) {
-    content += `KUNCI JAWABAN (Answer Key / Correct Answers):\n${answerKey}\n\n`;
-  }
-
-  if (rubricData.enabled && rubricData.items.length > 0) {
-    content += `Weighted Checklist Rubric:\n${JSON.stringify(rubricData.items, null, 2)}\n\n`;
-  }
-
-  content += `Candidate Transcript:\n${transcript || "(no transcript available)"}`;
-
-  return content;
 }

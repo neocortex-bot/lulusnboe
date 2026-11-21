@@ -1,5 +1,10 @@
 # Roadmap
 
+## Kalibrasi prompt penilaian (21 Nov 2026)
+- [x] Pahami transkrip mentah dalam satu analisis AI tanpa memoles bukti/mengarang jawaban; kontrol AI langsung transkrip terinterupsi, fonetik, konteks bilateral, dosis berbahaya dan topik kosong menghasilkan [2,2,0,0,2]. Tes langsung tersimpan dan lolos.
+- [x] Enam iterasi pada transkrip terakhir: baseline 35; v4 53/53; v6 dengan transkrip mentah 45/53. Variasi AI masih ada, belum optimal universal. Kontrol kosong/berbahaya tidak lulus; tidak memilih skor tertinggi untuk mengganti nilai resmi. Catatan pengukuran di docs/grading-calibration-2026-11-21.md.
+- [x] Prompt kompetensi + transkrip mentah v6 terpasang; source server memuat kebijakan/versi, akses tanpa login 401. 215 tes aplikasi dan 1 kontrol AI langsung lolos; build OK. Skala 0/1/2, critical, nilai manual dan independensi Word by Word dipertahankan; nilai terakhir tetap 43 dan transkrip 3467 karakter. Evaluasi ulang tersimpan lewat UI dan pembandingan audio asli belum diuji; bukan jaminan kelulusan.
+
 ## Kedaluwarsa sesi menunggu (20 Nov 2026)
 - [x] Kedaluwarsa dihitung server setelah 15 menit, tanpa cron/polling tambahan; klaim kedaluwarsa ditolak termasuk update langsung. Sesi membaca/aktif terlindungi; soal berikut mendapat waktu dari hasil terakhir dan terlindungi selama rangkaian aktif. Data sesi tetap disimpan, bukan dihapus.
 - [x] 210 tes aplikasi lolos; SQL transaksional menguji sebelum/tepat 15 menit, membaca, rangkaian aktif, hasil terakhir, dan penolakan klaim langsung; semua fixture di-rollback. Browser station asli menampilkan Sesi Kedaluwarsa tanpa QR; build OK. Tidak ada peringatan keamanan baru; 29 temuan lama tidak diubah.
