@@ -16,9 +16,9 @@ total yang dikarang model. Skor tersimpan tetap 43/100.
 | Kompetensi v1 | 40 |
 | Kompetensi v2 | 43, 40 |
 | Kompetensi v3, tanpa anotasi SKOR lama | 43, 43 |
-| Kompetensi v4, ringkas | 53, 53 |
+| Kompetensi v4, ringkas — dipilih pengguna | 53, 53 |
 | Kompetensi + transkrip mentah v5 | 45, 43 |
-| Kompetensi + transkrip mentah v6, terpasang | 45, 53 |
+| Kompetensi + transkrip mentah v6 | 45, 53 |
 
 Ini pengujian satu transkrip, bukan bukti optimal untuk semua soal. Pengulangan
 masih bervariasi meski seed sama. Jangan mengambil skor tertinggi lalu
@@ -27,6 +27,16 @@ Ada topik yang memang belum dijawab: CDT, antitrombotik jangka panjang,
 pencegahan sekunder, dan edukasi hasil/urgensi. Kekurangan tersebut tidak boleh
 diisi dari kunci jawaban. Beberapa alasan pengurangan yang hanya bersifat
 detail pendukung masih muncul; prompt belum menghilangkan seluruh masalah.
+
+## Pilihan pengguna setelah kalibrasi
+
+Pengguna memilih prompt v4 yang menghasilkan 53 pada dua percobaan, bukan
+memaksa nilai ujian menjadi 53. Prompt dan format masukan dikembalikan ke versi
+v4; tidak menambahkan instruksi v5/v6 karena itu mengubah versi yang diuji.
+Pemahaman makna speech-to-text, konteks seluruh transkrip, dan bukti mentah tetap
+ada pada v4. Nilai serta transkrip tersimpan tidak diubah. Versi sebelumnya
+tersimpan di riwayat kode untuk pemulihan bila pengguna melaporkan masalah.
+Hasil pengulangan berikutnya tidak dijamin tepat 53.
 
 ## Kebijakan akhir
 
@@ -57,8 +67,8 @@ mengubah laporan. Tes biasa menguji skala poin dan preservasi data mentah.
 ## Verifikasi dan batasan
 
 215 tes aplikasi lolos; pemeriksaan aplikasi terakhir berhasil. Source fungsi
-terpasang memuat versi `clinical-competency-raw-v6-2026-11-21` dan kebijakan
-transkrip mentah. Panggilan tanpa login ditolak 401. Database dibaca kembali:
+saat kalibrasi memuat versi `clinical-competency-raw-v6-2026-11-21` dan kebijakan
+transkrip mentah; pilihan berikutnya mengembalikan versi `clinical-competency-v4-2026-11-21`. Panggilan tanpa login ditolak 401. Database dibaca kembali:
 nilai asli tetap 43, transkrip tetap 3467 karakter, status evaluasi tetap done.
 
 Belum melakukan evaluasi ulang tersimpan lewat akun peserta/admin, belum

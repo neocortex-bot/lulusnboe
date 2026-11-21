@@ -67,7 +67,7 @@ async function evaluateResult(supabase: any, result_id: string) {
       .select("case_id, session_start_time").eq("id", result.session_id).single();
     if (!sessionData) throw new Error("Sesi ujian tidak ditemukan.");
     const [caseResult, answerKeyResult] = await Promise.all([
-      supabase.from("clinical_cases").select("title, initial_prompt, questions_text, time_limit_seconds").eq("id", sessionData.case_id).single(),
+      supabase.from("clinical_cases").select("title, questions_text, time_limit_seconds").eq("id", sessionData.case_id).single(),
       supabase.from("case_answer_keys").select("answer_key_text, checklist_rubric").eq("case_id", sessionData.case_id).maybeSingle(),
     ]);
     if (caseResult.error) throw new Error("Soal ujian tidak ditemukan.");
@@ -207,7 +207,7 @@ async function evaluateResult(supabase: any, result_id: string) {
           return kept ?? item;
         });
       }
-      scoreReport.gradingPromptVersion = "clinical-competency-raw-v6-2026-11-21";
+      scoreReport.gradingPromptVersion = "clinical-competency-v4-2026-11-21";
       scoreReport.totalPossible = scoreReport.items.reduce((sum: number, item: any) => sum + (item.maxPoints ?? 2), 0);
       scoreReport.totalScore = scoreReport.items.reduce((sum: number, item: any) => sum + (item.points ?? 0), 0);
       if (rubricData.enabled) scoreReport.score = scoreReport.totalPossible > 0 ? Math.round(scoreReport.totalScore / scoreReport.totalPossible * 100) : 0;

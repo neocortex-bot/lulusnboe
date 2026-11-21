@@ -1,5 +1,9 @@
 # Roadmap
 
+## Pilih prompt 53/53 (21 Nov 2026)
+- [x] Prompt kompetensi v4 dan format masukan dikembalikan sesuai pilihan pengguna (hasil kalibrasi 53/53); nilai lama/manual tidak diganti, nilai terakhir tetap 43 dan transkrip 3467 karakter.
+- [x] 48 tes regresi dan 1 kontrol AI langsung transkrip terinterupsi/berbahaya lolos. Source server terverifikasi memakai clinical-competency-v4-2026-11-21, bukan v6. Hasil evaluasi berikutnya tidak dijamin selalu 53; versi sebelumnya tersimpan di riwayat kode.
+
 ## Kalibrasi prompt penilaian (21 Nov 2026)
 - [x] Pahami transkrip mentah dalam satu analisis AI tanpa memoles bukti/mengarang jawaban; kontrol AI langsung transkrip terinterupsi, fonetik, konteks bilateral, dosis berbahaya dan topik kosong menghasilkan [2,2,0,0,2]. Tes langsung tersimpan dan lolos.
 - [x] Enam iterasi pada transkrip terakhir: baseline 35; v4 53/53; v6 dengan transkrip mentah 45/53. Variasi AI masih ada, belum optimal universal. Kontrol kosong/berbahaya tidak lulus; tidak memilih skor tertinggi untuk mengganti nilai resmi. Catatan pengukuran di docs/grading-calibration-2026-11-21.md.

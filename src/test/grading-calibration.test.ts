@@ -4,9 +4,8 @@ import { buildUserContent, coveragePoints } from '../../supabase/functions/evalu
 describe('clinical competency calibration boundaries', () => {
   it('preserves raw interrupted speech rather than normalizing the evidence', () => {
     const raw = 'Saya uji... sebentar dokter... tajam tumpul dan ujirah baringan. Bukan kanan, saya koreksi kiri. Dosis 80-100 unit per kilo.';
-    const content = buildUserContent({ title: 'Kasus uji', initial_prompt: 'Nyeri tungkai kiri' }, { enabled: false, items: [] }, '', '', raw);
+    const content = buildUserContent({ title: 'Kasus uji' }, { enabled: false, items: [] }, '', '', raw);
     expect(content.split('Candidate Transcript:\n')[1]).toBe(raw);
-    expect(content.split('SKENARIO:\n')[1].split('\n\n')[0]).toBe('Nyeri tungkai kiri');
   });
   it('awards 2 for full core competency', () => {
     expect(coveragePoints('full')).toBe(2);
