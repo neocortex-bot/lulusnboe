@@ -594,7 +594,7 @@ const StationDisplay = () => {
       const row = Array.isArray(data) ? data[0] : data;
       if (cancelled) return;
       setCaseData(row ? row as CaseData : null);
-      const { data: assetData } = await supabase.rpc("get_case_assets_for_display", { _case_id: session.case_id });
+      const { data: assetData } = await supabase.rpc("get_case_assets_for_display", { _case_id: session.case_id, _station_token: currentToken } as any);
       if (cancelled) return;
       const assetRows = Array.isArray(assetData) ? assetData : [];
       setAssets(assetRows.filter((a: AssetData & { category: string }) => a.category === "examination"));
@@ -604,7 +604,7 @@ const StationDisplay = () => {
     return () => {
       cancelled = true;
     };
-  }, [state, session?.case_id]);
+  }, [state, session?.case_id, currentToken]);
 
   // Latihan mandiri: ambil properti digital untuk panel 1/3 di layar station.
   useEffect(() => {
@@ -614,7 +614,7 @@ const StationDisplay = () => {
     }
     let cancelled = false;
     const fetchProps = async () => {
-      const { data, error } = await supabase.rpc("get_case_digital_properties", { _case_id: session.case_id });
+      const { data, error } = await supabase.rpc("get_case_digital_properties", { _case_id: session.case_id, _station_token: currentToken } as any);
       if (cancelled) return;
       if (error) {
         console.warn("Gagal memuat properti digital:", error);
@@ -626,7 +626,7 @@ const StationDisplay = () => {
     return () => {
       cancelled = true;
     };
-  }, [state, session?.case_id, session?.show_examiner_panel]);
+  }, [state, session?.case_id, session?.show_examiner_panel, currentToken]);
 
   // Subscribe to broadcast channel
   useEffect(() => {

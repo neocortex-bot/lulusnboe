@@ -483,6 +483,10 @@ export type Database = {
           outcome: string
         }[]
       }
+      can_view_case_at_station: {
+        Args: { _case_id: string; _station_token: string }
+        Returns: boolean
+      }
       claim_ai_evaluation: { Args: { _result_id: string }; Returns: string }
       claim_exam_session: {
         Args: { _candidate_id: string; _session_id: string }
@@ -498,7 +502,7 @@ export type Database = {
       }
       exam_waiting_deadline: { Args: { _session_id: string }; Returns: string }
       get_case_assets_for_display: {
-        Args: { _case_id: string }
+        Args: { _case_id: string; _station_token?: string }
         Returns: {
           answer_text: string
           asset_type: string
@@ -508,7 +512,10 @@ export type Database = {
           trigger_keywords: string[]
         }[]
       }
-      get_case_digital_properties: { Args: { _case_id: string }; Returns: Json }
+      get_case_digital_properties: {
+        Args: { _case_id: string; _station_token?: string }
+        Returns: Json
+      }
       get_case_display: {
         Args: { _case_id: string }
         Returns: {
@@ -584,6 +591,7 @@ export type Database = {
           status: string
         }[]
       }
+      reset_window_open: { Args: { _station_token: string }; Returns: boolean }
       rubric_text_head: { Args: { _text: string }; Returns: string }
       start_exam_timer: { Args: { _session_id: string }; Returns: string }
     }
