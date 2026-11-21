@@ -384,7 +384,7 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
                               <div>
                                 <div className="flex flex-wrap items-center gap-2 mb-1">
                                   <h4 className="text-sm font-semibold">Audio Recording</h4>
-                                  <Button
+                                  {audioUrls[r.id] !== AUDIO_MISSING && <Button
                                     variant="outline"
                                     size="sm"
                                     className="text-destructive hover:text-destructive"
@@ -397,7 +397,7 @@ const ResultsViewer = ({ examMode }: ResultsViewerProps) => {
                                   >
                                     {deleteAudioMutation.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <Volume2 className="h-3.5 w-3.5 mr-1" />}
                                     Hapus Audio
-                                  </Button>
+                                  </Button>}
                                 </div>
                                 {audioUrls[r.id] === AUDIO_MISSING ? (
                                   <p className="text-sm text-muted-foreground">File audio tidak ditemukan atau mungkin sudah dihapus.</p>
