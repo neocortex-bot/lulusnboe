@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import RubricBuilder, { type RubricData } from "@/components/admin/RubricBuilder";
+import PropertySyncDialog from "@/components/admin/PropertySyncDialog";
 import RubricWordByWordSection from "@/components/admin/RubricWordByWordSection";
 import AssetUploader from "@/components/admin/AssetUploader";
 import PropertiesEditor from "@/components/admin/PropertiesEditor";
@@ -651,7 +652,18 @@ const CasePreview = () => {
               </CardHeader>
               <CardContent>
                 {isEditing ? (
-                  <DigitalPropertiesEditor items={digitalProps} onChange={setDigitalProps} caseId={id} />
+                  <div className="space-y-3">
+                    <DigitalPropertiesEditor items={digitalProps} onChange={setDigitalProps} caseId={id} />
+                    {id && (
+                      <PropertySyncDialog
+                        caseId={id}
+                        properties={digitalProps}
+                        answerKeyText={answerKeyText}
+                        items={rubricData.items}
+                        onApply={({ answerKeyText: k, items }) => { setAnswerKeyText(k); setRubricData((d) => ({ ...d, items })); }}
+                      />
+                    )}
+                  </div>
                 ) : digitalProps.length === 0 ? (
                   <p className="text-sm text-muted-foreground">Belum ada properti digital.</p>
                 ) : (

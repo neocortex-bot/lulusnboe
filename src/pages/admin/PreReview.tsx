@@ -17,6 +17,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Plus, Trash2, Wand2, Send, Save } from "lucide-react";
 import PropertiesEditor from "@/components/admin/PropertiesEditor";
+import PropertySyncDialog from "@/components/admin/PropertySyncDialog";
 import DigitalPropertiesEditor from "@/components/admin/DigitalPropertiesEditor";
 import { cleanDigitalProperties, parseDigitalProperties, isMediaPending, type DigitalProperty } from "@/lib/digitalProperties";
 
@@ -419,6 +420,13 @@ const DraftEditor = ({ initial, busy, onSave, onIngest }: EditorProps) => {
               )}
             </div>
             <DigitalPropertiesEditor items={d.digital_properties} onChange={(v) => set("digital_properties", v)} caseId={d.id} />
+            <PropertySyncDialog
+              caseId={d.id}
+              properties={d.digital_properties}
+              answerKeyText={d.answer_key_text}
+              items={d.items}
+              onApply={({ answerKeyText, items }) => setD((p) => ({ ...p, answer_key_text: answerKeyText, items: items as typeof p.items }))}
+            />
           </section>
         </TabsContent>
 
