@@ -58,6 +58,10 @@ function runInBackground(supabase: any, resultId: string) {
   if (typeof EdgeRuntime !== "undefined") EdgeRuntime.waitUntil(task);
 }
 
+function buildTranscriptionPrompt(title?: string | null) {
+  return `Ujian lisan kardiologi berbahasa Indonesia dengan istilah medis Inggris. ${title ? `Topik: ${title}. ` : ""}Istilah: pemeriksaan fisis, anamnesis, diagnosis banding, near syncope, sinus ritme, QTc, T inversi, pulseless, parestesia, poikilotermia, echo, ekokardiografi, EKG, ECG, LVH, RVH, PFO, ASD, VSD, HOCM, LVOT, TAPSE, EF, LVEF, troponin, NT-proBNP, CT scan, MRI, cath lab, PCI, STEMI, NSTEMI, atrial fibrilasi, stenosis, regurgitasi, perikarditis, kardiomiopati, Holter, treadmill, bubble study, TEE, TTE.`;
+}
+
 async function evaluateResult(supabase: any, result_id: string) {
     const { data: result, error: resultError } = await supabase.from("exam_results").select("*").eq("id", result_id).single();
     if (resultError || !result) throw new Error("Hasil ujian tidak ditemukan.");
@@ -82,14 +86,23 @@ async function evaluateResult(supabase: any, result_id: string) {
       if (audioErr || !audioData) throw new Error("Rekaman gagal diunduh.");
       if (!audioData.size) throw new Error("Rekaman kosong. Tidak ada jawaban untuk dinilai.");
       if (audioData.size > 25 * 1024 * 1024) throw new Error("Rekaman melebihi batas transkripsi 25 MB.");
-      const formData = new FormData();
       const lowerName = String(result.audio_file_url).toLowerCase();
       const isMp4 = /\.(mp4|m4a)$/.test(lowerName) || audioData.type.includes("mp4");
-      formData.append("file", audioData, isMp4 ? "audio.mp4" : "audio.webm");
-      formData.append("model", "whisper-1");
-      const whisperRes = await fetch("https://api.openai.com/v1/audio/transcriptions", {
-        method: "POST", headers: { Authorization: `Bearer ${openaiKey}` }, body: formData,
-      });
+      const transcribe = (model: string) => {
+        const formData = new FormData();
+        formData.append("file", audioData, isMp4 ? "audio.mp4" : "audio.webm");
+        formData.append("model", model);
+        formData.append("language", "id");
+        formData.append("prompt", buildTranscriptionPrompt(clinicalCase?.title));
+        return fetch("https://api.openai.com/v1/audio/transcriptions", {
+          method: "POST", headers: { Authorization: `Bearer ${openaiKey}` }, body: formData,
+        });
+      };
+      let whisperRes = await transcribe("gpt-4o-transcribe");
+      if (!whisperRes.ok && whisperRes.status !== 401 && whisperRes.status !== 429) {
+        console.warn("gpt-4o-transcribe gagal, memakai whisper-1", whisperRes.status);
+        whisperRes = await transcribe("whisper-1");
+      }
       if (!whisperRes.ok) {
         const message = await safeUpstreamError(whisperRes, "Transkripsi OpenAI gagal");
         throw new Error(`Transkripsi OpenAI: ${message}`);
