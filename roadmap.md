@@ -1,5 +1,10 @@
 # Roadmap
 
+## Sesi membaca penguji tertinggal (21 Nov 2026)
+- [ ] Tambahkan waktu klaim server agar sesi membaca lama dapat dibedakan dari klaim baru pada deployment lama; jangan mengubah status/nilai sesi lama.
+- [ ] Keluarkan dua sesi membaca terbengkalai dan uji perlindungan sesi membaca baru serta sesi tunggal/pilihan ruangan.
+- [ ] Verifikasi data Supabase, tes regresi, dan tampilan; ujian nyata melalui akun eksternal belum dapat diverifikasi.
+
 ## Pemilihan sesi penguji (21 Nov 2026)
 - [x] Abaikan sesi menunggu/selesai dan sesi menjawab yang waktunya habis tanpa mengubah data ujian; pertahankan sesi membaca. Segarkan daftar saat kembali ke halaman penguji.
 - [x] Satu sesi otomatis dibuka; beberapa sesi dapat dipilih dan tombol kembali tidak mengunci pemilihan saat tinggal satu sesi.
