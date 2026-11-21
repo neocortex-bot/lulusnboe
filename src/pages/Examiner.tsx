@@ -58,7 +58,7 @@ const Examiner = () => {
       const candIds = [...new Set(sessions.map((s) => s.current_candidate_id).filter(Boolean))] as string[];
       const sIds = sessions.map((s) => s.id);
       const [cases, keys, profs, seq] = await Promise.all([
-        caseIds.length ? supabase.from("clinical_cases").select("id, title, initial_prompt, reading_time_seconds, time_limit_seconds").in("id", caseIds) : { data: [] },
+        caseIds.length ? supabase.from("clinical_cases").select("id, title, initial_prompt, questions_text, reading_time_seconds, time_limit_seconds").in("id", caseIds) : { data: [] },
         caseIds.length ? supabase.from("case_answer_keys").select("case_id, checklist_rubric").in("case_id", caseIds) : { data: [] },
         candIds.length ? supabase.from("profiles").select("id, full_name").in("id", candIds) : { data: [] },
         sIds.length ? supabase.from("exam_sequence_items").select("session_id, deployment_id, sequence_order").in("session_id", sIds) : { data: [] },
@@ -265,8 +265,15 @@ const Examiner = () => {
                   </div>
                   <p className="break-words text-sm text-muted-foreground">{current.case?.title}{current.order ? ` · Soal ${current.order}/${current.total}` : ""} · {current.station_token}</p>
                 </CardHeader>
-                <CardContent>
-                  <p className="whitespace-pre-line break-words text-sm">{current.case?.initial_prompt}</p>
+                <CardContent className="space-y-4">
+                  <section className="min-w-0 space-y-2" aria-label="Vignette">
+                    <h2 className="text-sm font-semibold">Vignette</h2>
+                    <p className="whitespace-pre-wrap break-words text-sm leading-relaxed">{current.case?.initial_prompt}</p>
+                  </section>
+                  <section className="min-w-0 space-y-2 border-t border-border pt-4" aria-label="Pertanyaan Peserta">
+                    <h2 className="text-sm font-semibold">Pertanyaan Peserta</h2>
+                    <p className="whitespace-pre-wrap break-words text-sm leading-relaxed">{current.case?.questions_text || "Pertanyaan tidak tersedia."}</p>
+                  </section>
                 </CardContent>
               </Card>
               <Card>
