@@ -17,7 +17,7 @@ import AssetUploader from "./AssetUploader";
 import ExcelImporter from "./ExcelImporter";
 import { Link } from "react-router-dom";
 import CategoryFilter from "./CategoryFilter";
-import { ALL, matchesCategory, toCategoryLabel, uniqueCategories } from "@/lib/caseCategory";
+import { ALL, categoryBadgeClass, matchesCategory, toCategoryLabel, uniqueCategories } from "@/lib/caseCategory";
 
 interface ClinicalCase {
   id: string;
@@ -195,7 +195,7 @@ const CaseManager = () => {
                   <TableCell className="font-medium">
                     {c.title}
                     {c.is_nboe && <Badge variant="nboe" className="ml-2 text-xs">Soal NBOE</Badge>}
-                    {c.category && <Badge variant="outline" className="ml-2 text-xs">{toCategoryLabel(c.category)}</Badge>}
+                    {c.category && <Badge variant="outline" className={`ml-2 text-xs ${categoryBadgeClass(c.category)}`}>{toCategoryLabel(c.category)}</Badge>}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1">

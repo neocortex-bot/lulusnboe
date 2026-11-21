@@ -31,6 +31,16 @@ export default {
           DEFAULT: "hsl(var(--nboe))",
           foreground: "hsl(var(--nboe-foreground))",
         },
+        cat: {
+          1: "hsl(var(--cat-1))",
+          2: "hsl(var(--cat-2))",
+          3: "hsl(var(--cat-3))",
+          4: "hsl(var(--cat-4))",
+          5: "hsl(var(--cat-5))",
+          6: "hsl(var(--cat-6))",
+          7: "hsl(var(--cat-7))",
+          8: "hsl(var(--cat-8))",
+        },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
