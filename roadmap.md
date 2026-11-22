@@ -4,7 +4,9 @@
 - [x] Jumlah properti di tabel berupa angka saja.
 - [x] Semua admin dapat melihat admin lain untuk dipilih sebagai penguji; tidak memperluas izin perubahan role.
 - [x] 4 tes pilihan penguji/deploy lolos dan kebijakan read-only terverifikasi di Supabase.
-- [ ] Sesi rotasi berikutnya mempertahankan penguji yang ditugaskan pada sesi sebelumnya.
+- [x] Sesi rotasi mempertahankan penguji per soal dan pengaturan panel dari sumber yang tepat; jalur advance/repair dan sesi tunggal ikut diperbaiki.
+- [x] 34 tes aplikasi lolos; uji transaksi Supabase nyata memverifikasi admin biasa melihat semua penguji tanpa bisa mengubah role, dua putaran rotasi anonim, retry, advance/repair, dan sesi tunggal. Seluruh data uji di-rollback, nol sisa.
+- [ ] Alur melalui akun admin asli di browser belum terverifikasi: Supabase eksternal tidak menyediakan sesi pengujian. Build OK; 29 temuan keamanan lama, tanpa temuan baru.
 
 ## Penanda media dan pemeriksaan AI (22 Nov 2026)
 - [x] Kolom emoji menunjukkan kelengkapan properti ditandai butuh media dan riwayat pemeriksaan AI; timestamp disimpan terpisah tanpa menulis rubrik/nilai.
