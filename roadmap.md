@@ -1,5 +1,10 @@
 # Roadmap
 
+## Angka properti dan penugasan penguji (22 Nov 2026)
+- [ ] Jumlah properti di tabel berupa angka saja.
+- [ ] Semua admin dapat melihat admin lain untuk dipilih sebagai penguji; tidak memperluas izin perubahan role.
+- [ ] Uji hak akses daftar admin dan pilihan penguji.
+
 ## Penanda media dan pemeriksaan AI (22 Nov 2026)
 - [x] Kolom emoji menunjukkan kelengkapan properti ditandai butuh media dan riwayat pemeriksaan AI; timestamp disimpan terpisah tanpa menulis rubrik/nilai.
 - [x] 13 tes lolos; browser data uji memverifikasi media lengkap → cek AI → reload → riwayat tetap tampil, tanpa error. Build OK.
