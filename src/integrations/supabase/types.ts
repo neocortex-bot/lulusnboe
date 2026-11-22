@@ -577,15 +577,29 @@ export type Database = {
         Args: { _report: Json; _rubric: Json }
         Returns: Json
       }
-      regenerate_station_session: {
-        Args: { _case_id: string; _new_token: string }
-        Returns: {
-          case_id: string
-          id: string
-          session_start_time: string
-          status: string
-        }[]
-      }
+      regenerate_station_session:
+        | {
+            Args: { _case_id: string; _new_token: string }
+            Returns: {
+              case_id: string
+              id: string
+              session_start_time: string
+              status: string
+            }[]
+          }
+        | {
+            Args: {
+              _case_id: string
+              _new_token: string
+              _previous_station_token: string
+            }
+            Returns: {
+              case_id: string
+              id: string
+              session_start_time: string
+              status: string
+            }[]
+          }
       reset_completed_station_sequence: {
         Args: { _new_tokens: string[]; _station_token: string }
         Returns: {
