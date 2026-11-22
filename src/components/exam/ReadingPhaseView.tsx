@@ -108,9 +108,18 @@ const ReadingPhaseView = ({ sessionId, onReadingComplete }: ReadingPhaseViewProp
 
       <div className="flex-1 min-w-0 overflow-y-auto p-4 sm:p-6 space-y-4">
         <h1 className="text-2xl font-bold text-foreground">Silahkan Soal Dibaca</h1>
-        <div className="prose prose-sm max-w-none text-foreground whitespace-pre-wrap">
+        <div className="prose prose-sm max-w-none text-foreground whitespace-pre-wrap break-words">
           {caseData.initial_prompt}
         </div>
+
+        {caseData.questions_text?.trim() && (
+          <section className="space-y-2 border-t border-border pt-4">
+            <h2 className="text-lg font-semibold text-foreground">Pertanyaan Peserta</h2>
+            <p className="whitespace-pre-wrap break-words text-foreground leading-relaxed">
+              {caseData.questions_text}
+            </p>
+          </section>
+        )}
 
         {caseMedia.length > 0 && (
           <div className="space-y-3 pt-2">
