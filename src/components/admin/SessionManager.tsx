@@ -89,13 +89,15 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
   // Latihan mandiri: layar station menampilkan panel properti digital (1/3
   // layar) yang bisa dibuka sendiri oleh peserta.
   const [showExaminerPanel, setShowExaminerPanel] = useState(false);
-  const { data: admins = [] } = useQuery({
+  const { data: admins = [], isLoading: adminsLoading, error: adminsError } = useQuery({
     queryKey: ["examiner_admins"],
     queryFn: async () => {
-      const { data: roles } = await supabase.from("user_roles").select("user_id").eq("role", "admin");
+      const { data: roles, error: rolesError } = await supabase.from("user_roles").select("user_id").eq("role", "admin");
+      if (rolesError) throw rolesError;
       const ids = (roles ?? []).map((r) => r.user_id);
       if (!ids.length) return [];
-      const { data } = await supabase.from("profiles").select("id, full_name, email").in("id", ids).order("full_name");
+      const { data, error } = await supabase.from("profiles").select("id, full_name, email").in("id", ids).order("full_name");
+      if (error) throw error;
       return data ?? [];
     },
   });
@@ -362,6 +364,7 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
                 <select
                   id={`examiner-${examMode}`}
                   value={examinerId}
+                  disabled={adminsLoading || !!adminsError}
                   onChange={(e) => setExaminerId(e.target.value)}
                   className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm"
                 >
@@ -370,6 +373,8 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
                     <option key={a.id} value={a.id}>{a.full_name || a.email}</option>
                   ))}
                 </select>
+                {adminsLoading && <p className="text-xs text-muted-foreground">Memuat daftar penguji…</p>}
+                {adminsError && <p className="text-xs text-destructive">Daftar penguji gagal dimuat. Muat ulang halaman untuk mencoba lagi.</p>}
                 <p className="text-xs text-muted-foreground">Penguji membuka /examiner di HP untuk melihat properti soal peserta yang sedang ujian.</p>
               </div>
               <div className="flex items-start gap-2 rounded-md border border-border px-3 py-2">

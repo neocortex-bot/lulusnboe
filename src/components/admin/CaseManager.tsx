@@ -231,7 +231,7 @@ const CaseManager = () => {
                   <TableCell>{Array.isArray(c.checklist_rubric) ? c.checklist_rubric.length : (Array.isArray(c.checklist_rubric?.items) ? c.checklist_rubric.items.length : 0)}</TableCell>
                   <TableCell>
                     {Array.isArray(c.checklist_rubric?.properties) && c.checklist_rubric.properties.length > 0 ? (
-                      <Badge variant="secondary" className="text-xs">{c.checklist_rubric.properties.length} properti</Badge>
+                      <Badge variant="secondary" className="text-xs">{c.checklist_rubric.properties.length}</Badge>
                     ) : (
                       <span className="text-xs text-muted-foreground">—</span>
                     )}

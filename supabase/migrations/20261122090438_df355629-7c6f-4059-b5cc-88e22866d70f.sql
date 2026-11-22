@@ -1,0 +1,2 @@
+GRANT SELECT ON public.user_roles TO authenticated;
+CREATE POLICY "Admins read role directory" ON public.user_roles FOR SELECT TO authenticated USING (public.has_role(auth.uid(), 'admin'::public.app_role));
