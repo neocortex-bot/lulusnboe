@@ -131,6 +131,7 @@ export type Database = {
           initial_prompt: string
           is_nboe: boolean
           properties: string[]
+          property_sync_checked_at: string | null
           questions_text: string
           reading_time_seconds: number
           reviewed_at: string | null
@@ -153,6 +154,7 @@ export type Database = {
           initial_prompt?: string
           is_nboe?: boolean
           properties?: string[]
+          property_sync_checked_at?: string | null
           questions_text?: string
           reading_time_seconds?: number
           reviewed_at?: string | null
@@ -175,6 +177,7 @@ export type Database = {
           initial_prompt?: string
           is_nboe?: boolean
           properties?: string[]
+          property_sync_checked_at?: string | null
           questions_text?: string
           reading_time_seconds?: number
           reviewed_at?: string | null

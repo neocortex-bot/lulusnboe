@@ -1,0 +1,2 @@
+ALTER TABLE public.clinical_cases ADD COLUMN IF NOT EXISTS property_sync_checked_at timestamptz;
+COMMENT ON COLUMN public.clinical_cases.property_sync_checked_at IS 'Last successful property-sync AI check; records button usage, not acceptance or proof of media accuracy.';

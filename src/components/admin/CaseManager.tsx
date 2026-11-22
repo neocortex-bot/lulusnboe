@@ -13,6 +13,7 @@ import { Plus, Pencil, Trash2, Upload, FileSpreadsheet, Eye, AlertTriangle } fro
 import { useAuth } from "@/contexts/AuthContext";
 import { canDeleteCase, canEditCase } from "@/lib/casePermissions";
 import CaseForm from "./CaseForm";
+import CaseReadiness from "./CaseReadiness";
 import AssetUploader from "./AssetUploader";
 import ExcelImporter from "./ExcelImporter";
 import { Link } from "react-router-dom";
@@ -33,6 +34,7 @@ interface ClinicalCase {
   status?: string;
   category?: string | null;
   is_nboe?: boolean;
+  property_sync_checked_at?: string | null;
   source?: string;
   rubric_mode?: string;
   created_by?: string | null;
@@ -177,7 +179,7 @@ const CaseManager = () => {
             Belum ada soal {examGroup === "oral_board" ? "Oral Board" : "Panel"}.
           </p>
         ) : (
-          <Table className="min-w-[720px]">
+          <Table className="min-w-[1040px]">
             <TableHeader>
               <TableRow>
                 <TableHead>Title</TableHead>
@@ -186,19 +188,20 @@ const CaseManager = () => {
                 <TableHead>Time (s)</TableHead>
                 <TableHead>Rubric Items</TableHead>
                 <TableHead>Properti</TableHead>
+                <TableHead className="w-20 text-center"><span role="img" aria-label="Kelengkapan media dan riwayat sinkronisasi" title="Kelengkapan media dan riwayat sinkronisasi">📋</span></TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredCases.map((c) => (
                 <TableRow key={c.id}>
-                  <TableCell className="font-medium">
+                  <TableCell className="min-w-60 font-medium">
                     {c.title}
                     {c.is_nboe && <Badge variant="nboe" className="ml-2 text-xs">Soal NBOE</Badge>}
                     {c.category && <Badge variant="outline" className={`ml-2 text-xs ${categoryBadgeClass(c.category)}`}>{toCategoryLabel(c.category)}</Badge>}
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 whitespace-nowrap">
                       {c.source === 'agent_api' && (
                         <Badge variant="secondary" className="text-xs bg-yellow-100 text-yellow-800 border-yellow-200">
                           AI
@@ -233,7 +236,8 @@ const CaseManager = () => {
                       <span className="text-xs text-muted-foreground">—</span>
                     )}
                   </TableCell>
-                  <TableCell className="text-right space-x-2">
+                  <TableCell><CaseReadiness rubric={c.checklist_rubric} checkedAt={c.property_sync_checked_at} /></TableCell>
+                  <TableCell className="whitespace-nowrap text-right space-x-2">
                     {/* Every admin can open the detail preview */}
                     <Link to={`/admin/case/preview/${c.id}`}>
                       <Button variant="ghost" size="icon" title="Lihat detail soal">

@@ -1,5 +1,10 @@
 # Roadmap
 
+## Penanda media dan pemeriksaan AI (22 Nov 2026)
+- [x] Kolom emoji menunjukkan kelengkapan properti ditandai butuh media dan riwayat pemeriksaan AI; timestamp disimpan terpisah tanpa menulis rubrik/nilai.
+- [x] 13 tes lolos; browser data uji memverifikasi media lengkap → cek AI → reload → riwayat tetap tampil, tanpa error. Build OK.
+- [ ] Pemeriksaan AI dan penyimpanan lewat akun asli belum terverifikasi: Supabase eksternal tidak menyediakan sesi pengujian; 29 temuan keamanan lama, tanpa temuan baru dari migrasi.
+
 ## Filter dan warna label NBOE (21 Nov 2026)
 - [x] Filter checkbox pada pemilih deploy menampilkan hanya soal NBOE tanpa mengubah pilihan atau urutan ujian; 4 tes dan browser 394/1110 px dengan data uji lolos.
 - [x] Label Soal NBOE lime green dengan teks hitam di tabel dan pemilih deploy; 4 tes lolos dan browser 394/1110 px memverifikasi tampilan dengan data uji, build OK.

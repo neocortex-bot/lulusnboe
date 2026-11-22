@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -6,6 +7,7 @@ import { Loader2, Sparkles, Check, X, AlertTriangle } from "lucide-react";
 import type { DigitalProperty } from "@/lib/digitalProperties";
 import type { RubricItem } from "@/lib/rubricParser";
 import { applyPropertySyncChanges, type PropertySyncResult } from "@/lib/propertySync";
+import { runAndRecordPropertyCheck } from "@/lib/caseReadiness";
 
 interface Props {
   caseId: string;
@@ -18,6 +20,7 @@ interface Props {
 type Decision = "accept" | "skip";
 
 export default function PropertySyncDialog({ caseId, properties, answerKeyText, items, onApply }: Props) {
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,16 +30,28 @@ export default function PropertySyncDialog({ caseId, properties, answerKeyText, 
   const run = async () => {
     setOpen(true); setLoading(true); setError(null); setResult(null); setDecided({});
     try {
-      const { data, error: fnError } = await supabase.functions.invoke("property-sync", {
-        body: { case_id: caseId, properties, answer_key_text: answerKeyText, items: items.map((i) => ({ text: i.text, answer: i.answer ?? "" })) },
+      const data = await runAndRecordPropertyCheck(async () => {
+        const { data, error: fnError } = await supabase.functions.invoke("property-sync", {
+          body: { case_id: caseId, properties, answer_key_text: answerKeyText, items: items.map((i) => ({ text: i.text, answer: i.answer ?? "" })) },
+        });
+        if (fnError) {
+          const ctx = (fnError as { context?: Response }).context;
+          const detail = ctx ? await ctx.json().catch(() => null) : null;
+          throw new Error(detail?.error ?? fnError.message);
+        }
+        if (data?.error) throw new Error(data.error);
+        if (!data || !Array.isArray(data.items) || !Array.isArray(data.property_warnings) || !Array.isArray(data.skipped)) {
+          throw new Error("Hasil pemeriksaan AI tidak valid.");
+        }
+        return data as PropertySyncResult;
+      }, async (at) => {
+        const { error: saveError } = await supabase.from("clinical_cases")
+          .update({ property_sync_checked_at: at }).eq("id", caseId).select("id").single();
+        if (saveError) throw new Error(`AI selesai memeriksa, tetapi riwayat pemeriksaan gagal disimpan: ${saveError.message}`);
+        // Update only the list: do not refetch detail forms and overwrite unsaved edits.
+        queryClient.invalidateQueries({ queryKey: ["clinical_cases"], exact: true });
       });
-      if (fnError) {
-        const ctx = (fnError as { context?: Response }).context;
-        const detail = ctx ? await ctx.json().catch(() => null) : null;
-        throw new Error(detail?.error ?? fnError.message);
-      }
-      if (data?.error) throw new Error(data.error);
-      setResult(data as PropertySyncResult);
+      setResult(data);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Pemeriksaan gagal.");
     } finally {

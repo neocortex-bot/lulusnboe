@@ -28,3 +28,4 @@
 
 - Keep evaluation prompt policy in the server-only grading-prompt module, judge clinical core competence rather than recital of supporting details, and record its version in new reports; this permits read-only calibration without rewriting case rubrics or historical grades.
 - Interpret noisy transcripts inside the grading call while retaining raw transcripts and raw evidence quotes; never repair safety-sensitive numbers or invent interrupted answers from the answer key.
+- Store successful property-sync check timestamps separately on clinical_cases; derive media readiness from private digital properties, and never equate a check history with accepted suggestions or verified media contents.
