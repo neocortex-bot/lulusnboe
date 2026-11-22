@@ -74,7 +74,7 @@ export default function PropertySyncDialog({ caseId, properties, answerKeyText, 
 
   return (
     <>
-      <Button type="button" variant="outline" size="sm" onClick={run} disabled={!properties.some((p) => p.value?.trim())}>
+      <Button type="button" variant="nboe" size="sm" onClick={run} disabled={!properties.some((p) => p.value?.trim())}>
         <Sparkles className="mr-1 h-4 w-4" />Sinkronkan properti dengan jawaban (AI)
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
