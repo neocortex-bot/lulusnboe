@@ -29,6 +29,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [roleUserId, setRoleUserId] = useState<string | null>(null);
 
   const isMasterAdmin =
     (user?.email ?? "").toLowerCase() === MASTER_ADMIN_EMAIL;
@@ -41,6 +42,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       .eq("role", "admin")
       .maybeSingle();
     setIsAdmin(!!data);
+    setRoleUserId(userId);
   };
 
   // Separate effect to check admin role whenever user changes
@@ -49,8 +51,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       checkAdminRole(user.id);
     } else {
       setIsAdmin(false);
+      setRoleUserId(null);
     }
   }, [user?.id]);
+
+  // Wait for the role check of the current user so admins are never routed as candidates.
+  const roleLoading = !!user?.id && roleUserId !== user.id;
 
   useEffect(() => {
     let mounted = true;
@@ -90,7 +96,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, isAdmin, isMasterAdmin, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading: loading || roleLoading, isAdmin, isMasterAdmin, signOut }}>
       {children}
     </AuthContext.Provider>
   );
