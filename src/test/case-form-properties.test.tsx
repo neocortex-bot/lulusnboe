@@ -3,9 +3,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import CaseForm from "@/components/admin/CaseForm";
 
-const mock = vi.hoisted(() => ({ writes: [] as any[], failKey: false, marker: false }));
+const mock = vi.hoisted(() => ({ writes: [] as any[], failKey: false, marker: false, failUpload: false }));
 vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: vi.fn() }) }));
 vi.mock("@/integrations/supabase/client", () => ({ supabase: {
+  storage: { from: () => ({
+    upload: async () => ({ error: mock.failUpload ? new Error("upload failed") : null }),
+    getPublicUrl: () => ({ data: { publicUrl: "https://example.test/ekg-upload" } }),
+  }) },
   auth: { getUser: async () => ({ data: { user: { id: "admin" } } }) },
   from: (table: string) => {
     let payload: any;
@@ -38,11 +42,37 @@ function mount(value: typeof existing | null = existing, close = vi.fn()) {
 }
 beforeEach(() => {
   vi.stubGlobal("ResizeObserver", class { observe() {} unobserve() {} disconnect() {} });
-  mock.writes = []; mock.failKey = false; mock.marker = false;
+  mock.writes = []; mock.failKey = false; mock.marker = false; mock.failUpload = false;
 });
 afterEach(() => { cleanup(); clients.splice(0).forEach(c => c.clear()); vi.unstubAllGlobals(); });
 
 describe("case form private digital properties", () => {
+  it.each(["image/png", "video/mp4", "audio/mpeg"])("uploading %s persists required media and hides caption, then allows manual caption choice", async mime => {
+    mount();
+    fireEvent.change(screen.getByLabelText("Unggah media"), { target: { files: [new File(["media"], "ekg", { type: mime })] } });
+    await waitFor(() => expect(screen.getByRole("switch", { name: "Butuh media asli" })).toBeDisabled());
+    expect(screen.getByRole("switch", { name: "Butuh media asli" })).toBeChecked();
+    expect(screen.getByRole("switch", { name: "Tampilkan caption saat ditampilkan" })).not.toBeChecked();
+    fireEvent.click(screen.getByRole("button", { name: "Simpan Perubahan" }));
+    await waitFor(() => expect(mock.writes).toHaveLength(2));
+    expect(mock.writes[1].payload.checklist_rubric.digital_properties[0]).toMatchObject({
+      media_url: "https://example.test/ekg-upload", needs_media: true, show_caption: false,
+    });
+    expect(mock.writes[0].payload.checklist_rubric).not.toHaveProperty("digital_properties");
+    fireEvent.click(screen.getByRole("switch", { name: "Tampilkan caption saat ditampilkan" }));
+    expect(screen.getByRole("switch", { name: "Tampilkan caption saat ditampilkan" })).toBeChecked();
+    fireEvent.change(screen.getByLabelText("Ganti media"), { target: { files: [new File(["replacement"], "ekg2", { type: mime })] } });
+    await waitFor(() => expect(screen.getByRole("switch", { name: "Tampilkan caption saat ditampilkan" })).not.toBeChecked());
+  });
+  it("failed uploads do not hide caption or claim that media exists", async () => {
+    mock.failUpload = true;
+    mount();
+    fireEvent.change(screen.getByLabelText("Unggah media"), { target: { files: [new File(["media"], "ekg.png", { type: "image/png" })] } });
+    await waitFor(() => expect(screen.getByLabelText("Unggah media")).toBeEnabled());
+    fireEvent.click(screen.getByRole("button", { name: "Simpan Perubahan" }));
+    await waitFor(() => expect(mock.writes).toHaveLength(2));
+    expect(mock.writes[1].payload.checklist_rubric.digital_properties[0]).toMatchObject({ media_url: null, show_caption: true });
+  });
   it("saves edited and new properties privately while preserving rubric IDs, answers and other metadata", async () => {
     mount();
     fireEvent.change(screen.getByDisplayValue("Hasil"), { target: { value: "  Hasil baru  " } });

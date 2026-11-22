@@ -14,7 +14,13 @@ describe("case readiness", () => {
   });
   it("does not mark cases with no required media as media completed", () => {
     expect(getCaseMediaReadiness(null)).toEqual({ required: 0, completed: 0, ready: false });
-    expect(getCaseMediaReadiness({ digital_properties: [{ needs_media: false, media_url: "a.jpg" }] }).ready).toBe(false);
+    expect(getCaseMediaReadiness({ digital_properties: [{ needs_media: false, media_url: " " }] }).ready).toBe(false);
+  });
+  it("counts an already uploaded EKG even if its old needs-media flag is false or missing", () => {
+    for (const needs_media of [false, undefined]) {
+      expect(getCaseMediaReadiness({ digital_properties: [{ label: "EKG TAVB", needs_media, media_url: "ekg.jpg" }] }))
+        .toEqual({ required: 1, completed: 1, ready: true });
+    }
   });
   it("records a successful check and returns its suggestions unchanged", async () => {
     const result = { items: [{ after: "EF 55%" }] };

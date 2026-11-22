@@ -21,6 +21,14 @@ describe("digital properties", () => {
   it("parses missing list as empty", () => {
     expect(parseDigitalProperties({ items: [] })).toEqual([]);
   });
+  it("defaults legacy media without a caption choice to hidden but preserves an explicit choice", () => {
+    const properties = parseDigitalProperties({ digital_properties: [
+      { label: "EKG", media_url: "ekg.jpg" },
+      { label: "Echo", media_url: "echo.mp4", show_caption: true },
+      { label: "Nadi", value: "80" },
+    ] });
+    expect(properties.map(p => p.show_caption)).toEqual([false, true, true]);
+  });
   it("caption hidden only when media exists", () => {
     expect(isCaptionVisible({ label: "EKG", value: "x", show_caption: false, media_url: "https://x/a.png" })).toBe(false);
     expect(isCaptionVisible({ label: "EKG", value: "x", show_caption: false })).toBe(true);

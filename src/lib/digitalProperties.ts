@@ -7,7 +7,7 @@ export interface DigitalProperty {
   value: string;
   media_url?: string | null;
   media_type?: DigitalMediaType | null;
-  /** Ditandai admin: seharusnya pakai media asli, tapi belum diunggah. */
+  /** Butuh media asli: ditandai admin atau otomatis bila media sudah diunggah. */
   needs_media?: boolean;
   /** Tampilkan teks saat ditampilkan ke layar. Hanya bisa dimatikan bila ada media. */
   show_caption?: boolean;
@@ -25,16 +25,17 @@ export function parseDigitalProperties(rubric: unknown): DigitalProperty[] {
     .map((p: any) => ({
       label: String(p.label ?? ""),
       value: String(p.value ?? ""),
-      media_url: p.media_url ? String(p.media_url) : null,
+      media_url: p.media_url ? String(p.media_url).trim() || null : null,
       media_type: ["image", "video", "audio"].includes(p.media_type) ? p.media_type : null,
-      needs_media: !!p.needs_media,
-      show_caption: p.show_caption !== false,
+      needs_media: !!p.needs_media || !!String(p.media_url ?? "").trim(),
+      show_caption: p.show_caption == null ? !String(p.media_url ?? "").trim() : p.show_caption !== false,
     }));
 }
 
 export function cleanDigitalProperties(list: DigitalProperty[]): DigitalProperty[] {
   return list
-    .map((p) => ({ ...p, label: p.label.trim(), value: p.value.trim() }))
+    .map((p) => ({ ...p, label: p.label.trim(), value: p.value.trim(),
+      needs_media: !!p.needs_media || !!p.media_url?.trim() }))
     .filter((p) => p.label || p.value || p.media_url);
 }
 

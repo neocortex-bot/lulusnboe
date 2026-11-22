@@ -1,5 +1,11 @@
 # Roadmap
 
+## Media terunggah dan caption otomatis (22 Nov 2026)
+- [x] Media terunggah otomatis dianggap butuh media, termasuk data lama pada tabel soal; penanda tidak dapat dimatikan selama media masih ada.
+- [x] Unggah/ganti media otomatis menyembunyikan caption; pilihan menampilkan caption kembali tetap tersedia. Data lama tanpa pilihan caption memakai default tersembunyi, pilihan eksplisit tetap dihormati.
+- [x] 46 tes lolos: EKG lama tanpa flag, unggah/ganti gambar/video/audio, caption manual, unggahan gagal, simpan privat, dan tampilan peserta. Build OK.
+- [ ] Pengujian lewat akun asli tidak tersedia karena Supabase eksternal tidak menyediakan sesi pengujian.
+
 ## Angka properti dan penugasan penguji (22 Nov 2026)
 - [x] Jumlah properti di tabel berupa angka saja.
 - [x] Semua admin dapat melihat admin lain untuk dipilih sebagai penguji; tidak memperluas izin perubahan role.

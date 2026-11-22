@@ -36,7 +36,7 @@ const DigitalPropertiesEditor = ({ items, onChange, caseId }: Props) => {
       const { error } = await supabase.storage.from("case-assets").upload(path, file);
       if (error) throw error;
       const { data } = supabase.storage.from("case-assets").getPublicUrl(path);
-      set(i, { media_url: data.publicUrl, media_type: type });
+      set(i, { media_url: data.publicUrl, media_type: type, needs_media: true, show_caption: false });
       toast.success("Media terunggah — jangan lupa Simpan");
     } catch (e: any) {
       toast.error(`Gagal unggah: ${e.message ?? e}`);
@@ -67,11 +67,11 @@ const DigitalPropertiesEditor = ({ items, onChange, caseId }: Props) => {
           <Textarea rows={2} value={p.value} onChange={(e) => set(i, { value: e.target.value })} placeholder="Nilai/hasil, mis. 150/95 mmHg (boleh kosong bila hanya media)" />
           <div className="flex flex-wrap items-center gap-3">
             <label className="flex items-center gap-2 text-sm">
-              <Switch checked={!!p.needs_media} onCheckedChange={(v) => set(i, { needs_media: v })} />
+              <Switch aria-label="Butuh media asli" checked={!!p.media_url || !!p.needs_media} disabled={!!p.media_url} onCheckedChange={(v) => set(i, { needs_media: v })} />
               Butuh media asli
             </label>
             <label className={`flex items-center gap-2 text-sm ${p.media_url ? "" : "opacity-50"}`} title={p.media_url ? "" : "Unggah media dulu agar teks bisa disembunyikan"}>
-              <Switch checked={!p.media_url || p.show_caption !== false} disabled={!p.media_url} onCheckedChange={(v) => set(i, { show_caption: v })} />
+              <Switch aria-label="Tampilkan caption saat ditampilkan" checked={!p.media_url || p.show_caption !== false} disabled={!p.media_url} onCheckedChange={(v) => set(i, { show_caption: v })} />
               Tampilkan caption saat ditampilkan
             </label>
             <Label className="inline-flex cursor-pointer items-center gap-1 rounded-md border border-input px-3 py-1.5 text-sm hover:bg-accent">
