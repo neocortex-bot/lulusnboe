@@ -311,6 +311,7 @@ const StationDisplay = () => {
       const { data, error } = await supabase.rpc("regenerate_station_session", {
         _case_id: caseId,
         _new_token: newToken,
+        _previous_station_token: stationToken,
       });
       const regenerated = firstRpcRow(data);
       if (error || !regenerated) {

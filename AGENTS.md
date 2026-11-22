@@ -30,3 +30,4 @@
 - Interpret noisy transcripts inside the grading call while retaining raw transcripts and raw evidence quotes; never repair safety-sensitive numbers or invent interrupted answers from the answer key.
 - Store successful property-sync check timestamps separately on clinical_cases; derive media readiness from private digital properties, and never equate a check history with accepted suggestions or verified media contents.
 - Allow server-validated admins read-only role-directory access for examiner and participant selection; keep role mutations restricted to the master admin to prevent privilege escalation.
+- Rotation inherits examiner configuration from the exact source session; legacy regeneration passes its token to an unexposed private helper through an invoker RPC to avoid cross-station inference.
