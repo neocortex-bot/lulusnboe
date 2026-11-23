@@ -1,10 +1,11 @@
 # Roadmap
 
 ## Riwayat dan backfill persiapan (23 Nov 2026)
-- [ ] Diagnosis/pemulihan riwayat peserta, batas pemuatan dan pesan error yang bisa dicoba ulang.
-- [ ] Isi 48 soal persiapan siap latihan beserta rubrik/jawaban privat dari PDF, tanpa menimpa soal manual.
-- [ ] Tombol tambah soal di /persiapan memakai formulir soal bersama, default persiapan 10/60 detik.
-- [ ] Tes regresi dan verifikasi data/tampilan.
+- [x] Riwayat sebelumnya memuat semua laporan/transkrip tanpa batas dan error state; sekarang ringkasan 20/halaman, detail saat dibuka, batas 15 detik termasuk auth wait, pesan error/coba ulang. 223 hasil asli tetap utuh.
+- [x] Penyebab kosong terkonfirmasi: constraint mode lama menolak preparation. Constraint diperluas dan 48 soal published + 48 kunci privat dibuat atomik dari PDF; 40 rubrik 8 butir, 8 rubrik 9 butir, 0 poin tidak valid/critical hilang/jawaban privat terbuka/waktu salah.
+- [x] Tombol tambah soal memakai CaseForm bersama, mode Persiapan dan default 10/60 detik; admin dapat mengedit lewat detail seperti soal biasa.
+- [x] 24 tes terarah lolos, build OK; browser 1124/390 px membaca 48 soal nyata dan membuka formulir 10/60; riwayat error/retry/detail diuji dengan data contoh.
+- [ ] Riwayat dan ujian lengkap melalui akun asli belum terverifikasi: sesi login Supabase eksternal tidak tersedia. 29 peringatan keamanan lama tidak berubah.
 
 ## Periode NBOE (23 Nov 2026)
 - [x] Periode NBOE tersimpan terpisah; trigger memvalidasi 14 periode Juni 2023–September 2026 tanpa menebak periode soal lama atau mengubah izin/rubrik.
@@ -167,4 +168,4 @@
 - [ ] Aset gambar athletes heart (5 gambar) belum terpasang ke soal
 - [x] Deploy ingest-case dan case-admin ke Supabase asli sudah diselesaikan pada pekerjaan sebelumnya.
 - [x] /persiapan: station persiapan (48 kartu PIKiR PADi), mulai ujian persiapan, evaluasi sama dengan ujian penuh
-- [ ] Admin klik "Impor 48 kartu PIKiR PADi" di /persiapan (butuh login admin)
+- [x] 48 kartu PIKiR PADi sudah di-backfill ke Supabase asli; tidak perlu klik impor.

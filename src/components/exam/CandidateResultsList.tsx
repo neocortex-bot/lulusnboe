@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { loadCandidateHistory, loadCandidateHistoryDetail } from "@/lib/candidateHistory";
+import { EXAM_RESULTS_PAGE_SIZE } from "@/lib/examPerformance";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -77,21 +78,32 @@ const getScoreDisplay = (report: Json | null): { label: string; variant: "defaul
 const CandidateResultsList = () => {
   const { user } = useAuth();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [page, setPage] = useState(0);
 
-  const { data: results = [], isLoading } = useQuery({
-    queryKey: ["candidate_results", user?.id],
+  const { data: resultPage, isLoading, isError, refetch, isFetching } = useQuery({
+    queryKey: ["candidate_results", user?.id, page],
     enabled: !!user?.id,
-    queryFn: async () => {
-      if (!user) return [];
-      const { data, error } = await supabase
-        .from("exam_results")
-        .select("id, created_at, ai_score_report, transcript, audio_file_url, exam_sessions:session_id(status, show_results_to_candidate_override, clinical_cases:case_id(title, show_results_to_candidate))")
-        .eq("candidate_id", user.id)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data;
+    retry: false,
+    gcTime: 30_000,
+    queryFn: ({ signal }) => {
+      if (!user) return { rows: [], count: 0 };
+      return loadCandidateHistory(user.id, page, signal);
     },
   });
+  const results = resultPage?.rows ?? [];
+  const selectedResult = results.find(r => r.id === expandedId);
+  const detailAllowed = canCandidateViewResultDetails(selectedResult?.exam_sessions?.show_results_to_candidate_override, selectedResult?.exam_sessions?.clinical_cases?.show_results_to_candidate);
+  const { data: detail, isLoading: detailLoading, isError: detailError, refetch: refetchDetail } = useQuery({
+    queryKey: ["candidate_result_detail", user?.id, expandedId],
+    enabled: !!user && !!expandedId && detailAllowed,
+    retry: false, gcTime: 0,
+    queryFn: ({ signal }) => user && expandedId ? loadCandidateHistoryDetail(user.id, expandedId, signal) : null,
+  });
+
+  if (isError) return <Card><CardHeader><CardTitle className="text-lg">Riwayat Ujian</CardTitle></CardHeader>
+    <CardContent className="space-y-3"><p role="alert" className="text-sm text-destructive">Riwayat ujian gagal dimuat. Periksa koneksi lalu coba lagi.</p>
+      <Button variant="outline" onClick={() => void refetch()} disabled={isFetching}>Coba lagi</Button>
+    </CardContent></Card>;
 
   if (isLoading) {
     return (
@@ -101,7 +113,7 @@ const CandidateResultsList = () => {
     );
   }
 
-  if (results.length === 0) {
+  if (results.length === 0 && page === 0) {
     return (
       <Card>
         <CardHeader>
@@ -136,9 +148,10 @@ const CandidateResultsList = () => {
             day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit",
           });
           const isExpanded = expandedId === r.id;
-          const parsed = parseScoreReport(r.ai_score_report);
+          const report = isExpanded ? detail?.ai_score_report ?? r.ai_score_report : r.ai_score_report;
+          const parsed = parseScoreReport(report);
           const scoreDisplay = getScoreDisplay(r.ai_score_report);
-          const transcript = r.transcript ?? "";
+          const transcript = isExpanded ? detail?.transcript ?? "" : "";
 
           return (
             <div key={r.id} className="rounded-lg border border-border overflow-hidden">
@@ -165,10 +178,11 @@ const CandidateResultsList = () => {
 
               {showResults && isExpanded && (
                 <div className="border-t border-border p-4 bg-muted/30 space-y-4">
+                  {detailLoading ? <p className="text-sm text-muted-foreground">Memuat hasil ujian...</p> : detailError ? <div className="space-y-2"><p role="alert" className="text-sm text-destructive">Detail hasil gagal dimuat.</p><Button variant="outline" onClick={() => void refetchDetail()}>Coba lagi</Button></div> : <>
                   <ResultCasePrompt key={r.id} resultId={r.id} />
                   <ModelAnswerPanel
                     resultId={r.id}
-                    cached={(r.ai_score_report as any)?.modelAnswer}
+                    cached={(report as any)?.modelAnswer}
                     rubricItems={parsed.items}
                   />
                   {parsed.hasCriticalFail && (
@@ -259,11 +273,19 @@ const CandidateResultsList = () => {
                   {!parsed.items.length && parsed.score == null && (
                     <p className="text-sm text-muted-foreground">Belum ada hasil evaluasi AI.</p>
                   )}
+                  </>}
                 </div>
               )}
             </div>
           );
         })}
+        <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
+          <span className="text-sm text-muted-foreground">Halaman {page + 1} · {resultPage?.count ?? 0} ujian</span>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" disabled={page === 0 || isFetching} onClick={() => { setExpandedId(null); setPage(p => p - 1); }}>Sebelumnya</Button>
+            <Button variant="outline" size="sm" disabled={(page + 1) * EXAM_RESULTS_PAGE_SIZE >= (resultPage?.count ?? 0) || isFetching} onClick={() => { setExpandedId(null); setPage(p => p + 1); }}>Berikutnya</Button>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

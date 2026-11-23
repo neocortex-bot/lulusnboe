@@ -32,3 +32,4 @@
 - Allow server-validated admins read-only role-directory access for examiner and participant selection; keep role mutations restricted to the master admin to prevent privilege escalation.
 - Rotation inherits examiner configuration from the exact source session; legacy regeneration passes its token to an unexposed private helper through an invoker RPC to avoid cross-station inference.
 - Preparation mode: private start RPC; reuses /exam.
+- Bound candidate history loads to prevent indefinite auth/network waits.

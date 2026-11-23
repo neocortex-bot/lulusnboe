@@ -34,10 +34,10 @@ const existing = {
     properties: ["Stetoskop"], provided_to_candidate: [{ label: "Nadi", value: "80" }],
     digital_properties: [{ label: "EKG", value: "Hasil", needs_media: true, show_caption: true }] },
 };
-function mount(value: typeof existing | null = existing, close = vi.fn()) {
+function mount(value: typeof existing | null = existing, close = vi.fn(), defaultExamMode = "oral_board") {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
   clients.push(client);
-  render(<QueryClientProvider client={client}><CaseForm existingCase={value} onClose={close} /></QueryClientProvider>);
+  render(<QueryClientProvider client={client}><CaseForm existingCase={value} defaultExamMode={defaultExamMode} onClose={close} /></QueryClientProvider>);
   return close;
 }
 beforeEach(() => {
@@ -47,6 +47,14 @@ beforeEach(() => {
 afterEach(() => { cleanup(); clients.splice(0).forEach(c => c.clear()); vi.unstubAllGlobals(); });
 
 describe("case form private digital properties", () => {
+  it("creates preparation questions through the shared form with 10s reading, 60s answering and visible results", async () => {
+    mount(null, vi.fn(), "preparation");
+    fireEvent.change(screen.getByLabelText("Judul Soal"), { target: { value: "Persiapan CAG baru" } });
+    fireEvent.change(screen.getByLabelText("Soal / Pertanyaan"), { target: { value: "Lafalkan persiapan CAG" } });
+    fireEvent.click(screen.getByRole("button", { name: "Buat Soal" }));
+    await waitFor(() => expect(mock.writes).toHaveLength(2));
+    expect(mock.writes[0].payload).toMatchObject({ exam_mode: "preparation", reading_time_seconds: 10, time_limit_seconds: 60, initial_prompt: "", show_results_to_candidate: true });
+  });
   it.each(["image/png", "video/mp4", "audio/mpeg"])("uploading %s persists required media and hides caption, then allows manual caption choice", async mime => {
     mount();
     fireEvent.change(screen.getByLabelText("Unggah media"), { target: { files: [new File(["media"], "ekg", { type: mime })] } });
