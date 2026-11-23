@@ -61,7 +61,7 @@ describe("deployed stations server pagination", () => {
     mock.total = 9;
     await client.invalidateQueries({ queryKey: ["deployed_stations"] });
     await screen.findByText("T0");
-    expect(mock.reads.at(-1).range).toEqual([0, 9]);
+    await waitFor(() => expect(mock.reads.at(-1).range).toEqual([0, 9]));
     expect(screen.queryByText("T10")).not.toBeInTheDocument();
   });
 });

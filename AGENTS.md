@@ -33,3 +33,6 @@
 - Rotation inherits examiner configuration from the exact source session; legacy regeneration passes its token to an unexposed private helper through an invoker RPC to avoid cross-station inference.
 - Preparation mode: private start RPC; reuses /exam.
 - Bound candidate history loads to prevent indefinite auth/network waits.
+<!-- LOVABLE:BEGIN -->
+- Keep final case approval service-written and bound to the saved content hash; validate publication and deployment on the server so UI or stale AI output cannot bypass review. Corrections change only participant-facing prompts/questions and require a fresh check, leaving grading inputs and existing sessions unchanged.
+<!-- LOVABLE:END -->

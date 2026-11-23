@@ -20,7 +20,7 @@ const AdminDashboard = () => {
           <h1 className="text-xl font-bold text-foreground">Admin Dashboard</h1>
           <p className="text-sm text-muted-foreground">{user?.email}</p>
         </div>
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="flex max-w-full shrink-0 flex-wrap items-center gap-2">
           <Button asChild size="sm" variant="outline">
             <Link to="/persiapan">Persiapan</Link>
           </Button>
