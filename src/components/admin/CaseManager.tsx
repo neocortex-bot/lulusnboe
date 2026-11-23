@@ -18,7 +18,8 @@ import AssetUploader from "./AssetUploader";
 import ExcelImporter from "./ExcelImporter";
 import { Link } from "react-router-dom";
 import CategoryFilter from "./CategoryFilter";
-import { nboeLabel } from "@/lib/nboePeriods";
+import NboePeriodFilter from "./NboePeriodFilter";
+import { NBOE_FILTER_ALL, matchesNboePeriodFilter, nboeLabel } from "@/lib/nboePeriods";
 import { ALL, categoryBadgeClass, matchesCategory, toCategoryLabel, uniqueCategories } from "@/lib/caseCategory";
 
 interface ClinicalCase {
@@ -50,6 +51,7 @@ const CaseManager = () => {
   const [caseToDelete, setCaseToDelete] = useState<ClinicalCase | null>(null);
   const [examGroup, setExamGroup] = useState("oral_board");
   const [categoryFilter, setCategoryFilter] = useState(ALL);
+  const [nboeFilter, setNboeFilter] = useState(NBOE_FILTER_ALL);
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { user, isAdmin, isMasterAdmin } = useAuth();
@@ -141,7 +143,7 @@ const CaseManager = () => {
   });
 
   const categories = uniqueCategories(cases);
-  const filteredCases = cases.filter((clinicalCase) => clinicalCase.exam_mode === examGroup && clinicalCase.status !== "prereview" && clinicalCase.status !== "archived" && matchesCategory(clinicalCase.category, categoryFilter));
+  const filteredCases = cases.filter((clinicalCase) => clinicalCase.exam_mode === examGroup && clinicalCase.status !== "prereview" && clinicalCase.status !== "archived" && matchesCategory(clinicalCase.category, categoryFilter) && matchesNboePeriodFilter(clinicalCase, nboeFilter));
 
   return (
     <Card>
@@ -174,12 +176,15 @@ const CaseManager = () => {
             </TabsList>
           </Tabs>
           <CategoryFilter categories={categories} value={categoryFilter} onChange={setCategoryFilter} />
+          <NboePeriodFilter value={nboeFilter} onChange={setNboeFilter} />
         </div>
         {isLoading ? (
           <p className="text-muted-foreground">Loading...</p>
         ) : filteredCases.length === 0 ? (
           <p className="text-muted-foreground text-center py-8">
-            Belum ada soal {examGroup === "oral_board" ? "Oral Board" : examGroup === "preparation" ? "Persiapan" : "Panel"}.
+            {categoryFilter !== ALL || nboeFilter !== NBOE_FILTER_ALL
+              ? "Tidak ada soal yang cocok dengan filter ini."
+              : `Belum ada soal ${examGroup === "oral_board" ? "Oral Board" : examGroup === "preparation" ? "Persiapan" : "Panel"}.`}
           </p>
         ) : (
           <Table className="min-w-[1040px]">

@@ -34,6 +34,7 @@ vi.mock("@/integrations/supabase/client", () => ({ supabase: {
       select: (columns: string) => { read.columns = columns; return q; },
       eq: (key: string, value: unknown) => { read.filters.push([key, value]); return q; },
       order: () => q, range: () => q,
+      abortSignal: () => q,
       single: () => Promise.resolve(result()),
       then: (resolve: any) => Promise.resolve(result()).then(resolve),
     };
@@ -89,7 +90,7 @@ describe("result case context loading", () => {
     mount(<CandidateResultsList />);
     fireEvent.click(await screen.findByRole("button", { name: /Ujian/ }));
     expect(promptReads()).toHaveLength(0);
-    fireEvent.click(screen.getByRole("button", { name: "Vignette dan pertanyaan" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Vignette dan pertanyaan" }));
     await screen.findByText("Pasien sesak sejak dua hari.");
     expect(promptReads()[0].filters).toEqual([["id", "result-1"]]);
   });

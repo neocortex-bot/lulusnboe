@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { NBOE_PERIODS, isValidNboePeriod, matchesNboeFilter } from "@/lib/nboePeriods";
+import {
+  NBOE_FILTER_ALL,
+  NBOE_FILTER_ANY,
+  NBOE_FILTER_UNSET,
+  NBOE_PERIODS,
+  isValidNboePeriod,
+  matchesNboeFilter,
+  matchesNboePeriodFilter,
+} from "@/lib/nboePeriods";
 
 describe("NBOE period rules", () => {
   it("allows exactly March, June, September and December within June 2023–September 2026", () => {
@@ -22,5 +30,21 @@ describe("NBOE period rules", () => {
     expect(matchesNboeFilter({ is_nboe: false }, true, "unset")).toBe(false);
     expect(matchesNboeFilter({ is_nboe: true }, true, "all")).toBe(true);
     expect(matchesNboeFilter({ is_nboe: false }, false, "2026-09")).toBe(true);
+  });
+  it("table filter keeps every case when set to Semua Soal", () => {
+    expect(matchesNboePeriodFilter({ is_nboe: false }, NBOE_FILTER_ALL)).toBe(true);
+    expect(matchesNboePeriodFilter({ is_nboe: true, nboe_period: "2024-03" }, NBOE_FILTER_ALL)).toBe(true);
+  });
+  it("table filter narrows to one period and never leaks other periods or plain cases", () => {
+    expect(matchesNboePeriodFilter({ is_nboe: true, nboe_period: "2024-03" }, "2024-03")).toBe(true);
+    expect(matchesNboePeriodFilter({ is_nboe: true, nboe_period: "2024-06" }, "2024-03")).toBe(false);
+    expect(matchesNboePeriodFilter({ is_nboe: false, nboe_period: "2024-03" }, "2024-03")).toBe(false);
+    expect(matchesNboePeriodFilter({ is_nboe: true, nboe_period: null }, "2024-03")).toBe(false);
+  });
+  it("table filter separates any-NBOE from period-not-filled", () => {
+    expect(matchesNboePeriodFilter({ is_nboe: true, nboe_period: null }, NBOE_FILTER_ANY)).toBe(true);
+    expect(matchesNboePeriodFilter({ is_nboe: false, nboe_period: null }, NBOE_FILTER_ANY)).toBe(false);
+    expect(matchesNboePeriodFilter({ is_nboe: true, nboe_period: null }, NBOE_FILTER_UNSET)).toBe(true);
+    expect(matchesNboePeriodFilter({ is_nboe: true, nboe_period: "2023-06" }, NBOE_FILTER_UNSET)).toBe(false);
   });
 });
