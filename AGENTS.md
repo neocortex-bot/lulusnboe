@@ -28,7 +28,7 @@
 
 - Keep evaluation prompt policy in the server-only grading-prompt module, judge clinical core competence rather than recital of supporting details, and record its version in new reports; this permits read-only calibration without rewriting case rubrics or historical grades.
 - Interpret noisy transcripts inside the grading call while retaining raw transcripts and raw evidence quotes; never repair safety-sensitive numbers or invent interrupted answers from the answer key.
-- Store successful property-sync check timestamps separately on clinical_cases; derive media readiness from private digital properties, and never equate a check history with accepted suggestions or verified media contents.
+- Store property-sync check timestamps on clinical_cases; a check is not proof suggestions were accepted or media verified.
 - Allow server-validated admins read-only role-directory access for examiner and participant selection; keep role mutations restricted to the master admin to prevent privilege escalation.
 - Rotation inherits examiner configuration from the exact source session; legacy regeneration passes its token to an unexposed private helper through an invoker RPC to avoid cross-station inference.
-- Preparation = exam_mode 'preparation'; start via private RPC, reuse /exam and evaluate-exam.
+- Preparation mode: private start RPC; reuses /exam.
