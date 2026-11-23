@@ -100,7 +100,7 @@ const CaseForm = ({ existingCase, categories = [], defaultExamMode = "oral_board
         const { data: authData } = await supabase.auth.getUser();
         const { data, error } = await supabase
           .from("clinical_cases")
-          .insert({ ...casePayload, ...nboe, created_by: authData.user?.id ?? null })
+          .insert({ ...casePayload, ...nboe, status: "draft", created_by: authData.user?.id ?? null })
           .select("id")
           .single();
         if (error) throw error;

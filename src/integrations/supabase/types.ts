@@ -140,6 +140,47 @@ export type Database = {
           },
         ]
       }
+      case_final_reviews: {
+        Row: {
+          case_id: string
+          checked_by: string | null
+          content_hash: string
+          created_at: string
+          passed: boolean
+          result: Json
+          stale: boolean
+          updated_at: string
+        }
+        Insert: {
+          case_id: string
+          checked_by?: string | null
+          content_hash: string
+          created_at?: string
+          passed?: boolean
+          result: Json
+          stale?: boolean
+          updated_at?: string
+        }
+        Update: {
+          case_id?: string
+          checked_by?: string | null
+          content_hash?: string
+          created_at?: string
+          passed?: boolean
+          result?: Json
+          stale?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_final_reviews_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: true
+            referencedRelation: "clinical_cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chat_messages: {
         Row: {
           created_at: string
@@ -545,6 +586,10 @@ export type Database = {
           outcome: string
         }[]
       }
+      apply_final_case_review: {
+        Args: { _case_id: string }
+        Returns: undefined
+      }
       can_view_case_at_station: {
         Args: { _case_id: string; _station_token: string }
         Returns: boolean
@@ -563,6 +608,7 @@ export type Database = {
         }[]
       }
       exam_waiting_deadline: { Args: { _session_id: string }; Returns: string }
+      final_case_ready: { Args: { _case_id: string }; Returns: boolean }
       get_case_assets_for_display: {
         Args: { _case_id: string; _station_token?: string }
         Returns: {
@@ -590,6 +636,7 @@ export type Database = {
           title: string
         }[]
       }
+      get_final_case_input: { Args: { _case_id: string }; Returns: Json }
       get_session_by_token: {
         Args: { _token: string }
         Returns: {
@@ -632,6 +679,15 @@ export type Database = {
       reconcile_rubric_report: {
         Args: { _report: Json; _rubric: Json }
         Returns: Json
+      }
+      record_final_case_review: {
+        Args: {
+          _case_id: string
+          _checked_by: string
+          _input: Json
+          _result: Json
+        }
+        Returns: undefined
       }
       regenerate_station_session:
         | {

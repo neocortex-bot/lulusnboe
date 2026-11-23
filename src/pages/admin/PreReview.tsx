@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -84,6 +84,7 @@ const validate = (d: DraftCase): string[] => {
 };
 
 const PreReview = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -194,15 +195,17 @@ const PreReview = () => {
       } else if (!d.title.trim()) {
         throw new Error("Isi judul soal dulu sebelum menyimpan.");
       }
-      const id = await save(d, publish);
+      // Final approval happens in the shared detail page, never before checking.
+      const id = await save(d, false);
       return { id, publish };
     },
     onSuccess: ({ id, publish }, { d }) => {
       qc.invalidateQueries({ queryKey: ["prereview_cases"] });
       qc.invalidateQueries({ queryKey: ["clinical_cases"] });
       if (publish) {
-        toast({ title: "Soal di-ingest", description: "Soal sudah masuk ke daftar Clinical Cases dan siap di-deploy." });
+        toast({ title: "Draft tersimpan", description: "Lanjutkan pemeriksaan akhir sebelum menerbitkan soal." });
         setEditing(null);
+        navigate(`/admin/case/preview/${id}`);
       } else {
         toast({ title: "Draft tersimpan" });
         setEditing({ ...d, id });
@@ -331,7 +334,7 @@ const PreReview = () => {
               busy={saveMut.isPending}
               onSave={(d) => saveMut.mutate({ d, publish: false })}
               onIngest={(d) => {
-                if (confirm("Soal sudah yakin dan beres? Soal akan di-ingest dan siap di-deploy.")) {
+                if (confirm("Simpan draft dan lanjutkan ke pemeriksaan akhir soal?")) {
                   saveMut.mutate({ d, publish: true });
                 }
               }}
@@ -549,7 +552,7 @@ const DraftEditor = ({ initial, busy, onSave, onIngest }: EditorProps) => {
           <Save className="h-4 w-4 mr-2" /> Simpan draft
         </Button>
         <Button disabled={busy || errs.length > 0} onClick={() => onIngest(d)}>
-          <Send className="h-4 w-4 mr-2" /> Submit & Ingest
+          <Send className="h-4 w-4 mr-2" /> Lanjutkan pemeriksaan akhir
         </Button>
       </div>
     </div>

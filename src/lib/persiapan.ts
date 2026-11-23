@@ -28,7 +28,7 @@ export function buildPreparationRows(card: PreparationSeedCard) {
       reading_time_seconds: PREPARATION_READING_SECONDS,
       time_limit_seconds: PREPARATION_ANSWER_SECONDS,
       show_results_to_candidate: true,
-      status: "published",
+      status: "draft",
       source: "admin",
       rubric_mode: "checklist",
       category: card.category,

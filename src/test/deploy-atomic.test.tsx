@@ -8,7 +8,7 @@ vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: vi.fn() }) }));
 vi.mock("@/components/admin/DeployedStationsTable", () => ({ default: () => null }));
 vi.mock("@/integrations/supabase/client", () => ({ supabase: {
   rpc: (_name: string, args: any) => { mock.calls.push(args); return Promise.resolve(mock.calls.length === 1 ? { data: null, error: new Error("jaringan putus") } : { data: args._stations, error: null }); },
-  from: (table: string) => { const q: any = { select: () => q, eq: () => q, ilike: () => q, in: () => q, order: () => q, insert: () => { mock.inserts++; return q; }, maybeSingle: () => Promise.resolve({ data: null, error: null }), then: (r: any) => Promise.resolve({ data: table === "clinical_cases" ? Array.from({ length: 6 }, (_, i) => ({ id: `c${i}`, title: `Soal ${i + 1}`, exam_mode: "oral_board", category: null })) : [], error: null }).then(r) }; return q; },
+  from: (table: string) => { const q: any = { select: () => q, eq: () => q, ilike: () => q, in: () => q, order: () => q, insert: () => { mock.inserts++; return q; }, maybeSingle: () => Promise.resolve({ data: null, error: null }), then: (r: any) => Promise.resolve({ data: table === "clinical_cases" ? Array.from({ length: 6 }, (_, i) => ({ id: `c${i}`, title: `Soal ${i + 1}`, exam_mode: "oral_board", category: null, case_final_reviews: { passed: true, stale: false } })) : [], error: null }).then(r) }; return q; },
 } }));
 afterEach(() => { cleanup(); mock.calls = []; mock.inserts = 0; });
 

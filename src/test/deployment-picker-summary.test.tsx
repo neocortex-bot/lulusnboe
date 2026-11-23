@@ -10,7 +10,7 @@ vi.mock("@/integrations/supabase/client", () => ({ supabase: {
   from: (table: string) => {
     const read = { table, columns: "", filters: [] as [string, unknown][] };
     mock.reads.push(read);
-    const result = () => ({ data: table === "clinical_cases" ? [{ id: "echo", title: "Echo HOCM", exam_mode: "oral_board", category: "echo" }] : [], error: null });
+    const result = () => ({ data: table === "clinical_cases" ? [{ id: "echo", title: "Echo HOCM", exam_mode: "oral_board", category: "echo", case_final_reviews: { passed: true, stale: false } }] : [], error: null });
     const q: any = {
       select: (columns: string) => { read.columns = columns; return q; },
       eq: (key: string, value: unknown) => { read.filters.push([key, value]); return q; },
@@ -31,10 +31,10 @@ describe("deployment summary picker", () => {
     fireEvent.click(await screen.findByRole("button", { name: "Echo HOCM" }));
     await waitFor(() => expect(screen.getByRole("button", { name: "Deploy 1 Station Oral Board" })).toBeEnabled());
     expect(mock.reads.filter(r => r.table === "clinical_cases")).toEqual([
-      { table: "clinical_cases", columns: "id, title, exam_mode, category, is_nboe, nboe_period", filters: [["status", "published"], ["exam_mode", "oral_board"]] },
+      { table: "clinical_cases", columns: "id, title, exam_mode, category, is_nboe, nboe_period, case_final_reviews(passed, stale)", filters: [["status", "published"], ["exam_mode", "oral_board"]] },
     ]);
     expect(mock.reads.some(r => r.table === "case_answer_keys")).toBe(false);
-    expect(client.getQueryData(["clinical_cases", "deployment_picker", "oral_board"])).toEqual([{ id: "echo", title: "Echo HOCM", exam_mode: "oral_board", category: "echo" }]);
+    expect(client.getQueryData(["clinical_cases", "deployment_picker", "oral_board"])).toEqual([{ id: "echo", title: "Echo HOCM", exam_mode: "oral_board", category: "echo", case_final_reviews: { passed: true, stale: false } }]);
     expect(client.getQueryData(["clinical_cases"])).toEqual([{ id: "old", title: "Unrelated full admin case" }]);
     client.clear();
   });

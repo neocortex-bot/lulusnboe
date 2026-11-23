@@ -12,7 +12,7 @@ vi.mock("@/integrations/supabase/client", () => ({ supabase: {
     let role = "";
     const result = () => ({ data: table === "user_roles" ? (role === "admin" ? [{ user_id: "admin-self" }, { user_id: "admin-other" }] : [])
       : table === "profiles" ? [{ id: "admin-self", full_name: "Admin A" }, { id: "admin-other", full_name: "Admin B" }]
-      : table === "clinical_cases" ? [{ id: "c1", title: "Soal 1", exam_mode: "oral_board" }] : [],
+      : table === "clinical_cases" ? [{ id: "c1", title: "Soal 1", exam_mode: "oral_board", case_final_reviews: { passed: true, stale: false } }] : [],
       error: mock.fail && table === "user_roles" && role === "admin" ? new Error("permission denied") : null });
     const q: any = { select: () => q, eq: (key: string, value: string) => { if (key === "role") role = value; return q; },
       in: () => q, ilike: () => q, order: () => q, maybeSingle: async () => ({ data: null, error: null }),

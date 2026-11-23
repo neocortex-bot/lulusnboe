@@ -4,6 +4,7 @@ import { ALL, matchesCategory, uniqueCategories } from "@/lib/caseCategory";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Json } from "@/integrations/supabase/types";
+import { finalReviewState } from "@/lib/finalCaseReview";
 import { generateBookingCode } from "@/lib/bookingCode";
 import {
   getDeploymentValidationError,
@@ -170,7 +171,7 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
       // The picker needs no scenario, private answers, rubric, or media.
       const { data, error } = await supabase
         .from("clinical_cases")
-        .select("id, title, exam_mode, category, is_nboe, nboe_period")
+        .select("id, title, exam_mode, category, is_nboe, nboe_period, case_final_reviews(passed, stale)")
         .eq("status", "published") // ONLY publishable cases
         .eq("exam_mode", examMode)
         .order("created_at", { ascending: false });
@@ -238,6 +239,7 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
         caseIds: selectedCases.map((clinicalCase) => clinicalCase.id),
         pcCount,
         excludedCaseIds: effectiveExcludedCaseIds,
+        reviewedCaseIds: new Set(cases.filter(c => finalReviewState(c.case_final_reviews) === "passed").map(c => c.id)),
       });
       if (validationError) throw new Error(validationError);
 
@@ -305,6 +307,7 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
           </div>
 
           <CaseTransferList
+            requireFinalReview
             cases={eligibleCases}
             selectedCases={selectedCases}
             onSelectedCasesChange={setSelectedCases}
@@ -444,7 +447,8 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
               deployMutation.isPending ||
               pcCount < 1 ||
               historyLoading ||
-              historyUnavailable
+              historyUnavailable ||
+              selectedCases.some(selected => finalReviewState(cases.find(c => c.id === selected.id)?.case_final_reviews) !== "passed")
             }
             className="h-auto min-h-10 w-full whitespace-normal sm:w-auto"
           >

@@ -14,6 +14,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { canDeleteCase, canEditCase } from "@/lib/casePermissions";
 import CaseForm from "./CaseForm";
 import CaseReadiness from "./CaseReadiness";
+import type { FinalReviewSummary } from "@/lib/finalCaseReview";
 import AssetUploader from "./AssetUploader";
 import ExcelImporter from "./ExcelImporter";
 import { Link } from "react-router-dom";
@@ -38,6 +39,7 @@ interface ClinicalCase {
   is_nboe?: boolean;
   nboe_period?: string | null;
   property_sync_checked_at?: string | null;
+  case_final_reviews?: FinalReviewSummary | null;
   source?: string;
   rubric_mode?: string;
   created_by?: string | null;
@@ -68,7 +70,7 @@ const CaseManager = () => {
       // Fetch cases + their answer keys from the secure table
       const { data: casesData, error } = await supabase
         .from("clinical_cases")
-        .select("*")
+        .select("*, case_final_reviews(passed, stale)")
         .order("created_at", { ascending: false });
       if (error) throw error;
 
@@ -196,7 +198,7 @@ const CaseManager = () => {
                 <TableHead>Time (s)</TableHead>
                 <TableHead>Rubric Items</TableHead>
                 <TableHead>Properti</TableHead>
-                <TableHead className="w-20 text-center"><span role="img" aria-label="Kelengkapan media dan riwayat sinkronisasi" title="Kelengkapan media dan riwayat sinkronisasi">📋</span></TableHead>
+                <TableHead className="w-28 text-center"><span role="img" aria-label="Media, sinkronisasi dan pemeriksaan akhir" title="Media, sinkronisasi dan pemeriksaan akhir">📋</span></TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -244,7 +246,7 @@ const CaseManager = () => {
                       <span className="text-xs text-muted-foreground">—</span>
                     )}
                   </TableCell>
-                  <TableCell><CaseReadiness rubric={c.checklist_rubric} checkedAt={c.property_sync_checked_at} /></TableCell>
+                  <TableCell><CaseReadiness rubric={c.checklist_rubric} checkedAt={c.property_sync_checked_at} finalReview={c.case_final_reviews} /></TableCell>
                   <TableCell className="whitespace-nowrap text-right space-x-2">
                     {/* Every admin can open the detail preview */}
                     <Link to={`/admin/case/preview/${c.id}`}>

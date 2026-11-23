@@ -33,6 +33,8 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import RubricBuilder, { type RubricData } from "@/components/admin/RubricBuilder";
 import PropertySyncDialog from "@/components/admin/PropertySyncDialog";
+import FinalCaseReview from "@/components/admin/FinalCaseReview";
+import { finalReviewState, loadFinalReview } from "@/lib/finalCaseReview";
 import RubricWordByWordSection from "@/components/admin/RubricWordByWordSection";
 import AssetUploader from "@/components/admin/AssetUploader";
 import PropertiesEditor from "@/components/admin/PropertiesEditor";
@@ -146,6 +148,11 @@ const CasePreview = () => {
   });
   const rubricEditable = isRubricEditable({ canEdit, isEditing });
   const canDelete = canDeleteCase({ isMasterAdmin, createdBy: caseRow?.created_by, userId: user?.id });
+  const finalReviewQuery = useQuery({
+    queryKey: ["final_case_review", id],
+    queryFn: () => { if (!id) throw new Error("Soal tidak ditemukan"); return loadFinalReview(id); },
+    enabled: !!id,
+  });
 
   // Sync form ketika data datang
   useEffect(() => {
@@ -181,23 +188,23 @@ const CasePreview = () => {
     return [
       {
         // Panel murni tanya-jawab tidak punya vignette — kosong itu sah.
-        label: examMode === "panel_exam"
+        label: examMode === "panel_exam" || examMode === "preparation"
           ? `Vignette (initial_prompt) opsional untuk panel — ≥ 20 karakter bila diisi`
           : `Vignette (initial_prompt) ≥ 400 karakter`,
-        pass: examMode === "panel_exam"
+        pass: examMode === "panel_exam" || examMode === "preparation"
           ? initialPrompt.trim().length === 0 || initialPrompt.trim().length >= 20
           : initialPrompt.trim().length >= 400,
         value: `${initialPrompt.trim().length}`,
       },
       {
         // Panel memakai satu pertanyaan inti; nomor ≥5 hanya wajib untuk mode kasus.
-        label: examMode === "panel_exam"
+        label: examMode === "panel_exam" || examMode === "preparation"
           ? `Soal (questions_text) ≥ 20 karakter`
           : `Tugas (questions_text) ≥ 300 karakter & ≥ 5 nomor`,
-        pass: examMode === "panel_exam"
+        pass: examMode === "panel_exam" || examMode === "preparation"
           ? questionsText.trim().length >= 20
           : questionsText.trim().length >= 300 && numberedTasks >= 5,
-        value: examMode === "panel_exam"
+        value: examMode === "panel_exam" || examMode === "preparation"
           ? `${questionsText.trim().length} chr`
           : `${questionsText.trim().length} chr / ${numberedTasks} tugas`,
       },
@@ -233,7 +240,17 @@ const CasePreview = () => {
         throw new Error("Anda tidak memiliki akses untuk mengubah soal ini.");
       }
       if (!id) throw new Error("Case ID missing");
+      if (action === "approve") {
+        if (isEditing) throw new Error("Simpan perubahan dan periksa akhir sebelum menerbitkan.");
+        const { data: ready, error: checkError } = await supabase.rpc("final_case_ready", { _case_id: id });
+        if (checkError) throw checkError;
+        if (!ready) throw new Error("Soal belum lolos pemeriksaan akhir kebocoran dan kesesuaian.");
+        const { error } = await supabase.from("clinical_cases").update({ status: "published", reviewed_at: new Date().toISOString(), reviewed_by: user?.id ?? null }).eq("id", id);
+        if (error) throw error;
+        return;
+      }
       const rubricItemsWithIds = withRubricItemIds(rubricData.items);
+      const publicItems = rubricItemsWithIds.map(({ answer: _answer, ...item }) => item);
       const payload: Record<string, unknown> = {
         title,
         exam_mode: examMode,
@@ -242,19 +259,12 @@ const CasePreview = () => {
         time_limit_seconds: timeLimitSeconds,
         reading_time_seconds: readingTimeSeconds,
         questions_text: questionsText,
-        answer_key_text: answerKeyText,
         show_results_to_candidate: showResultsToCandidate,
-        checklist_rubric: { enabled: rubricData.enabled, items: rubricItemsWithIds },
+        checklist_rubric: { enabled: rubricData.enabled, items: publicItems },
         rubric_mode: rubricMode,
       };
 
-      if (action === "approve") {
-        payload.status = "published";
-        payload.reviewed_at = new Date().toISOString();
-        // reviewed_by diisi dari user yang sedang login
-        const { data: authData } = await supabase.auth.getUser();
-        payload.reviewed_by = authData.user?.id ?? null;
-      } else if (action === "reject") {
+      if (action === "reject") {
         payload.status = "rejected";
         payload.reviewed_at = new Date().toISOString();
       }
@@ -268,6 +278,7 @@ const CasePreview = () => {
         case_id: id,
         answer_key_text: answerKeyText,
         checklist_rubric: {
+          ...(caseRow?.checklist_rubric && !Array.isArray(caseRow.checklist_rubric) ? caseRow.checklist_rubric : {}),
           enabled: rubricData.enabled,
           items: rubricItemsWithIds,
           properties: properties.map((p) => p.trim()).filter(Boolean),
@@ -282,6 +293,7 @@ const CasePreview = () => {
     onSuccess: (_data, action) => {
       queryClient.invalidateQueries({ queryKey: ["clinical_cases"] });
       queryClient.invalidateQueries({ queryKey: ["clinical_case_preview", id] });
+      queryClient.invalidateQueries({ queryKey: ["final_case_review", id] });
       queryClient.invalidateQueries({ queryKey: ["exam_results_admin"] });
       const msg =
         action === "approve"
@@ -360,7 +372,7 @@ const CasePreview = () => {
   }
 
   const statusMeta = STATUS_LABEL[caseRow.status] ?? STATUS_LABEL.published;
-  const needsReview = caseRow.source === "agent_api" && caseRow.status === "draft";
+  const needsReview = caseRow.status === "draft" || caseRow.status === "prereview";
   const isBusy = saveMutation.isPending || deleteMutation.isPending;
 
 
@@ -432,7 +444,7 @@ const CasePreview = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-yellow-800 dark:text-yellow-300">
                 <AlertTriangle className="h-5 w-5" />
-                Soal dari AI Agent — wajib review manual sebelum dipakai
+                Soal belum diterbitkan — wajib pemeriksaan akhir
               </CardTitle>
               <CardDescription>
                 Soal ini dikirim otomatis oleh AI agent dan belum tayang. Periksa kebenaran klinis,
@@ -462,7 +474,7 @@ const CasePreview = () => {
                 <Button
                   variant="default"
                   onClick={() => saveMutation.mutate("approve")}
-                  disabled={isBusy || !allGatesPass}
+                  disabled={isBusy || isEditing || !allGatesPass || finalReviewState(finalReviewQuery.data) !== "passed"}
                   className="gap-2"
                 >
                   <CheckCircle2 className="h-4 w-4" />
@@ -481,9 +493,9 @@ const CasePreview = () => {
                   Hapus Permanen
                 </Button>
               </div>
-              {!allGatesPass && (
+              {(!allGatesPass || finalReviewState(finalReviewQuery.data) !== "passed") && (
                 <p className="text-xs text-muted-foreground">
-                  Approve dikunci sampai seluruh gerbang mutu terpenuhi (sesuai aturan endpoint).
+                  Penerbitan terkunci sampai gerbang mutu dan pemeriksaan akhir kebocoran lolos.
                 </p>
               )}
             </CardContent>
@@ -541,6 +553,7 @@ const CasePreview = () => {
                       <SelectContent>
                         <SelectItem value="oral_board">Oral Board</SelectItem>
                         <SelectItem value="panel_exam">Panel Exam</SelectItem>
+                        <SelectItem value="preparation">Persiapan</SelectItem>
                         <SelectItem value="osce">OSCE</SelectItem>
                       </SelectContent>
                     </Select>
@@ -617,6 +630,7 @@ const CasePreview = () => {
                     disabled={!isEditing}
                   />
                 </div>
+                {id && canEdit && <FinalCaseReview caseId={id} disabled={isEditing || isBusy} />}
               </CardContent>
             </Card>
 

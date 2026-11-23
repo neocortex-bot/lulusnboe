@@ -7,12 +7,14 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { NBOE_PERIODS, matchesNboeFilter, nboeLabel } from "@/lib/nboePeriods";
 import { Search, Plus, ChevronUp, ChevronDown, X } from "lucide-react";
+import { finalReviewLabel, finalReviewState, type FinalReviewSummary } from "@/lib/finalCaseReview";
 
 interface CaseItem {
   id: string;
   title: string;
   is_nboe?: boolean;
   nboe_period?: string | null;
+  case_final_reviews?: FinalReviewSummary | null;
 }
 
 interface CaseTransferListProps {
@@ -21,6 +23,7 @@ interface CaseTransferListProps {
   onSelectedCasesChange: (cases: CaseItem[]) => void;
   emptyStateMessage?: string;
   disabled?: boolean;
+  requireFinalReview?: boolean;
 }
 
 const CaseTransferList = ({
@@ -29,6 +32,7 @@ const CaseTransferList = ({
   onSelectedCasesChange,
   emptyStateMessage,
   disabled = false,
+  requireFinalReview = false,
 }: CaseTransferListProps) => {
   const [search, setSearch] = useState("");
   const [nboeOnly, setNboeOnly] = useState(false);
@@ -104,11 +108,13 @@ const CaseTransferList = ({
                 variant="ghost"
                 key={c.id}
                 onClick={() => addCase(c)}
-                disabled={disabled}
+                disabled={disabled || (requireFinalReview && finalReviewState(c.case_final_reviews) !== "passed")}
+                title={requireFinalReview ? finalReviewLabel(c.case_final_reviews) : undefined}
+                aria-label={c.title}
                 className="h-auto min-h-10 w-full justify-start rounded-none whitespace-normal px-3 py-2 text-sm text-left border-b border-border last:border-0"
               >
                 <Plus className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                <div className="min-w-0 break-words">{c.title}{c.is_nboe && <Badge variant="nboe" className="ml-2 text-xs">{nboeLabel(c.nboe_period)}</Badge>}</div>
+                <div className="min-w-0 break-words">{c.title}{c.is_nboe && <Badge variant="nboe" className="ml-2 text-xs">{nboeLabel(c.nboe_period)}</Badge>}{requireFinalReview && <span className="ml-2" role="img" aria-label={finalReviewLabel(c.case_final_reviews)}>{finalReviewState(c.case_final_reviews) === "passed" ? "🛡️" : "🔒"}</span>}</div>
               </Button>
             ))
           )}
