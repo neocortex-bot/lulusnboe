@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { normalizeFinalReview } from "../../supabase/functions/_shared/final-case-review";
+import { investigationResultHints, normalizeFinalReview, UnfixedLeakError } from "../../supabase/functions/_shared/final-case-review";
 import { finalReviewState } from "@/lib/finalCaseReview";
 import { getDeploymentValidationError } from "@/lib/deploymentEligibility";
 
@@ -13,7 +13,7 @@ describe("final review rules", () => {
     expect(deployment(new Set())).not.toBeNull();
   });
   it("blocks detected leaked investigation results even when the model says passed", () => {
-    const result = normalizeFinalReview({ ...good, issues: [{ field: "initial_prompt", kind: "leak", quote: "EKG menunjukkan AV block total.", reason: "Peserta harus meminta EKG terlebih dahulu." }] }, input);
+    const result = normalizeFinalReview({ ...good, issues: [{ field: "initial_prompt", kind: "leak", quote: "EKG menunjukkan AV block total.", reason: "Peserta harus meminta EKG terlebih dahulu." }], initial_prompt: "Pasien sesak." }, input);
     expect(result.passed).toBe(false);
   });
   it("does not count suggested corrections as passing the current question", () => {
@@ -40,5 +40,33 @@ describe("final review rules", () => {
     const before = structuredClone(input);
     normalizeFinalReview({ ...good, questions_text: "1. Jelaskan pemeriksaan yang akan Anda minta." }, input);
     expect(input).toEqual(before);
+  });
+});
+describe("interpretation station leaks", () => {
+  const pda = {
+    initial_prompt: "Perempuan 24 tahun sesak. PEMERIKSAAN PENUNJANG: EKG sinus rhythm, LAD, LVH dengan strain. Echo menunjukkan PDA kiri-ke-kanan diameter 3,8 mm. RHC menunjukkan mPAP 30 mmHg, Qp/Qs 1,56.",
+    questions_text: "1. Sebutkan dan interpretasikan pemeriksaan penunjang.",
+    answer_key_text: "EKG LVH strain; echo PDA 3,8 mm; mPAP 30 mmHg.",
+    checklist_rubric: { items: [{ text: "Interpretasi echo", points: 2 }] },
+  };
+  const leak = { field: "initial_prompt", kind: "leak", quote: "Echo menunjukkan PDA kiri-ke-kanan diameter 3,8 mm.", reason: "Interpretasi echo sedang diujikan." };
+  it("flags investigation result sentences in the vignette for the AI", () => {
+    const hints = investigationResultHints(pda.initial_prompt);
+    expect(hints).toContain("Echo menunjukkan PDA kiri-ke-kanan diameter 3,8 mm.");
+    expect(hints).not.toContain("Perempuan 24 tahun sesak.");
+  });
+  it("rejects a suggestion that keeps the leaked sentence unchanged", () => {
+    expect(() => normalizeFinalReview({ ...good, passed: false, issues: [leak], initial_prompt: pda.initial_prompt + " Mohon interpretasi." }, pda)).toThrow(UnfixedLeakError);
+  });
+  it("rejects a paraphrased suggestion that keeps the same measured value", () => {
+    expect(() => normalizeFinalReview({ ...good, passed: false, issues: [leak], initial_prompt: "Perempuan 24 tahun sesak. Ekokardiografi: duktus 3,8 mm." }, pda)).toThrow(UnfixedLeakError);
+  });
+  it("rejects a leak finding without any suggested fix", () => {
+    expect(() => normalizeFinalReview({ ...good, passed: false, issues: [leak] }, pda)).toThrow(UnfixedLeakError);
+  });
+  it("accepts a suggestion that only names available investigations", () => {
+    const r = normalizeFinalReview({ ...good, passed: false, issues: [leak], initial_prompt: "Perempuan 24 tahun sesak. Tersedia EKG, echo, dan RHC; minta kepada penguji untuk melihat hasilnya." }, pda);
+    expect(r.passed).toBe(false);
+    expect(r.initial_prompt).toContain("Tersedia EKG");
   });
 });

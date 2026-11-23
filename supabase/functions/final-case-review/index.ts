@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders, json } from "../_shared/exam-ai-access.ts";
 import { getOpenAIConfig, openAIJson } from "../_shared/openai.ts";
-import { FINAL_REVIEW_POLICY, normalizeFinalReview } from "../_shared/final-case-review.ts";
+import { FINAL_REVIEW_POLICY, investigationResultHints, normalizeFinalReview, UnfixedLeakError } from "../_shared/final-case-review.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -30,8 +30,19 @@ Deno.serve(async (req) => {
     if (content.length > 200000) return json({ error: "Isi soal terlalu panjang untuk diperiksa lengkap; ringkas terlebih dahulu." }, 400);
     const config = getOpenAIConfig();
     if (!config) return json({ error: "Konfigurasi AI belum tersedia." }, 500);
-    const raw = await openAIJson(config, [{ role: "system", content: FINAL_REVIEW_POLICY }, { role: "user", content: `DATA SOAL TERSIMPAN:\n${content}` }], { signal: req.signal });
-    const result = normalizeFinalReview(raw, input);
+    const hints = investigationResultHints(String(input.initial_prompt ?? ""));
+    const userMsg = `DATA SOAL TERSIMPAN:\n${content}` +
+      (hints.length ? `\n\nKALIMAT_PERLU_DINILAI:\n${hints.map((h, i) => `${i + 1}. ${h}`).join("\n")}` : "");
+    const messages: { role: "system" | "user"; content: string }[] = [{ role: "system", content: FINAL_REVIEW_POLICY }, { role: "user", content: userMsg }];
+    let result;
+    try {
+      result = normalizeFinalReview(await openAIJson(config, messages, { signal: req.signal }), input);
+    } catch (e) {
+      if (!(e instanceof UnfixedLeakError)) throw e;
+      // One corrective retry: the suggestion repeated leaked text/values.
+      const feedback = `Saran Anda DITOLAK karena masih memuat kebocoran berikut:\n${e.leftovers.map((l) => `- ${l}`).join("\n")}\nUlangi pemeriksaan dan berikan JSON lengkap dengan saran yang benar-benar menghapus semua hasil/interpretasi/angka tersebut.`;
+      result = normalizeFinalReview(await openAIJson(config, [...messages, { role: "user", content: feedback }], { signal: req.signal }), input);
+    }
     const { error: saveError } = await admin.rpc("record_final_case_review", { _case_id: caseId, _input: input, _result: result, _checked_by: auth.user.id });
     if (saveError) throw saveError;
     return json({ case_id: caseId, result, passed: result.passed, stale: false, updated_at: new Date().toISOString() });
