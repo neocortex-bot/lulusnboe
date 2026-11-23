@@ -1,12 +1,16 @@
 # Roadmap
 
+## Konfirmasi dan persetujuan manual (23 Nov 2026)
+- [x] Modal menawarkan analisis AI per soal atau “Tandai sudah sesuai”; tanpa AI otomatis/batch, termasuk setelah menerima perbaikan.
+- [x] Persetujuan manual admin tersimpan, membuka pengajuan/deployment, dan batal bila isi berubah; 16 tes terarah dan transaksi Supabase lolos, fixture dibatalkan tanpa panggilan AI. Akun admin asli di browser tetap tidak tersedia.
+
 ## Pemeriksaan akhir kebocoran soal (23 Nov 2026)
 - [x] DUS carotis (9e3f5953): hapus bocoran angka Doppler, parameter alat, langkah scanning dan target terapi dari teks peserta; rubrik/kunci/Word by Word/properti privat tetap utuh. Status arsip dipertahankan; belum ditandai lolos pemeriksaan AI.
 - [x] AI membandingkan vignette/pertanyaan dengan kunci, rubrik, Word by Word, dan properti; saran hanya mengubah teks peserta. Pemeriksaan memakai isi tersimpan dan gagal tertutup bila jawaban tidak lengkap atau konflik privat belum selesai.
 - [x] Rekomendasi akhir tersimpan dengan hash; perubahan isi membatalkan kelulusan; status emoji dan tombol di bawah pertanyaan. Hanya service role boleh menulis hasil; admin hanya membaca/menerima perbaikan.
 - [x] Pengajuan/deployment ditolak server sebelum pemeriksaan terbaru lolos; ujian yang sudah berjalan tidak diganggu. Uji transaksi nyata lolos: cegah pemalsuan/publikasi/deploy, retry idempotent, penerimaan hanya teks peserta, perubahan semua sumber membatalkan hasil, nilai ujian tetap utuh; fixture dibatalkan.
 - [x] 279 tes lolos; browser 1139×714 dan 390×844 dengan data contoh memverifikasi belum lolos → terima → cek ulang → lolos, modal/status tabel, tanpa error/overflow. Build OK; 29 peringatan keamanan lama tidak diubah.
-- [ ] Pemeriksaan AI final DUS carotis dan alur lewat akun admin asli: sesi login Supabase eksternal tidak tersedia. Data DUS nyata sudah dibaca ulang dan bocoran terhapus, tetapi belum diklaim lolos AI; konflik angka pada sumber privat perlu tetap diperiksa.
+- [ ] Persetujuan DUS carotis menunggu pilihan admin pada modal (manual atau AI); jangan analisis otomatis. Akun admin asli untuk verifikasi browser tidak tersedia.
 
 ## Riwayat dan backfill persiapan (23 Nov 2026)
 - [x] Riwayat sebelumnya memuat semua laporan/transkrip tanpa batas dan error state; sekarang ringkasan 20/halaman, detail saat dibuka, batas 15 detik termasuk auth wait, pesan error/coba ulang. 223 hasil asli tetap utuh.

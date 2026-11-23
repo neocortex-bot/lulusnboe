@@ -590,6 +590,10 @@ export type Database = {
         Args: { _case_id: string }
         Returns: undefined
       }
+      approve_final_case_review: {
+        Args: { _case_id: string }
+        Returns: undefined
+      }
       can_view_case_at_station: {
         Args: { _case_id: string; _station_token: string }
         Returns: boolean
