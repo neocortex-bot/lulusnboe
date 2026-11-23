@@ -154,3 +154,5 @@
 - [ ] Rubrik 53 butir athletes heart ke soal aktif — butuh CASE_ADMIN_API_KEY dikenali case-admin
 - [ ] Aset gambar athletes heart (5 gambar) belum terpasang ke soal
 - [x] Deploy ingest-case dan case-admin ke Supabase asli sudah diselesaikan pada pekerjaan sebelumnya.
+- [x] /persiapan: station persiapan (48 kartu PIKiR PADi), mulai ujian persiapan, evaluasi sama dengan ujian penuh
+- [ ] Admin klik "Impor 48 kartu PIKiR PADi" di /persiapan (butuh login admin)

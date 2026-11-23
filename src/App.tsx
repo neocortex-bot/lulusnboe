@@ -17,6 +17,7 @@ import StationDisplay from "./pages/StationDisplay";
 import ExamEntry from "./pages/ExamEntry";
 import ExamMobile from "./pages/ExamMobile";
 import Examiner from "./pages/Examiner";
+import Persiapan from "./pages/Persiapan";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -74,6 +75,7 @@ const App = () => (
             />
             <Route path="/examiner" element={<ProtectedRoute requireAdmin><Examiner /></ProtectedRoute>} />
             <Route path="/station/:token" element={<StationDisplay />} />
+            <Route path="/persiapan" element={<ProtectedRoute><Persiapan /></ProtectedRoute>} />
             <Route path="/exam" element={<ExamEntry />} />
             <Route path="/exam/:sessionId" element={<ExamMobile />} />
             <Route path="*" element={<NotFound />} />

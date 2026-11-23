@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import QRScanner from "@/components/exam/QRScanner";
@@ -55,6 +56,9 @@ const ExamEntry = () => {
           Logout
         </Button>
       </div>
+      <Button asChild variant="outline" className="w-full">
+        <Link to="/persiapan">Latihan Persiapan Skill Station</Link>
+      </Button>
       <QRScanner onScan={handleScan} />
       <Separator />
       <CandidateResultsList />

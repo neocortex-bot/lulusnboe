@@ -168,6 +168,7 @@ const CaseManager = () => {
             <TabsList>
               <TabsTrigger value="oral_board">Oral Board</TabsTrigger>
               <TabsTrigger value="panel_exam">Panel</TabsTrigger>
+              <TabsTrigger value="preparation">Persiapan</TabsTrigger>
             </TabsList>
           </Tabs>
           <CategoryFilter categories={categories} value={categoryFilter} onChange={setCategoryFilter} />
@@ -176,7 +177,7 @@ const CaseManager = () => {
           <p className="text-muted-foreground">Loading...</p>
         ) : filteredCases.length === 0 ? (
           <p className="text-muted-foreground text-center py-8">
-            Belum ada soal {examGroup === "oral_board" ? "Oral Board" : "Panel"}.
+            Belum ada soal {examGroup === "oral_board" ? "Oral Board" : examGroup === "preparation" ? "Persiapan" : "Panel"}.
           </p>
         ) : (
           <Table className="min-w-[1040px]">
@@ -226,7 +227,7 @@ const CaseManager = () => {
                       )}
                     </div>
                   </TableCell>
-                  <TableCell>{c.exam_mode === "oral_board" ? "Oral Board" : "Panel Exam"}</TableCell>
+                  <TableCell>{c.exam_mode === "oral_board" ? "Oral Board" : c.exam_mode === "preparation" ? "Persiapan" : "Panel Exam"}</TableCell>
                   <TableCell>{c.time_limit_seconds}</TableCell>
                   <TableCell>{Array.isArray(c.checklist_rubric) ? c.checklist_rubric.length : (Array.isArray(c.checklist_rubric?.items) ? c.checklist_rubric.items.length : 0)}</TableCell>
                   <TableCell>

@@ -110,7 +110,7 @@ const SessionManager = ({ examMode }: SessionManagerProps) => {
     () => selectedCasesByMode[examMode] ?? [],
     [examMode, selectedCasesByMode],
   );
-  const modeLabel = examMode === "oral_board" ? "Oral Board" : "Panel";
+  const modeLabel = examMode === "oral_board" ? "Oral Board" : examMode === "preparation" ? "Persiapan" : "Panel";
   const setSelectedCases = (nextCases: { id: string; title: string }[]) => {
     setSelectedCasesByMode((current) => ({ ...current, [examMode]: nextCases }));
   };

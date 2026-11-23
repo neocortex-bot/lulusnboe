@@ -26,12 +26,14 @@ export async function getExamAiContext(req: Request, resultId: unknown) {
   const { data: result } = await admin.from("exam_results").select("*").eq("id", resultId).single();
   if (!result) return { response: json({ error: "Hasil ujian tidak ditemukan." }, 404) };
   if (result.candidate_id !== uid && !isAdmin && !isMaster) return { response: json({ error: "Anda tidak dapat mengakses hasil ini." }, 403) };
-  if (!isAdmin && !isMaster && !access?.allowed) return { response: json({ error: "Akun belum diizinkan menggunakan AI ujian. Hubungi admin utama." }, 403) };
   const { data: session } = await admin.from("exam_sessions")
     .select("case_id, show_results_to_candidate_override").eq("id", result.session_id).single();
   if (!session) return { response: json({ error: "Sesi ujian tidak ditemukan." }, 404) };
   const { data: clinicalCase } = await admin.from("clinical_cases")
-    .select("show_results_to_candidate").eq("id", session.case_id).single();
+    .select("show_results_to_candidate, exam_mode").eq("id", session.case_id).single();
+  // Preparation practice is open to every signed-in participant.
+  const isPreparation = clinicalCase?.exam_mode === "preparation";
+  if (!isAdmin && !isMaster && !access?.allowed && !isPreparation) return { response: json({ error: "Akun belum diizinkan menggunakan AI ujian. Hubungi admin utama." }, 403) };
   return { admin, result, session, isAdmin: Boolean(isAdmin || isMaster), canReview: Boolean(isAdmin || isMaster || session.show_results_to_candidate_override || clinicalCase?.show_results_to_candidate) };
 }
 

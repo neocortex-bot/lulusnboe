@@ -1,0 +1,3199 @@
+[
+ {
+  "no": 1,
+  "title": "Persiapan 01 – Bubble test",
+  "category": "ekokardiografi",
+  "invasive": true,
+  "questions_text": "Lafalkan persiapan untuk melakukan Bubble test. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "e836b75e-a065-591b-b650-a5e9acf950e3",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "8954f5c6-b26c-5e80-86c7-a70fd7738645",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan USG jantung sambil menyuntik cairan bergelembung kecil untuk mencari jalur bocor antarruang jantung."
+   },
+   {
+    "id": "8dfa2259-4b26-54ab-9092-910870fd5e1a",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Kehamilan atau pirau kanan-kiri besar perlu penilaian dahulu."
+   },
+   {
+    "id": "426c99b2-3309-595e-a12a-cecf3ffb41a8",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Risiko memar, infeksi dan sangat jarang gangguan saraf."
+   },
+   {
+    "id": "e832ad33-03f0-5819-991a-f875c36f5a01",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "f4d9adb9-e173-5f76-a115-23f925e1f547",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Miring kiri; cek akses vena"
+   },
+   {
+    "id": "552fbf34-b9de-5aa2-8c3a-ca8c671f9593",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan mesin echo, spuit, stopcock, saline dan monitor."
+   },
+   {
+    "id": "30a3c5c6-c198-5721-981c-8b19a4d4ee74",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   },
+   {
+    "id": "67103fb3-f015-5290-bef9-8dbddd4c0b44",
+    "text": "Teknik aseptik dan sarung tangan steril (tindakan invasif)\nSKOR: 2 = asepsis dan sarung tangan steril; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Cuci tangan, APD, asepsis dan sarung tangan steril."
+   }
+  ]
+ },
+ {
+  "no": 2,
+  "title": "Persiapan 02 – Katup prostetik aorta",
+  "category": "ekokardiografi",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Katup prostetik aorta. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "35918fc9-0aba-5a15-b9ad-4868908ffd84",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "e34e3674-8b94-570b-9355-07649b30b87b",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan USG jantung untuk melihat apakah katup buatan membuka baik atau bocor."
+   },
+   {
+    "id": "d6a67d8e-ed90-54e2-8516-af775f260b22",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Pemeriksaan lewat dada umumnya aman; bila luka dada, kita sesuaikan posisi."
+   },
+   {
+    "id": "7419b3d2-f0df-5ee6-897c-016268e62c24",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Mungkin terasa sedikit tertekan."
+   },
+   {
+    "id": "f3e55246-992a-58d8-b779-23966e8b969f",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "da909694-c6ad-5202-8d5a-827231650a93",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Miring kiri"
+   },
+   {
+    "id": "5c579a67-03c2-5b34-a62c-e168d8878c5c",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan echo, probe, gel, EKG dan data jenis katup."
+   },
+   {
+    "id": "1bb451af-8a42-5e88-9372-043534a9fb1d",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 3,
+  "title": "Persiapan 03 – Katup prostetik mitral / DVR",
+  "category": "ekokardiografi",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Katup prostetik mitral / DVR. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "f2db1f48-ee8f-563d-a9b5-3ea6be12d759",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "53278586-e227-584f-bd41-1bc47dcb3820",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan USG jantung untuk memeriksa gerakan dan aliran melalui katup buatan, apakah menyempit atau bocor."
+   },
+   {
+    "id": "78caad16-57cf-5192-aa7c-339a03596145",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Pemeriksaan umumnya aman; luka dada perlu penyesuaian."
+   },
+   {
+    "id": "ee3935a2-9297-5417-978d-a281829de112",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Gel terasa dingin."
+   },
+   {
+    "id": "dc488157-f9bb-5fe4-a812-237d0dc87038",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "daa9ad5b-9380-5a9b-8e92-6c56ddfbbbaf",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Miring kiri"
+   },
+   {
+    "id": "c86abf68-9cfd-571f-bb79-b52fc04933d2",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan echo, probe, gel, EKG dan data prostesis."
+   },
+   {
+    "id": "272088bf-408b-5c11-99cc-dfe314f9f0ee",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 4,
+  "title": "Persiapan 04 – Fungsi diastolik LV",
+  "category": "ekokardiografi",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Fungsi diastolik LV. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "d1b5dc6c-df02-5419-83a6-c938b3a2c368",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "ab312869-08e9-5c4d-92ec-fb0d6ff0c4c5",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan USG jantung untuk menilai kemampuan jantung mengisi darah dan apakah tekanannya meningkat."
+   },
+   {
+    "id": "dce74e9a-5f5a-5d98-a15f-ad004c5f8889",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Umumnya aman, posisi disesuaikan bila sesak atau luka dada."
+   },
+   {
+    "id": "395e02be-46ce-51ee-b150-7c2146a47012",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Tekanan probe mungkin kurang nyaman."
+   },
+   {
+    "id": "87cad57c-005a-50b0-a413-fdb866c3e3a2",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "6e1bd595-358d-5032-84c2-05e1b912c5f3",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Miring kiri; catat tinggi, berat, pasang EKG"
+   },
+   {
+    "id": "c65869df-ce51-5e70-8d23-090332edba17",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan echo, probe dan gel."
+   },
+   {
+    "id": "f0d7e612-206e-54d2-bb22-d57cd5548b3b",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 5,
+  "title": "Persiapan 05 – Fungsi sistolik RV / LV",
+  "category": "ekokardiografi",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Fungsi sistolik RV / LV. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "a564a114-2050-5c15-b1ea-0caaa93cc45b",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "463f636b-91c9-5f93-a27a-7b464a88800d",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan USG untuk menilai kekuatan pompa jantung."
+   },
+   {
+    "id": "dd602c72-1b48-5b28-b2f2-661c5671862b",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Pemeriksaan ini tidak menggunakan radiasi; bila sesak atau luka dada, posisi disesuaikan."
+   },
+   {
+    "id": "3b2fc998-6d64-51ba-a428-8d96eaa4c06d",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Tekanan alat bisa sedikit tidak nyaman."
+   },
+   {
+    "id": "bd44dce9-18ca-5737-a9fb-48812a78583e",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "f8d87c8f-fb27-55b5-87d0-459ef9d7ada4",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Miring kiri"
+   },
+   {
+    "id": "194a73a0-3fcf-57df-bef7-8ab96325a283",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan echo, probe, gel dan EKG."
+   },
+   {
+    "id": "1cb9622e-9e1e-51a0-b518-49259adcab2b",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 6,
+  "title": "Persiapan 06 – Regional wall motion assessment",
+  "category": "ekokardiografi",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Regional wall motion assessment. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "550c1fb3-9494-57a1-b8f4-0a50a47e7a58",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "c1474634-e7f3-5ba9-aabd-1ebfc5d06c44",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan USG jantung untuk melihat apakah ada bagian otot jantung yang kurang bergerak akibat gangguan aliran darah."
+   },
+   {
+    "id": "afff3d09-04c3-5e7d-b1c2-f5b2680f8c2d",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Umumnya aman; posisi disesuaikan bila sesak atau nyeri."
+   },
+   {
+    "id": "997a837e-fe8b-580a-976c-fd41ef53ae6d",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Gel terasa dingin."
+   },
+   {
+    "id": "6990c7f1-773c-5bb6-b522-2f01c1eeb5be",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "03999b52-2ade-5a83-8bd9-3fa1d68dd2a8",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Miring kiri"
+   },
+   {
+    "id": "20672dba-9ec2-5d73-83ae-4c6097ecfb64",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan echo, probe, gel dan EKG."
+   },
+   {
+    "id": "1e74fde3-ee14-542f-ba8d-0af618e53c8e",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 7,
+  "title": "Persiapan 07 – Akses arteri radial / femoral (termasuk post-CABG)",
+  "category": "intervensi",
+  "invasive": true,
+  "questions_text": "Lafalkan persiapan untuk melakukan Akses arteri radial / femoral (termasuk post-CABG). Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "8a319d0f-e2a6-51fc-87bf-1e9791318e5e",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "90b351b3-f706-5024-b722-8a45706ce948",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan memasukkan selang kecil melalui pembuluh nadi untuk pemeriksaan jantung."
+   },
+   {
+    "id": "6c6f85d9-5a20-5327-8e1f-d196ee379255",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Pembuluh yang tersumbat atau infeksi setempat perlu akses lain."
+   },
+   {
+    "id": "3182e7a6-01f6-5f33-9d58-02449eb04e63",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Risikonya memar, perdarahan, infeksi, cedera atau sumbatan pembuluh."
+   },
+   {
+    "id": "65fac294-57a5-5bdb-b8f5-88819ca4ae2f",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "bdcd3e1a-bb0d-5ce7-b5fc-c1c4df6b7c1f",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Baringkan; cek perfusi, risiko perdarahan"
+   },
+   {
+    "id": "ccbc4567-1633-534b-96cb-93f56616760e",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan set pungsi steril, USG, anestesi lokal dan monitor."
+   },
+   {
+    "id": "ba720777-5406-5d22-8fd3-4237f218dfa2",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   },
+   {
+    "id": "62877274-7d5f-5461-ac25-ba2c2585ca4d",
+    "text": "Teknik aseptik dan sarung tangan steril (tindakan invasif)\nSKOR: 2 = asepsis dan sarung tangan steril; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Cuci tangan, APD, asepsis dan sarung tangan steril."
+   }
+  ]
+ },
+ {
+  "no": 8,
+  "title": "Persiapan 08 – Coronary angiography / kanulasi LCA-RCA / graft",
+  "category": "intervensi",
+  "invasive": true,
+  "questions_text": "Lafalkan persiapan untuk melakukan Coronary angiography / kanulasi LCA-RCA / graft. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "1fd383ec-e4b7-586a-8fdd-c5f6dfa699dc",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "7008e1a6-07f2-51af-89ee-5e2707344b9d",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan memeriksa pembuluh jantung dengan selang kecil dan kontras."
+   },
+   {
+    "id": "25c0f9f2-2d3c-5bec-84f3-2da8b718399a",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Alergi, gangguan ginjal atau perdarahan perlu penilaian."
+   },
+   {
+    "id": "1362e74c-7677-58f0-bf86-62ad66d00dcb",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Risiko memar, perdarahan, infeksi, cedera pembuluh, gangguan ginjal, alergi, serangan jantung atau stroke."
+   },
+   {
+    "id": "e402ca8e-e8a2-59bf-a206-a7c758a25f6e",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "425294c2-c07d-5cae-9692-15602ffd57c9",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Baringkan; cek akses, persetujuan, monitor"
+   },
+   {
+    "id": "13aaf5cd-eded-523e-80d1-c38434d60dff",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan kateter, kontras dan set steril."
+   },
+   {
+    "id": "948da81a-7105-526a-b3ce-27e6a6a78994",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   },
+   {
+    "id": "7f76fe48-56b5-5a2a-8bfa-bf609c867803",
+    "text": "Teknik aseptik dan sarung tangan steril (tindakan invasif)\nSKOR: 2 = asepsis dan sarung tangan steril; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Cuci tangan, APD, asepsis dan sarung tangan steril."
+   }
+  ]
+ },
+ {
+  "no": 9,
+  "title": "Persiapan 09 – Proteksi radiasi pasien, operator dan tim",
+  "category": "intervensi",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Proteksi radiasi pasien, operator dan tim. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "7fadb19a-0cfd-5cc0-94e2-3c255b2617d0",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "5ad915df-d175-5afc-9093-28429b708261",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Pemeriksaan memakai sinar X agar pembuluh terlihat."
+   },
+   {
+    "id": "1dfaf9e3-5451-5747-848b-75db901461c7",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Kondisi khusus pasien perlu dinilai dahulu sebelum mulai."
+   },
+   {
+    "id": "1a0151cb-dced-5ae5-91ac-ff5896f32c48",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Kehamilan perlu penilaian manfaat dan risiko; paparan berlebih dapat merugikan jaringan. Kami akan membatasi paparan tanpa mengganggu pemeriksaan."
+   },
+   {
+    "id": "9f5afdb7-47b8-52ad-975b-488ffbc90647",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "3a5ac199-c5a2-5803-9f63-c657f1ac26ed",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Verifikasi kehamilan bila relevan"
+   },
+   {
+    "id": "9918ec7e-b039-5031-82d0-8f5db4e51331",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan pelindung tim, dosimeter, perisai; atur proteksi pasien sesuai protokol."
+   },
+   {
+    "id": "1779c41c-5114-529d-ab4b-3b87881dd8f0",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 10,
+  "title": "Persiapan 10 – Ankle-brachial index (ABI)",
+  "category": "vaskular",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Ankle-brachial index (ABI). Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "3e741b81-b56c-5e26-a58c-c422cc8b436f",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "7116ade3-ca1a-5856-9ae4-614f04dc69f5",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan membandingkan tekanan darah lengan dan kaki untuk menilai aliran darah ke kaki."
+   },
+   {
+    "id": "85cbc4c1-7b38-5846-976c-321cbd624f2a",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Bila ada luka, nyeri berat atau akses pembuluh, manset disesuaikan."
+   },
+   {
+    "id": "6a57d843-f1d2-5ec9-b744-f310b08b5236",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Manset dapat terasa ketat."
+   },
+   {
+    "id": "0ef19952-8007-5df8-bdb9-427b3e63ec13",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "00d005c5-d557-5bc4-a7be-16bc437030d1",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Telentang istirahat"
+   },
+   {
+    "id": "7b8cd5bf-b3be-5715-b619-b2b13e79ca4e",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan manset sesuai ukuran, Doppler dan gel."
+   },
+   {
+    "id": "6c6a7004-279c-565c-b915-91e9051ce4af",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 11,
+  "title": "Persiapan 11 – Pemeriksaan fisik ALI dan PAD",
+  "category": "vaskular",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Pemeriksaan fisik ALI dan PAD. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "e6421c56-abb9-598e-8bf5-363e581dcfbe",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "ac1b0d63-7a94-5bf9-b840-dc2b5637b07a",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan melihat, meraba nadi dan menilai rasa serta gerak kaki untuk mengetahui aliran darahnya."
+   },
+   {
+    "id": "77cb8db6-17d2-5aaa-8f8a-b80bc0c7f858",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Bila sangat nyeri, pemeriksaan saya lakukan perlahan."
+   },
+   {
+    "id": "8925af2f-24cf-5bdc-a0b3-12a2458d7bfe",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Mungkin terasa tidak nyaman."
+   },
+   {
+    "id": "b9d95450-c5c4-521c-8f4f-ad6da820ea16",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "c72247db-859c-5cf5-8594-a372ac138975",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Telentang; buka kedua tungkai dengan privasi"
+   },
+   {
+    "id": "708b3418-68f0-55b1-8e5f-104a8e3a8878",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan Doppler dan stetoskop."
+   },
+   {
+    "id": "286c8774-0ba4-585c-8dc1-720494703561",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 12,
+  "title": "Persiapan 12 – DUS vena - DVT",
+  "category": "vaskular",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan DUS vena - DVT. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "45fc2193-bbdf-5ff8-ac29-8b6ce8740aa6",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "2025ad4c-64cd-5c71-bf01-eb7e720c90fa",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan USG pembuluh balik kaki untuk mencari bekuan darah."
+   },
+   {
+    "id": "5121e17e-ae2f-53a2-a6ff-c6e18c898589",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Pemeriksaan umumnya aman; luka atau nyeri hebat perlu penyesuaian."
+   },
+   {
+    "id": "7663e105-4b3b-5eab-95c9-c59f2bf4e292",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Probe dapat terasa menekan."
+   },
+   {
+    "id": "e4c99a36-0f85-5fa9-8890-e287b9d77d70",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "d6233a15-47b8-5e75-9b0c-63df502abddd",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Posisikan sesuai segmen"
+   },
+   {
+    "id": "32d30f5c-af0f-5a81-ace1-1fe8ae152f4a",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan probe linear, gel dan Doppler; hindari pijatan kuat."
+   },
+   {
+    "id": "60dacc71-3887-5e1d-bd1c-ad605d78c982",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 13,
+  "title": "Persiapan 13 – DUS vena - CVI/refluks",
+  "category": "vaskular",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan DUS vena - CVI/refluks. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "cbffd02f-11d5-5abb-bbe6-66301c703027",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "77ed1cc6-db6c-574e-a0d9-918542d27844",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan USG pembuluh balik untuk menilai apakah darah mengalir balik akibat katup yang lemah."
+   },
+   {
+    "id": "d6a8119a-9199-5797-985e-dab267dd7a58",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Bila sulit berdiri kita sesuaikan posisi."
+   },
+   {
+    "id": "df04eb61-5207-5064-932a-9343110d62ae",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Probe dapat menimbulkan rasa tidak nyaman."
+   },
+   {
+    "id": "7a3bc82f-fc5e-55bb-bc41-f87fafe80344",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "b85237ad-670e-5900-b2a5-ac659416484b",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Berdiri dengan penyangga atau posisi alternatif"
+   },
+   {
+    "id": "9fee120c-69d7-55f4-8687-43650e3c3b53",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan probe linear, gel dan Doppler."
+   },
+   {
+    "id": "d9cb6f07-21b7-5698-a576-7c131384268b",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 14,
+  "title": "Persiapan 14 – DUS carotis",
+  "category": "vaskular",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan DUS carotis. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "827405e7-0539-5727-8d47-646e450612ae",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "f3ca34ea-5855-5145-8a77-511af91e42ef",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan USG pembuluh leher untuk melihat penyempitan yang dapat memicu stroke."
+   },
+   {
+    "id": "30d598c0-5781-565c-8d3d-f06440b552af",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Umumnya aman; luka atau nyeri leher perlu penyesuaian."
+   },
+   {
+    "id": "66ee86a5-3f89-539b-824d-92cce526c06f",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Tekanan ringan alat mungkin kurang nyaman."
+   },
+   {
+    "id": "2edc794a-00f9-55d3-b6b5-a2e856b3c22b",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "57382f54-6370-5fde-b981-1fe5b97350e8",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Telentang, kepala sedikit menoleh"
+   },
+   {
+    "id": "fd280f76-f031-5dbb-8f1a-18983eaf8897",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan probe linear, gel dan Doppler."
+   },
+   {
+    "id": "0ce2204b-3d8e-50f7-bbcd-3aecd89afaff",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 15,
+  "title": "Persiapan 15 – DUS arteri dan vena ekstremitas superior",
+  "category": "vaskular",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan DUS arteri dan vena ekstremitas superior. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "a5eeff91-18d6-5dd5-b827-c91fc321548a",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "ea22a737-bc3f-57f3-be3f-5eb0bd27a905",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan USG pembuluh lengan untuk menilai aliran, penyumbatan atau kelainan pembuluh."
+   },
+   {
+    "id": "38904d23-c431-5e8a-a9cf-b30598f18f82",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Bila ada luka atau nyeri, tekanan probe disesuaikan."
+   },
+   {
+    "id": "132d96ba-2471-5533-a29a-18256902999a",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Pemeriksaan umumnya aman."
+   },
+   {
+    "id": "2ab7d2a9-dfee-5909-aa66-1295ba15a394",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "19ff4532-de31-5a68-bc2e-9d6d0bc40737",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Baringkan dengan lengan ditopang"
+   },
+   {
+    "id": "2c355481-a55b-5dc3-a665-e9bf952a5bba",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan probe linear, gel dan Doppler."
+   },
+   {
+    "id": "3b3a3699-2236-5d62-b668-eee6fad40036",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 16,
+  "title": "Persiapan 16 – DUS pseudoaneurisma pascapungsi",
+  "category": "vaskular",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan DUS pseudoaneurisma pascapungsi. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "19c197b3-0eb6-5952-a63a-987d0a2b6852",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "7cd892cf-a535-5df1-a613-6c88a53943a8",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan USG benjolan untuk mencari kebocoran pembuluh akibat tusukan sebelumnya."
+   },
+   {
+    "id": "238dcb95-55b7-543e-85af-ced60f34c83a",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Bila sangat nyeri atau perdarahan aktif, kami utamakan stabilisasi."
+   },
+   {
+    "id": "2f187bd2-6f9f-5480-b5ff-2b02e8ab4a29",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Tekanan alat bisa tidak nyaman."
+   },
+   {
+    "id": "d725a67d-073f-57a3-9f6d-869534ca9946",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "52e269e9-f362-593d-9446-26a9944d2b01",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Baringkan; cek perfusi, ukuran benjolan"
+   },
+   {
+    "id": "44d992af-1f5b-5293-9444-f82793535b9e",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan probe linear dan gel; jangan menekan kuat."
+   },
+   {
+    "id": "46b7c5f2-6875-5c9b-8cfa-d168a755b551",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 17,
+  "title": "Persiapan 17 – Echo aortic root / STJ / sinus Valsalva",
+  "category": "vaskular",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Echo aortic root / STJ / sinus Valsalva. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "4ecd3554-a929-57e3-ac64-c956d8fbe6ef",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "48356302-76e0-53f2-b910-b30be2c64216",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan USG jantung untuk melihat pelebaran pembuluh utama dan tanda robekan."
+   },
+   {
+    "id": "0bc350f5-b20f-5f66-93d8-436e146fdf2f",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Pemeriksaan umumnya aman; bila kondisi tidak stabil, penanganan segera diutamakan."
+   },
+   {
+    "id": "ce61dc34-4bd1-58fd-a4a2-1867609e2725",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Probe mungkin sedikit menekan."
+   },
+   {
+    "id": "8db6d7fd-420d-5094-a750-53840643be38",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "49c4b373-4f5f-5cbe-b83b-79107e37e47b",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Posisi sesuai stabilitas"
+   },
+   {
+    "id": "bb8e01e3-5a8b-536b-a970-ad91384663b2",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan echo, probe, gel dan monitor."
+   },
+   {
+    "id": "e78fd680-4932-564d-9b99-d013c9b6382a",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 18,
+  "title": "Persiapan 18 – Evaluasi akses pre-CAG / Allen test bila diminta",
+  "category": "vaskular",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Evaluasi akses pre-CAG / Allen test bila diminta. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "0a6895f8-253c-50f9-8cd3-142d44f62768",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "8645138c-bb0d-559d-b432-50f79e383224",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan menilai nadi dan aliran darah tangan sebelum tindakan pembuluh."
+   },
+   {
+    "id": "00f81981-2b93-5c41-aed9-202a09b08715",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Luka atau nyeri berat perlu penyesuaian."
+   },
+   {
+    "id": "4509901d-20a8-58cd-b5b8-28d07ed0d228",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saat pembuluh ditekan sebentar tangan mungkin terasa tidak nyaman."
+   },
+   {
+    "id": "fb82b703-fc6d-53f7-8dad-ca9fdba1924c",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "6614334c-2e8b-5a29-8c64-f979af25272d",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Lengan ditopang"
+   },
+   {
+    "id": "3c5d8a81-f657-5082-9896-29c76f8be29e",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan pemeriksaan nadi, oksimeter atau Doppler sesuai kebutuhan."
+   },
+   {
+    "id": "bbad0c40-a772-554e-a3a3-2bee45d692ef",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 19,
+  "title": "Persiapan 19 – Echo hemodinamik",
+  "category": "iacc",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Echo hemodinamik. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "bbfe5d73-d214-5eae-bc86-dd932d67af2a",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "8414b2eb-3966-5ca1-91de-cfd3407bc94a",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan USG jantung dan pembuluh besar untuk menilai pompa, aliran darah dan kebutuhan cairan."
+   },
+   {
+    "id": "bfb54dd2-3b2c-52b7-83dd-b377358224de",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Pemeriksaan umumnya aman; posisi disesuaikan dengan kondisi."
+   },
+   {
+    "id": "1967fdf4-7695-54ce-bb30-d339a6ebd735",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Mungkin terasa sedikit tertekan."
+   },
+   {
+    "id": "d0d978d9-45fa-5576-a44a-910a35537dd5",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "bf76fd31-5b1a-57a4-b8dd-f7746ad27972",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Posisi nyaman"
+   },
+   {
+    "id": "acab01ec-ddf9-5e42-850d-b27d4f9fb07a",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan echo, probe, gel, EKG dan monitor tekanan darah."
+   },
+   {
+    "id": "5a41f82a-8d20-5f39-98f7-b7e80b86962b",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 20,
+  "title": "Persiapan 20 – Passive leg raising (PLR)",
+  "category": "iacc",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Passive leg raising (PLR). Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "3fa86d2f-9e20-5afd-af9f-bc2bcafcca07",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "618b5492-9c55-5ae8-98af-449d09128a49",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan mengangkat kaki sementara untuk melihat apakah jantung membutuhkan cairan."
+   },
+   {
+    "id": "2f36d0f3-7c78-54a3-afd4-b5c0389a4976",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cedera tulang belakang, panggul atau kaki perlu penilaian."
+   },
+   {
+    "id": "d2b914c1-2160-589a-8e75-40b6b78d7f93",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Posisi ini mungkin menambah sesak atau nyeri."
+   },
+   {
+    "id": "93d42763-c21a-51da-9f99-c3543ce655f6",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "3e4dbf57-1058-5bb7-9788-4de2cbfbb172",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Monitor pasien"
+   },
+   {
+    "id": "11399732-e531-5f77-92d3-2b9c4872bf2c",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan ranjang yang bisa diatur dan echo untuk mengukur aliran."
+   },
+   {
+    "id": "08b8ea09-3b95-5c30-8164-385b1a55d673",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 21,
+  "title": "Persiapan 21 – Lung ultrasound",
+  "category": "iacc",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Lung ultrasound. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "b7cac213-41ca-50b8-a293-4dff22460195",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "af58f497-ab66-5890-a447-78d3269a96a7",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan USG dada untuk mencari cairan atau gangguan paru penyebab sesak."
+   },
+   {
+    "id": "90a70377-bb8d-5239-8041-c8dc7bcbeaca",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Pemeriksaan umumnya aman; bila luka atau sesak berat posisi disesuaikan."
+   },
+   {
+    "id": "8074282a-9fac-5ed9-b679-a9f15a8b25e3",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Gel terasa dingin."
+   },
+   {
+    "id": "7283d21d-977e-5ac1-a0ac-9726cfd047e3",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "b3e3151e-c0da-5886-9e1e-343c9ddd7f2e",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Posisi sesuai toleransi"
+   },
+   {
+    "id": "1989a1de-6197-54e9-be33-d1f8fb12d8dd",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan probe, gel dan oksimeter."
+   },
+   {
+    "id": "da221066-fd45-5ace-9a5e-f56a83890571",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 22,
+  "title": "Persiapan 22 – NIV CPAP/BiPAP",
+  "category": "iacc",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan NIV CPAP/BiPAP. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "3d2bb7ee-75d0-5210-b59d-ce2a92a44d18",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "06238e6b-08ae-5b41-965f-bb4743864d36",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan memasang masker bertekanan untuk membantu napas."
+   },
+   {
+    "id": "1d2d0dd3-9e34-53e4-945e-37b310b3e49e",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Bila muntah, tidak mampu menjaga jalan napas atau sangat tidak stabil, cara ini tidak aman."
+   },
+   {
+    "id": "2774c8dd-1b5f-59f0-a18a-18443e15ef52",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Risiko iritasi kulit, kebocoran, aspirasi dan tekanan darah turun."
+   },
+   {
+    "id": "51083a21-973e-511e-888d-d941283d992d",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "7d15b4e7-6661-538d-9955-5bb4b280fe69",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Dudukkan pasien"
+   },
+   {
+    "id": "afc313f6-ca3a-503f-ab04-111802ac859f",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan mesin, masker, oksigen, monitor, suction dan cadangan intubasi."
+   },
+   {
+    "id": "0568b8d6-5eea-5a71-9b40-3b34ccbf8f9b",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 23,
+  "title": "Persiapan 23 – Endotracheal intubation",
+  "category": "iacc",
+  "invasive": true,
+  "questions_text": "Lafalkan persiapan untuk melakukan Endotracheal intubation. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "a8d15192-8787-55fa-afec-71ae424e4f56",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "b9d4e212-4e5e-5f23-9989-5ea7786b0d6a",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Kami akan memasukkan selang napas karena napas tidak mencukupi."
+   },
+   {
+    "id": "10da049b-452b-5fe2-8772-4d345cf0d46c",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cedera leher atau sumbatan perlu pendekatan khusus."
+   },
+   {
+    "id": "fee5a170-0e17-5835-a6bd-42d9d0d6794e",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Risikonya cedera gigi, perdarahan, aspirasi, kekurangan oksigen, tekanan darah turun, hingga henti jantung."
+   },
+   {
+    "id": "997a0dec-36cd-5866-92f3-6f3220d92fde",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "c6d0ae77-f747-5647-8092-10dcb07bd20e",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Panggil tim; monitor, posisi dan oksigenasi"
+   },
+   {
+    "id": "5d38d8bf-d17b-545c-837a-e97036e2241b",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan alat intubasi, suction, kapnografi dan alat cadangan."
+   },
+   {
+    "id": "5e09fd41-1cd2-50a1-9429-9a46465b2659",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   },
+   {
+    "id": "31c7629f-9fb6-5582-b4b0-8dff9c4b7868",
+    "text": "Teknik aseptik dan sarung tangan steril (tindakan invasif)\nSKOR: 2 = asepsis dan sarung tangan steril; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Cuci tangan, APD, asepsis dan sarung tangan steril."
+   }
+  ]
+ },
+ {
+  "no": 24,
+  "title": "Persiapan 24 – Simulasi tatalaksana ALO",
+  "category": "iacc",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Simulasi tatalaksana ALO. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "65c88589-d160-5cda-b8bf-ef6121c8ba5b",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "ba4444fa-2dd2-573b-a939-5cd44e5e68e6",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Kami akan membantu napas dan memberikan obat untuk mengurangi cairan paru."
+   },
+   {
+    "id": "0d6a8efd-56e2-5a3c-a31e-c5bb59c743fb",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Obat menyesuaikan tekanan darah, ginjal dan alergi."
+   },
+   {
+    "id": "a5e7f70e-adbe-5d59-b1b2-61a048576783",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Risiko tekanan darah turun, gangguan garam darah atau iritasi masker."
+   },
+   {
+    "id": "85a40204-dcaa-5492-93d8-e6b23aaeff0b",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "c978edeb-eac6-5bf1-ba10-5c7db70523b1",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Dudukkan, monitor"
+   },
+   {
+    "id": "c9f0b045-f6dc-568f-8892-01a0afeab1e4",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan oksigen, akses intravena, obat dan alat ventilasi sesuai indikasi."
+   },
+   {
+    "id": "fde30f86-2387-5b28-930d-12c523d256f3",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 25,
+  "title": "Persiapan 25 – RLHC / RHC dan uji vasoreaktivitas",
+  "category": "pediatri",
+  "invasive": true,
+  "questions_text": "Lafalkan persiapan untuk melakukan RLHC / RHC dan uji vasoreaktivitas. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "93acad33-abb4-5e9a-a481-88ba7bbe89a6",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "96d6069a-3173-50b7-a4ef-54c3cbec7fca",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Kami akan memakai selang kecil untuk mengukur tekanan dan oksigen jantung anak."
+   },
+   {
+    "id": "33dc3b71-0664-5910-b819-f305c85609eb",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Infeksi atau gangguan pembekuan perlu penilaian."
+   },
+   {
+    "id": "30053e2d-89de-5cc7-af9a-3e5397b0fe71",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Risiko memar, perdarahan, infeksi, gangguan irama, cedera pembuluh atau jantung, serta komplikasi kontras bila digunakan."
+   },
+   {
+    "id": "6fb7f0d1-022e-50be-baf0-bc53ec46bdaa",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "c048942a-3f42-550a-9ce4-9d94e1df4b56",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Verifikasi wali, berat badan, akses, monitor"
+   },
+   {
+    "id": "5307dc97-4e04-59ab-9c02-e36a076abfb2",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan kateter, set steril dan alat resusitasi."
+   },
+   {
+    "id": "475a888a-6500-5107-8619-f60f9ca517cf",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   },
+   {
+    "id": "b2f8d1cb-559b-59df-873d-0c4bc3347031",
+    "text": "Teknik aseptik dan sarung tangan steril (tindakan invasif)\nSKOR: 2 = asepsis dan sarung tangan steril; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Cuci tangan, APD, asepsis dan sarung tangan steril."
+   }
+  ]
+ },
+ {
+  "no": 26,
+  "title": "Persiapan 26 – Sequential segmental analysis / defek septum",
+  "category": "pediatri",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Sequential segmental analysis / defek septum. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "71262ee8-0611-5a1e-be68-bf2bc5a36d5a",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "d0650dbf-b9ba-58c1-b15b-f55620387176",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan USG jantung anak untuk melihat susunan ruang, pembuluh dan lubang antarruang."
+   },
+   {
+    "id": "f1a37719-09ff-5364-bc80-274bf01ef5c6",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Umumnya aman; bila anak sesak atau gelisah, posisi disesuaikan."
+   },
+   {
+    "id": "11c8e480-954f-5fec-a37e-e52a57c6d6b6",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Gel terasa dingin."
+   },
+   {
+    "id": "b769451e-8fc1-5a86-aac0-879aef359750",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "201af048-717d-5df0-97d1-6a897ad46b45",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Libatkan orang tua; posisi nyaman"
+   },
+   {
+    "id": "cfc1f173-7df0-56ca-9cd4-6736504ff732",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan echo, probe sesuai ukuran dan gel."
+   },
+   {
+    "id": "e8f7fb2a-c4ef-5124-88ec-6e87327671b9",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 27,
+  "title": "Persiapan 27 – Auskultasi jantung anak",
+  "category": "pediatri",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Auskultasi jantung anak. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "97539e75-af37-5039-b5e3-ff3857dd662e",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "58f59f71-9a04-5f51-9a9a-2cd4883ecf4a",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan mendengarkan bunyi jantung anak untuk mencari bunyi tambahan akibat kelainan aliran darah."
+   },
+   {
+    "id": "e6c0c63a-f0b5-59b6-a45c-614565978c88",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Pemeriksaan aman; bila anak sesak, posisi disesuaikan."
+   },
+   {
+    "id": "c3a5c69c-bfca-5680-8f92-3b0f9174c61a",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Stetoskop mungkin terasa dingin."
+   },
+   {
+    "id": "4d33474d-04fc-5c48-b9e4-30577060b7a4",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "9b4c4288-7d1a-5cd7-acf7-a4c18f5ce93e",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Tenangkan anak bersama orang tua; buka dada seperlunya"
+   },
+   {
+    "id": "6e0a644c-b8ba-5e6c-9726-043d883aa51b",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan stetoskop."
+   },
+   {
+    "id": "d32bd26c-0965-518a-bbed-5044aedc8d22",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 28,
+  "title": "Persiapan 28 – Hypercyanotic spell - penanganan awal",
+  "category": "pediatri",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Hypercyanotic spell - penanganan awal. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "2e45bfcf-934a-588d-bba8-63d65c1b454d",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "2818f400-e63c-578a-ba6f-2a9c09d80165",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Anak sedang kekurangan oksigen."
+   },
+   {
+    "id": "608ff0a9-3929-5445-bf6b-117692e2fa1c",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Kami akan membantu posisi, napas dan memberi obat sesuai kondisi."
+   },
+   {
+    "id": "b289ab4a-3b3c-5fd9-9e33-7fc4d32978c9",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Obat disesuaikan dengan tekanan darah dan berat badan; mungkin menyebabkan tekanan darah turun atau gangguan napas."
+   },
+   {
+    "id": "3e792dc5-b219-5ac3-b116-eb67870dc10d",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "b8164ead-7c3b-5a80-b1f5-1b01ac71f211",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Panggil bantuan; tenangkan anak, monitor"
+   },
+   {
+    "id": "578cd993-98e0-5854-80e9-b39366361957",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan oksigen, obat dan alat resusitasi."
+   },
+   {
+    "id": "fff6983d-f76d-5677-a20f-d86f5856ca26",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 29,
+  "title": "Persiapan 29 – Transcutaneous pacing",
+  "category": "aritmia",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Transcutaneous pacing. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "04d03bd8-4a8a-5f88-9e8f-1d5bf46ee12e",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "663a6790-4fef-51f6-ae2c-fcd7e756f88e",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Kami akan memberi rangsangan listrik melalui bantalan dada karena denyut terlalu lambat."
+   },
+   {
+    "id": "0eb58f78-3ace-5ab3-81c2-10914b70ce2a",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Pada henti jantung utamakan resusitasi jantung paru."
+   },
+   {
+    "id": "b4310227-5232-55d2-9a41-fb1306ac0340",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Tindakan dapat nyeri, mengiritasi kulit atau gagal menghasilkan denyut."
+   },
+   {
+    "id": "01877869-e143-5282-9e5c-aad8449b446d",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "c38c109d-8a99-5fcb-8600-71cb408492e6",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Monitor, pasang bantalan"
+   },
+   {
+    "id": "d8fe808b-2ef9-51f5-b1bd-b48502ec045f",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan pacer, defibrilator, obat nyeri bila memungkinkan dan resusitasi."
+   },
+   {
+    "id": "2cd0768e-f91d-5c81-ba80-19052baec0ec",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 30,
+  "title": "Persiapan 30 – Interogasi permanent pacemaker",
+  "category": "aritmia",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Interogasi permanent pacemaker. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "1f04e65a-ed21-5932-ba92-6548e5019ff6",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "a18bcf96-6c79-5583-b148-5f0081add720",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan memeriksa alat pacu dengan perangkat pembaca untuk melihat baterai, kabel dan pengaturannya."
+   },
+   {
+    "id": "9b2255ef-4a4e-5e04-84f8-a99265843677",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Kondisi khusus pasien perlu dinilai dahulu sebelum mulai."
+   },
+   {
+    "id": "d17f3e27-8409-55f3-9bd0-8483e85f01d7",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Pemeriksaan biasanya aman; perubahan pengaturan harus hati-hati karena dapat mengganggu denyut atau membuat pusing."
+   },
+   {
+    "id": "2438f24d-7422-50d4-8aae-17d00d51a8b0",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "1d60f560-37bc-549c-a4f5-16fa7c5cb1de",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Baringkan, monitor"
+   },
+   {
+    "id": "4a625d8f-6dc1-51a4-87ea-95f6913f3422",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan programmer yang cocok dan ECG; cek ketergantungan alat pacu."
+   },
+   {
+    "id": "bd77f83c-fd4a-5105-9329-b04a0082e4b1",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 31,
+  "title": "Persiapan 31 – SVT - manuver vagal / terapi awal",
+  "category": "aritmia",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan SVT - manuver vagal / terapi awal. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "985dbcf7-c51c-5c5b-bafc-226f5a03dca6",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "6aa581bf-fa86-59e5-8f65-23e434df9f90",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan mencoba manuver napas mengejan untuk memperlambat denyut cepat."
+   },
+   {
+    "id": "b4167260-b70c-530f-919c-85251839f47a",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Bila tekanan darah turun atau kondisi tidak stabil, perlu tindakan lain."
+   },
+   {
+    "id": "a6fb77e0-fc3c-53d0-ada7-4c4145da712b",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Manuver dapat membuat pusing atau tekanan darah turun sementara."
+   },
+   {
+    "id": "811d0384-5ae2-5c31-9476-e259dc9ab6bd",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "69577a84-dcf7-50c8-84bd-430bbc487ea5",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Baringkan; monitor"
+   },
+   {
+    "id": "36718e39-9e41-5282-a9b5-7c723c3e79cc",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan spuit dan alat resusitasi; cek irama dan kestabilan."
+   },
+   {
+    "id": "ba3a0b05-d3d5-50f1-8e8f-11cd7157e9f6",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 32,
+  "title": "Persiapan 32 – Pemeriksaan hipotensi ortostatik",
+  "category": "aritmia",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Pemeriksaan hipotensi ortostatik. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "a49d91ba-6a58-5d99-b1f0-f85aaf18fea6",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "f192a441-7319-5882-8b40-f5d22e4394f2",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan mengukur tekanan darah saat berbaring dan berdiri untuk mencari penyebab pusing."
+   },
+   {
+    "id": "953e0cb6-5767-5523-a902-50aeff3d3a7f",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Bila tidak mampu berdiri atau berisiko jatuh, pemeriksaan disesuaikan."
+   },
+   {
+    "id": "9be24f89-e9be-5a18-ab7f-ae6cbf044269",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Bisa terasa pusing atau hampir pingsan."
+   },
+   {
+    "id": "ab484fb9-77ad-59f5-bc46-0122e6d2f9db",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "f93ac315-c804-5ff2-ab62-7893fdb81ba7",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Baringkan dahulu"
+   },
+   {
+    "id": "e326acfd-435e-5418-9c51-94c0c28e5b58",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan tensimeter, jam, kursi dan pendamping saat berdiri."
+   },
+   {
+    "id": "401d3613-e24f-5116-bd2d-098ea29cc73a",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 33,
+  "title": "Persiapan 33 – Six-minute walk test",
+  "category": "rehab_prevensi",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Six-minute walk test. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "44fcd848-cce0-5ed8-b777-2aad31a4ea63",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "fe9a90f3-2414-52f0-a1f3-b3eaeb189bd7",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan meminta Bapak berjalan enam menit untuk menilai kemampuan aktivitas."
+   },
+   {
+    "id": "403f4c90-dbba-5cdb-9c50-de341bf77ffb",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Nyeri dada tidak stabil atau kondisi akut berat harus ditangani dahulu."
+   },
+   {
+    "id": "7a976af3-f9a0-50a5-83c3-43ca96d7c858",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Bisa lelah, sesak, pusing atau nyeri dada; berhenti bila muncul."
+   },
+   {
+    "id": "2bb44e89-668a-543e-ae62-b1ef863ceff7",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "72fb181a-033c-5d3f-bffc-f65fc5464275",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cek vital awal"
+   },
+   {
+    "id": "7eeb82d4-3ad4-5b88-b424-af409e532769",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan lintasan, penanda, timer, oksimeter, kursi dan resusitasi."
+   },
+   {
+    "id": "45bcb3ed-c740-5ce0-9e38-b5dddfa592ea",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 34,
+  "title": "Persiapan 34 – Jugular venous pressure (JVP)",
+  "category": "karklin",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Jugular venous pressure (JVP). Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "fc840862-6e29-571c-bb12-d21b2544b61c",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "82849b19-8bdd-5a43-b3b7-c580986d9fde",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan melihat denyut pembuluh leher untuk menilai apakah tekanan darah balik ke jantung meningkat."
+   },
+   {
+    "id": "becc6750-815b-53c5-b05a-aef1b1cfbb56",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Kondisi khusus pasien perlu dinilai dahulu sebelum mulai."
+   },
+   {
+    "id": "f368dba3-0e0a-5785-96e0-2cc9aefe7959",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Umumnya aman; nyeri leher atau sesak membutuhkan posisi nyaman. Tidak ada tusukan."
+   },
+   {
+    "id": "80f442db-126a-50d0-959b-d8ca444d93cf",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "cc201ef6-2e9d-5c64-bbfd-2992ff7fa92e",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Posisikan setengah duduk; buka leher dengan privasi"
+   },
+   {
+    "id": "733ce12d-a538-5185-9a6e-0dbbbff286dc",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan dua penggaris dan lampu."
+   },
+   {
+    "id": "25a8f8f5-75bb-5f2d-936b-fc68198e99a3",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 35,
+  "title": "Persiapan 35 – Hepatojugular reflux (HJR)",
+  "category": "karklin",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Hepatojugular reflux (HJR). Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "15c73656-19f2-5ece-bcc4-6873f0306f1b",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "bee0fd56-9c5c-5e91-8858-51cf106a0a80",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan menekan perlahan perut untuk melihat respons pembuluh leher terhadap tambahan aliran darah."
+   },
+   {
+    "id": "71919bb4-36f7-51fe-bff5-984b5f108ef5",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Nyeri perut akut atau luka operasi perlu penilaian dahulu."
+   },
+   {
+    "id": "eced673f-68d0-5a23-a3ab-10c038797419",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Tekanan bisa terasa kurang nyaman."
+   },
+   {
+    "id": "b582d7c6-f494-562f-ac56-84ce2d6de72d",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "6a9f6842-a181-5482-a843-8e2985708ca0",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Setengah duduk; lihat vena leher"
+   },
+   {
+    "id": "fd2992fa-2eb1-5762-9d47-541782ba6590",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan penggaris dan lampu, periksa nyeri perut."
+   },
+   {
+    "id": "d5668b16-e530-530b-b826-dc885cfb8408",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 36,
+  "title": "Persiapan 36 – EKG standar, kanan dan posterior",
+  "category": "karklin",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan EKG standar, kanan dan posterior. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "070c63f3-5b3c-5c29-9cc2-700c1a7974ed",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "888f213c-0fe6-5e4c-a2de-ea9236488a42",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan memasang elektroda di dada dan anggota tubuh untuk merekam listrik jantung, termasuk sisi kanan atau punggung bila diperlukan."
+   },
+   {
+    "id": "f31a7241-72ac-5852-970b-23d1785434ac",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Kondisi khusus pasien perlu dinilai dahulu sebelum mulai."
+   },
+   {
+    "id": "17ecc084-5b2a-56ad-89a6-63843870691b",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Umumnya aman; luka kulit perlu penyesuaian. Perekat dapat mengiritasi kulit."
+   },
+   {
+    "id": "17710399-9119-5655-af14-adab18c2369b",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "f021bcfe-9b91-541b-b557-6c18f87a2e87",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Baringkan dengan privasi"
+   },
+   {
+    "id": "a1f57c9c-4fc9-5a36-a70a-fbeb963eec05",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan mesin EKG, kabel, elektroda dan pembersih kulit."
+   },
+   {
+    "id": "26be8f44-2221-5e53-88e5-afbdad88efe8",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 37,
+  "title": "Persiapan 37 – Treadmill exercise test (bila diminta melakukan)",
+  "category": "tambahan",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Treadmill exercise test (bila diminta melakukan). Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "3144fcc7-2e85-5f57-be46-dccb7bceb685",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "22b939c8-7174-5185-8c93-12e6a7234efd",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan meminta Bapak berjalan di alat dengan beban bertahap sambil merekam jantung."
+   },
+   {
+    "id": "459eb35a-5f4b-581f-a99f-55e8a101ae85",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Nyeri dada tidak stabil, syok atau gangguan irama berat harus ditangani dahulu."
+   },
+   {
+    "id": "d2d985c0-3a59-5bad-971e-45079ea9ad00",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Risiko sesak, nyeri dada, aritmia atau pingsan."
+   },
+   {
+    "id": "ef57f494-7af9-568b-86ce-0703e9f88676",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "9a0371ea-88b0-54c0-b6c3-22a124b0f391",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cek vital dan EKG"
+   },
+   {
+    "id": "91c2d009-901a-55f5-9686-349b01696acc",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan treadmill, manset, monitor, defibrilator dan tim."
+   },
+   {
+    "id": "a805fd94-34c9-59b6-912f-fc9884350b38",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 38,
+  "title": "Persiapan 38 – Pericardiocentesis (bila menjadi demonstrasi)",
+  "category": "tambahan",
+  "invasive": true,
+  "questions_text": "Lafalkan persiapan untuk melakukan Pericardiocentesis (bila menjadi demonstrasi). Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "efe6c0b5-f543-575b-90ca-06ecd05b3163",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "bdcf3f3d-c714-5389-a914-621bee48a496",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Kami akan mengeluarkan cairan yang menekan jantung dengan jarum dan selang."
+   },
+   {
+    "id": "ab58fb2f-72b0-544f-8b57-71e2294af46d",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Gangguan pembekuan perlu penilaian, tetapi keadaan mengancam nyawa membutuhkan tindakan segera."
+   },
+   {
+    "id": "9d259fe8-06e9-5950-8e5b-36dd271a18b8",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Risiko perdarahan, infeksi, cedera jantung, paru atau gangguan irama, hingga henti jantung."
+   },
+   {
+    "id": "6576699b-fa10-5914-b119-b880c602a076",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "eafdb211-7b2a-5d86-b8ba-a1949e1718a1",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Panggil tim; monitor"
+   },
+   {
+    "id": "d0b5597c-5357-528d-8284-80ea55af1a84",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan echo, set steril, anestesi lokal dan alat resusitasi."
+   },
+   {
+    "id": "546dc486-43ca-5682-95c9-f628921a7e98",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   },
+   {
+    "id": "19ccf4d4-30af-5563-8241-e4ea13a48b8d",
+    "text": "Teknik aseptik dan sarung tangan steril (tindakan invasif)\nSKOR: 2 = asepsis dan sarung tangan steril; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Cuci tangan, APD, asepsis dan sarung tangan steril."
+   }
+  ]
+ },
+ {
+  "no": 39,
+  "title": "Persiapan 39 – Synchronized cardioversion",
+  "category": "tambahan",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Synchronized cardioversion. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "4d24f9f5-f2a1-501e-b971-2dd1f0f286ad",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "f7a4b3f8-7c3b-5a24-bd37-b955f6bc3126",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Kami akan memberi kejutan listrik terukur untuk mengembalikan irama jantung."
+   },
+   {
+    "id": "7708cdbf-e4bc-5fb9-855e-31371e2f8358",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Risiko bekuan perlu penilaian bila ada fibrilasi atrium, tanpa menunda tindakan darurat."
+   },
+   {
+    "id": "1ba11ddd-729e-5309-87c5-f7ffc6e49dac",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Risiko nyeri, luka kulit, gangguan irama atau stroke."
+   },
+   {
+    "id": "120039a8-d069-5050-a9df-f7bfb673fadc",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "53c138dd-97b4-5d83-815f-4ff7266faca0",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Monitor"
+   },
+   {
+    "id": "aa2cb3cb-a151-5c38-9860-60eb4173803e",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan defibrilator, bantalan, oksigen, sedasi bila memungkinkan dan resusitasi."
+   },
+   {
+    "id": "e59fb938-671e-5e7b-ab5c-96cb747f449f",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 40,
+  "title": "Persiapan 40 – TEE (bila diminta persiapan)",
+  "category": "tambahan",
+  "invasive": true,
+  "questions_text": "Lafalkan persiapan untuk melakukan TEE (bila diminta persiapan). Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "43ecc460-e6fa-5a05-93df-160e05a5e865",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "7439200a-87e2-5f99-8c80-f86b6ef489cc",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan USG jantung melalui selang di tenggorokan agar gambar lebih jelas."
+   },
+   {
+    "id": "294a50c0-ab1b-577e-9c76-834ed49fa2f3",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Gangguan kerongkongan atau perdarahan perlu penilaian."
+   },
+   {
+    "id": "1c0b8ac0-e76e-5d3f-a26a-1ea0b486360f",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Risiko tersedak, aspirasi, perdarahan, cedera kerongkongan dan gangguan napas akibat sedasi."
+   },
+   {
+    "id": "579702af-9746-5ed7-af1e-83120aa20e5b",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "e8c6e6ad-f4d1-504d-aef0-f3fb1ca9eb62",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cek puasa dan riwayat menelan"
+   },
+   {
+    "id": "98187cf6-37ef-5674-8c0c-6d7b1d57aba5",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan probe, monitor, suction dan tim."
+   },
+   {
+    "id": "7ad20c41-7ea5-590f-a7e0-a0cb5daf3aa1",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   },
+   {
+    "id": "aea46b42-5edd-5946-9511-3f3371ccb287",
+    "text": "Teknik aseptik dan sarung tangan steril (tindakan invasif)\nSKOR: 2 = asepsis dan sarung tangan steril; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Cuci tangan, APD, asepsis dan sarung tangan steril."
+   }
+  ]
+ },
+ {
+  "no": 41,
+  "title": "Persiapan 41 – Pemeriksaan tekanan darah / ABPM",
+  "category": "tambahan",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Pemeriksaan tekanan darah / ABPM. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "8ab3bfc4-102a-5095-8130-5db917248856",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "f70e9a4e-84f0-533e-81c1-2e337a153fef",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan memasang manset untuk mengukur tekanan darah saat aktivitas dan tidur bila memakai alat 24 jam."
+   },
+   {
+    "id": "8c3080bf-9bfc-5251-bf75-4a619f116083",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Luka, fistula atau gangguan aliran lengan perlu penyesuaian lokasi."
+   },
+   {
+    "id": "472110ec-4d61-5e23-b950-bda220240493",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Manset bisa terasa ketat atau mengganggu tidur."
+   },
+   {
+    "id": "58a8baeb-96df-598e-ab93-8f53970fa830",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "629b18e5-b00a-5124-a238-ebe1dc1d22bc",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Pilih lengan dan ukuran manset"
+   },
+   {
+    "id": "7724e981-dd94-56bb-96c4-e0825079951d",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan alat, jam dan buku aktivitas."
+   },
+   {
+    "id": "6a0bee87-570b-54fd-9297-71cc08e64f33",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 42,
+  "title": "Persiapan 42 – Pengambilan darah / AGD (bila diminta)",
+  "category": "tambahan",
+  "invasive": true,
+  "questions_text": "Lafalkan persiapan untuk melakukan Pengambilan darah / AGD (bila diminta). Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "5278ba61-7c26-5fee-ac80-d1c8d8061d50",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "44b79a67-5254-5f91-af51-85d527697245",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan mengambil darah untuk menilai kondisi tubuh; bila dari arteri, kadar oksigen dan keasaman darah."
+   },
+   {
+    "id": "a848769e-b1b8-5eb0-9f39-3c4afbe6e267",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Infeksi lokasi atau gangguan aliran perlu penilaian."
+   },
+   {
+    "id": "f84cc89c-d060-5294-82e7-e75faf617b28",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Risiko nyeri, memar, perdarahan, infeksi dan cedera pembuluh."
+   },
+   {
+    "id": "0028449d-e750-5372-96cc-bad3a9aceeff",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "6f51748d-d2ad-5bc0-ba75-0043d63feec2",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Posisikan, cek lokasi dan risiko perdarahan"
+   },
+   {
+    "id": "034e773a-77d3-58f8-9de7-2910b0347e0e",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan set steril, label dan kasa."
+   },
+   {
+    "id": "d5caf756-38b7-5d6c-8d16-b1f8e4cde269",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   },
+   {
+    "id": "05c988f7-d9a4-5bde-a591-527c551fa73f",
+    "text": "Teknik aseptik dan sarung tangan steril (tindakan invasif)\nSKOR: 2 = asepsis dan sarung tangan steril; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Cuci tangan, APD, asepsis dan sarung tangan steril."
+   }
+  ]
+ },
+ {
+  "no": 43,
+  "title": "Persiapan 43 – Injeksi / akses IV (bila diminta)",
+  "category": "tambahan",
+  "invasive": true,
+  "questions_text": "Lafalkan persiapan untuk melakukan Injeksi / akses IV (bila diminta). Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "312e4fae-4cd7-5ef1-be99-9e26f19a0419",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "f779c6fd-9c77-598d-bd4b-5fcdf8e5a7b8",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan memasang selang kecil pada pembuluh balik untuk memberi obat atau cairan."
+   },
+   {
+    "id": "2fbaed64-c21a-5374-90ce-eb2145c11749",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Hindari lokasi infeksi atau pembuluh bermasalah."
+   },
+   {
+    "id": "15f0b95d-5fa2-57e6-a664-d4ab3b84cd1c",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Risiko nyeri, memar, perdarahan, infeksi dan cairan bocor ke jaringan."
+   },
+   {
+    "id": "bc82ab5a-f770-5ed4-9e92-fbee06f08c01",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "0f02a6e1-8d37-55dc-8ec9-9103975c9e0e",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Baringkan; cek alergi"
+   },
+   {
+    "id": "fcd1e8be-30a4-57d2-adf1-923418a508d0",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan kanul, antiseptik, plester, saline dan wadah tajam."
+   },
+   {
+    "id": "b7f3eaec-5e0c-5783-a6c4-ad17c40a08ce",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   },
+   {
+    "id": "0d667140-4e7d-583a-a9e8-5dfba7825156",
+    "text": "Teknik aseptik dan sarung tangan steril (tindakan invasif)\nSKOR: 2 = asepsis dan sarung tangan steril; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Cuci tangan, APD, asepsis dan sarung tangan steril."
+   }
+  ]
+ },
+ {
+  "no": 44,
+  "title": "Persiapan 44 – Angiografi pulmonal pasca-BCPS / DORV",
+  "category": "tambahan",
+  "invasive": true,
+  "questions_text": "Lafalkan persiapan untuk melakukan Angiografi pulmonal pasca-BCPS / DORV. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "3e390b13-4d40-5793-951e-116ebc94ca64",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "9b5198e6-c18b-5cd7-b222-dc8c8e89ae0d",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Kami akan melihat pembuluh paru anak memakai selang kecil dan kontras untuk menilai aliran sebelum operasi berikutnya."
+   },
+   {
+    "id": "dd67c870-c33d-5fa3-81a5-83657c33d7e0",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Alergi, gangguan ginjal atau perdarahan perlu dinilai."
+   },
+   {
+    "id": "fc2a1388-d36c-5fd0-937a-185d28181c54",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Risiko perdarahan, memar, infeksi, cedera pembuluh dan gangguan irama."
+   },
+   {
+    "id": "caea93ed-7d86-5b40-a771-d560b1b1dfab",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "63fc02d3-3e1a-54ce-9fea-b3c9659e9085",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cek wali, berat badan, akses dan monitor"
+   },
+   {
+    "id": "3c5716c1-831c-5368-ad0c-b9a13504b567",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan kateter, kontras, set steril dan resusitasi."
+   },
+   {
+    "id": "446125f5-3887-510d-bc3a-b32f7c18548f",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   },
+   {
+    "id": "25b1938f-9e2f-5b7f-9222-5f6125b4c07f",
+    "text": "Teknik aseptik dan sarung tangan steril (tindakan invasif)\nSKOR: 2 = asepsis dan sarung tangan steril; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Cuci tangan, APD, asepsis dan sarung tangan steril."
+   }
+  ]
+ },
+ {
+  "no": 45,
+  "title": "Persiapan 45 – CT angiografi aorta / koroner",
+  "category": "tambahan",
+  "invasive": true,
+  "questions_text": "Lafalkan persiapan untuk melakukan CT angiografi aorta / koroner. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "85082151-4c79-5c68-9fe8-0c4d5f6248d3",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "5ba6ba7f-9cf4-5060-83fa-078d450d0f8d",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan memindai pembuluh dengan sinar X dan zat kontras untuk melihat penyempitan atau robekan."
+   },
+   {
+    "id": "a65dc6c5-13cc-58cb-a058-099ad87dcff9",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Alergi, gangguan ginjal atau kehamilan perlu penilaian."
+   },
+   {
+    "id": "2ed6f903-0cd6-5f80-80f0-b32b84657411",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Risiko alergi, gangguan ginjal, bocor kontras dan radiasi."
+   },
+   {
+    "id": "803ca292-c682-52e6-b6a4-15a09d57f973",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "5733fa1b-b0ce-5ecb-b592-d822067b5484",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cek fungsi ginjal, akses vena dan alergi"
+   },
+   {
+    "id": "5d863ae2-2a53-5b71-bb99-84e333546ad8",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan pemindai, kontras dan monitor."
+   },
+   {
+    "id": "78cf1821-fced-54e2-84db-8a63599b668f",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   },
+   {
+    "id": "0f576833-c27c-5343-8149-883989f13900",
+    "text": "Teknik aseptik dan sarung tangan steril (tindakan invasif)\nSKOR: 2 = asepsis dan sarung tangan steril; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Cuci tangan, APD, asepsis dan sarung tangan steril."
+   }
+  ]
+ },
+ {
+  "no": 46,
+  "title": "Persiapan 46 – CMR / uji fibrosis dan viabilitas",
+  "category": "tambahan",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan CMR / uji fibrosis dan viabilitas. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "f6326067-828a-5f2c-a80b-fb02b9d6776b",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "9d9dc8f5-5e39-5a94-b10d-132159db3ad4",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan memindai jantung dengan magnet untuk menilai jaringan dan fungsi jantung."
+   },
+   {
+    "id": "b19ac509-61e0-5e03-9cb6-7795b12421b5",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Implan logam dan gangguan ginjal bila memakai kontras perlu diperiksa."
+   },
+   {
+    "id": "5d9e6a33-78b3-59b0-b950-ecd6e11cc13d",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Mungkin terasa sempit, bising atau jarang alergi kontras."
+   },
+   {
+    "id": "fb87a2d8-0c77-569b-b1ad-ee42e3dba6e9",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "a1a2e5da-777f-5224-a355-d538913b8595",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cek perangkat implan, lepaskan logam"
+   },
+   {
+    "id": "c001ade0-bf89-5feb-9c22-2de279494fb9",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan pemindai, pelindung telinga dan monitor kompatibel."
+   },
+   {
+    "id": "8efe4dc4-96f0-5aeb-8a8e-b74eb0f7f7b0",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 47,
+  "title": "Persiapan 47 – Holter monitoring",
+  "category": "tambahan",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Holter monitoring. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "bb99042e-d63e-50c1-a9a1-8e82de96e7cf",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "1d06c3a4-f031-5178-8dcc-c36e17757bbd",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan merekam denyut jantung selama beraktivitas untuk mencari gangguan irama yang hilang timbul."
+   },
+   {
+    "id": "72b60fa3-c578-5d51-9480-26bb6c729066",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Luka atau alergi perekat memerlukan penyesuaian."
+   },
+   {
+    "id": "518d0282-41ef-5799-9821-a17d77d6d478",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Kulit bisa terasa gatal."
+   },
+   {
+    "id": "d9658d58-4c9e-581f-9b3d-10a4216a2b87",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "e580fa9d-4407-5132-8faa-a9fc1a44d961",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Bersihkan kulit dengan privasi"
+   },
+   {
+    "id": "159f58f6-e94b-5b8a-b5d4-1ebfdbe4f09a",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan elektroda, perekam, baterai dan buku gejala."
+   },
+   {
+    "id": "21b66612-a340-5a44-ae76-a5c74af06ce0",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ },
+ {
+  "no": 48,
+  "title": "Persiapan 48 – Pemeriksaan fisis kardiovaskular terarah",
+  "category": "tambahan",
+  "invasive": false,
+  "questions_text": "Lafalkan persiapan untuk melakukan Pemeriksaan fisis kardiovaskular terarah. Mulai dari menyapa pasien hingga berhenti tepat sebelum prosedur dimulai.",
+  "items": [
+   {
+    "id": "1b8f9f0e-808a-5b21-95d1-e90faf7f9b8d",
+    "text": "Menyapa dan memperkenalkan diri sebagai dokter\nSKOR: 1 = menyapa dan menyebut diri dokter; 0 = tidak",
+    "points": 1,
+    "isCritical": false,
+    "answer": "Selamat pagi, saya dokter yang akan memeriksa Bapak/Ibu."
+   },
+   {
+    "id": "4388335b-2acb-549b-a541-8d1e8f66ac9e",
+    "text": "P – Prosedur & I – Indikasi: menjelaskan tindakan dan tujuannya dengan bahasa awam\nSKOR: 2 = prosedur dan tujuan jelas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Saya akan memeriksa nadi, tekanan darah, bunyi jantung dan paru untuk mengetahui penyebab keluhan."
+   },
+   {
+    "id": "5e6c9142-32d4-58a2-ac49-7f05b1137c9d",
+    "text": "Ki – Kontraindikasi: menyebut kondisi yang perlu dinilai sebelum mulai\nSKOR: 2 = menyebut kondisi relevan; 1 = umum/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Bila nyeri atau sesak, posisi disesuaikan."
+   },
+   {
+    "id": "0aa32107-cd84-53c3-88c8-b8b524e1ba21",
+    "text": "R – Risiko/komplikasi yang nyata dan proporsional\nSKOR: 2 = risiko relevan disebut; 1 = sebagian/samar; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Pemeriksaan umumnya aman."
+   },
+   {
+    "id": "aa600ba8-3229-5c97-aee0-3753d05fa9c5",
+    "text": "Meminta izin dan verifikasi identitas (nama dan tanggal lahir), menunggu jawaban\nSKOR: 2 = izin dan identitas; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": true,
+    "answer": "Saya dokter, boleh saya lakukan? Mohon sebutkan nama dan tanggal lahir Bapak/Ibu."
+   },
+   {
+    "id": "7be72cbb-ed6a-52c8-ba02-3ab64ac6cb07",
+    "text": "P – Pasien: posisi, privasi dan persiapan keselamatan pasien\nSKOR: 2 = posisi/persiapan tepat; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Posisi nyaman, jaga privasi"
+   },
+   {
+    "id": "ad196854-76a0-59a3-ad1d-0fa687b75865",
+    "text": "A – Alat: menyebut alat utama dan kelayakannya\nSKOR: 2 = alat utama lengkap; 1 = sebagian; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "siapkan tensimeter, stetoskop, oksimeter dan jam."
+   },
+   {
+    "id": "f80e53e8-05c4-592e-9c8b-99c84f766ffb",
+    "text": "Di – Diri: cuci tangan enam langkah dan APD sesuai risiko\nSKOR: 2 = keduanya; 1 = salah satu; 0 = tidak",
+    "points": 2,
+    "isCritical": false,
+    "answer": "Cuci tangan enam langkah, APD sesuai risiko."
+   }
+  ]
+ }
+]

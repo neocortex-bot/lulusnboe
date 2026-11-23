@@ -21,6 +21,9 @@ const AdminDashboard = () => {
           <p className="text-sm text-muted-foreground">{user?.email}</p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
+          <Button asChild size="sm" variant="outline">
+            <Link to="/persiapan">Persiapan</Link>
+          </Button>
           <Button asChild size="sm" title="Buka halaman ujian peserta (scan QR / mulai ujian)">
             <Link to="/exam">
               <PlayCircle className="h-4 w-4" /> Ke Halaman Ujian
@@ -57,6 +60,7 @@ const AdminDashboard = () => {
                 <TabsList>
                   <TabsTrigger value="oral_board">Oral Board</TabsTrigger>
                   <TabsTrigger value="panel_exam">Panel</TabsTrigger>
+                  <TabsTrigger value="preparation">Persiapan</TabsTrigger>
                 </TabsList>
               </Tabs>
               <SessionManager examMode={sessionExamMode} />
