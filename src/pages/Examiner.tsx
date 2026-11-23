@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Monitor, MonitorOff, AlertTriangle, CaptionsOff } from "lucide-react";
+import { ArrowLeft, Monitor, MonitorOff, AlertTriangle, CaptionsOff, Image, Video, Volume2, Paperclip } from "lucide-react";
 import { parseDigitalProperties, PROPERTY_SHOW_EVENT, PROPERTY_ACK_EVENT, PROPERTY_SYNC_EVENT, isMediaPending, isCaptionVisible, withExaminerCaptionOverride, type DigitalProperty } from "@/lib/digitalProperties";
 import { pickActiveExaminerSessions, resolveSelectedSession, examinerPhase, type ExaminerSessionRow } from "@/lib/examinerSessions";
 import { createRealtimeFallback } from "@/lib/examPerformance";
@@ -295,7 +295,15 @@ const Examiner = () => {
                         className={`h-auto w-full items-start justify-start whitespace-normal p-3 text-left ${on ? "border-primary bg-primary/10" : "border-border"}`}>
                         {on ? <Monitor className="mt-1 h-5 w-5 shrink-0 text-primary" /> : <MonitorOff className="mt-1 h-5 w-5 shrink-0 text-muted-foreground" />}
                         <div className="min-w-0 flex-1">
-                          <div className="text-sm text-muted-foreground">{p.label}{p.media_type ? ` · ${p.media_type === "image" ? "gambar" : p.media_type === "video" ? "video" : "suara"}` : ""}</div>
+                          <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+                            <span>{p.label}{p.media_type ? ` · ${p.media_type === "image" ? "gambar" : p.media_type === "video" ? "video" : "suara"}` : ""}</span>
+                            {p.media_url ? (
+                              <Badge className="gap-1 border-transparent bg-primary text-primary-foreground">
+                                {p.media_type === "video" ? <Video className="h-3 w-3" /> : p.media_type === "audio" ? <Volume2 className="h-3 w-3" /> : p.media_type === "image" ? <Image className="h-3 w-3" /> : <Paperclip className="h-3 w-3" />}
+                                Ada media
+                              </Badge>
+                            ) : null}
+                          </div>
                           {p.value && <div className="whitespace-pre-line break-words text-lg font-semibold">{p.value}</div>}
                           {!isCaptionVisible(withExaminerCaptionOverride(p, hideMediaCaptions)) && <p className="text-xs text-muted-foreground">Peserta hanya melihat media, tanpa caption.</p>}
                           {isMediaPending(p) && <div className="mt-1 inline-flex items-center gap-1 text-xs text-destructive"><AlertTriangle className="h-3 w-3" /> Media asli belum diunggah admin</div>}
