@@ -1,5 +1,11 @@
 # Roadmap
 
+## Pemeriksaan akhir kebocoran soal (23 Nov 2026)
+- [ ] AI membandingkan vignette/pertanyaan dengan kunci, rubrik, Word by Word, dan properti; saran hanya mengubah teks peserta.
+- [ ] Rekomendasi akhir tersimpan; perubahan isi membatalkan kelulusan pemeriksaan; status emoji dan tombol di bawah pertanyaan.
+- [ ] Pengajuan/deployment ditolak server sebelum pemeriksaan terbaru lolos; ujian yang sudah berjalan tidak diganggu.
+- [ ] Tes aturan, pemeriksaan alur, dan penyimpanan perubahan.
+
 ## Riwayat dan backfill persiapan (23 Nov 2026)
 - [x] Riwayat sebelumnya memuat semua laporan/transkrip tanpa batas dan error state; sekarang ringkasan 20/halaman, detail saat dibuka, batas 15 detik termasuk auth wait, pesan error/coba ulang. 223 hasil asli tetap utuh.
 - [x] Penyebab kosong terkonfirmasi: constraint mode lama menolak preparation. Constraint diperluas dan 48 soal published + 48 kunci privat dibuat atomik dari PDF; 40 rubrik 8 butir, 8 rubrik 9 butir, 0 poin tidak valid/critical hilang/jawaban privat terbuka/waktu salah.
