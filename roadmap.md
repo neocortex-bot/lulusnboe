@@ -1,5 +1,10 @@
 # Roadmap
 
+## Periode NBOE (23 Nov 2026)
+- [ ] Simpan periode NBOE tanpa mengubah rubrik atau menebak periode soal lama.
+- [ ] Modal pilihan periode, label periode, dan filter periode di pemilih deploy.
+- [ ] Tes aturan periode dan verifikasi tampilan/penyimpanan.
+
 ## Media terunggah dan caption otomatis (22 Nov 2026)
 - [x] Media terunggah otomatis dianggap butuh media, termasuk data lama pada tabel soal; penanda tidak dapat dimatikan selama media masih ada.
 - [x] Unggah/ganti media otomatis menyembunyikan caption; pilihan menampilkan caption kembali tetap tersedia. Data lama tanpa pilihan caption memakai default tersembunyi, pilihan eksplisit tetap dihormati.
