@@ -1,11 +1,5 @@
 # Roadmap
 
-## Konfirmasi dan persetujuan manual pemeriksaan akhir (23 Nov 2026)
-- [ ] Klik pemeriksaan akhir membuka pilihan, tanpa otomatis memanggil AI; hasil tersimpan tetap bisa dibuka.
-- [ ] Admin dapat menyetujui manual tanpa AI, dengan konfirmasi; simpan penanda manual dan pemberi persetujuan untuk isi tersimpan yang sama.
-- [ ] Persetujuan manual membuka pengajuan/deployment; perubahan isi membatalkan persetujuan, akses tetap divalidasi server.
-- [ ] Tes aturan dan modal, verifikasi komputer/ponsel, simpan perubahan.
-
 ## Pemeriksaan akhir kebocoran soal (23 Nov 2026)
 - [x] DUS carotis (9e3f5953): hapus bocoran angka Doppler, parameter alat, langkah scanning dan target terapi dari teks peserta; rubrik/kunci/Word by Word/properti privat tetap utuh. Status arsip dipertahankan; belum ditandai lolos pemeriksaan AI.
 - [x] AI membandingkan vignette/pertanyaan dengan kunci, rubrik, Word by Word, dan properti; saran hanya mengubah teks peserta. Pemeriksaan memakai isi tersimpan dan gagal tertutup bila jawaban tidak lengkap atau konflik privat belum selesai.
