@@ -1,5 +1,11 @@
 # Roadmap
 
+## Riwayat dan backfill persiapan (23 Nov 2026)
+- [ ] Diagnosis/pemulihan riwayat peserta, batas pemuatan dan pesan error yang bisa dicoba ulang.
+- [ ] Isi 48 soal persiapan siap latihan beserta rubrik/jawaban privat dari PDF, tanpa menimpa soal manual.
+- [ ] Tombol tambah soal di /persiapan memakai formulir soal bersama, default persiapan 10/60 detik.
+- [ ] Tes regresi dan verifikasi data/tampilan.
+
 ## Periode NBOE (23 Nov 2026)
 - [x] Periode NBOE tersimpan terpisah; trigger memvalidasi 14 periode Juni 2023–September 2026 tanpa menebak periode soal lama atau mengubah izin/rubrik.
 - [x] Modal pilihan/ubah periode di detail dan formulir, label lime/black, filter periode di pemilih deploy termasuk periode belum diisi; pilihan ujian tetap dipertahankan.

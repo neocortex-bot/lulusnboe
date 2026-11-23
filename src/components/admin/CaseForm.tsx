@@ -35,6 +35,7 @@ interface CaseFormProps {
     category?: string | null;
   } | null;
   categories?: string[];
+  defaultExamMode?: string;
   onClose: () => void;
 }
 
@@ -42,19 +43,19 @@ function parseRubricData(raw: any): RubricData {
   return sharedParseRubricData(raw);
 }
 
-const CaseForm = ({ existingCase, categories = [], onClose }: CaseFormProps) => {
+const CaseForm = ({ existingCase, categories = [], defaultExamMode = "oral_board", onClose }: CaseFormProps) => {
   const [category, setCategory] = useState<string | null>(existingCase?.category ?? null);
   const [title, setTitle] = useState(existingCase?.title ?? "");
-  const [examMode, setExamMode] = useState(existingCase?.exam_mode ?? "oral_board");
+  const [examMode, setExamMode] = useState(existingCase?.exam_mode ?? defaultExamMode);
   const [initialPrompt, setInitialPrompt] = useState(existingCase?.initial_prompt ?? "");
-  const [timeLimitSeconds, setTimeLimitSeconds] = useState(existingCase?.time_limit_seconds ?? 360);
-  const [readingTimeSeconds, setReadingTimeSeconds] = useState(existingCase?.reading_time_seconds ?? 120);
+  const [timeLimitSeconds, setTimeLimitSeconds] = useState(existingCase?.time_limit_seconds ?? (defaultExamMode === "preparation" ? 60 : 360));
+  const [readingTimeSeconds, setReadingTimeSeconds] = useState(existingCase?.reading_time_seconds ?? (defaultExamMode === "preparation" ? 10 : 120));
   const [questionsText, setQuestionsText] = useState(existingCase?.questions_text ?? "");
   const [answerKeyText, setAnswerKeyText] = useState(existingCase?.answer_key_text ?? "");
   const [nboe, setNboe] = useState<NboeValue>({ is_nboe: false, nboe_period: null });
   const [digitalProps, setDigitalProps] = useState(() => parseDigitalProperties(existingCase?.checklist_rubric));
   const [showResultsToCandidate, setShowResultsToCandidate] = useState(
-    existingCase?.show_results_to_candidate ?? false
+    existingCase?.show_results_to_candidate ?? defaultExamMode === "preparation"
   );
   const [rubricData, setRubricData] = useState<RubricData>(
     parseRubricData(existingCase?.checklist_rubric)
@@ -131,6 +132,7 @@ const CaseForm = ({ existingCase, categories = [], onClose }: CaseFormProps) => 
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["clinical_cases"] });
+      queryClient.invalidateQueries({ queryKey: ["preparation_cases"] });
       queryClient.invalidateQueries({ queryKey: ["clinical_case_preview", existingCase?.id] });
       toast({ title: existingCase ? "Soal diperbarui" : "Soal dibuat" });
       onClose();
@@ -169,6 +171,7 @@ const CaseForm = ({ existingCase, categories = [], onClose }: CaseFormProps) => 
           <SelectContent>
             <SelectItem value="oral_board">Oral Board</SelectItem>
             <SelectItem value="panel_exam">Panel Exam</SelectItem>
+            <SelectItem value="preparation">Persiapan</SelectItem>
           </SelectContent>
         </Select>
       </div>

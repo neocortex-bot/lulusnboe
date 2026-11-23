@@ -9,7 +9,9 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
-import { ArrowLeft, Download, Loader2, Mic, Pencil } from "lucide-react";
+import { ArrowLeft, Download, Loader2, Mic, Pencil, Plus } from "lucide-react";
+import CaseForm from "@/components/admin/CaseForm";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { categoryBadgeClass, toCategoryLabel } from "@/lib/caseCategory";
 import { importPreparationSeed, PREPARATION_MODE, startPreparationPractice } from "@/lib/persiapan";
 
@@ -25,6 +27,7 @@ const Persiapan = () => {
   const [division, setDivision] = useState(ALL);
   const [startingId, setStartingId] = useState<string | null>(null);
   const [importing, setImporting] = useState(false);
+  const [showForm, setShowForm] = useState(false);
 
   const { data: cases = [], isLoading, error } = useQuery({
     queryKey: ["preparation_cases"],
@@ -87,7 +90,8 @@ const Persiapan = () => {
               Lafalkan persiapan dari menyapa pasien sampai tepat sebelum prosedur. Baca 10 detik, jawab 60 detik.
             </p>
           </div>
-          <div className="flex shrink-0 gap-2">
+          <div className="flex flex-wrap gap-2">
+            {isAdmin && <Button size="sm" onClick={() => setShowForm(true)}><Plus className="h-4 w-4" /> Tambah Soal Persiapan</Button>}
             {isAdmin && (
               <Button variant="outline" size="sm" onClick={runImport} disabled={importing}>
                 {importing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
@@ -158,6 +162,12 @@ const Persiapan = () => {
           </div>
         )}
       </main>
+      <Dialog open={showForm} onOpenChange={setShowForm}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>Tambah Soal Persiapan</DialogTitle></DialogHeader>
+          <CaseForm defaultExamMode={PREPARATION_MODE} categories={divisions} onClose={() => setShowForm(false)} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
