@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { loadRecommendation, saveRecommendation, saveDecisions } from "@/lib/aiRecommendations";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -27,8 +28,22 @@ export default function PropertySyncDialog({ caseId, properties, answerKeyText, 
   const [result, setResult] = useState<PropertySyncResult | null>(null);
   const [decided, setDecided] = useState<Record<string, Decision>>({});
 
+  const [savedAt, setSavedAt] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (open && savedAt) void saveDecisions(caseId, "property_sync", decided);
+  }, [decided]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const openSaved = async () => {
+    setOpen(true); setLoading(true); setError(null);
+    const saved = await loadRecommendation<PropertySyncResult>(caseId, "property_sync");
+    if (!saved) return run();
+    setResult(saved.result); setDecided((saved.decisions ?? {}) as Record<string, Decision>);
+    setSavedAt(saved.updated_at); setLoading(false);
+  };
+
   const run = async () => {
-    setOpen(true); setLoading(true); setError(null); setResult(null); setDecided({});
+    setOpen(true); setLoading(true); setError(null); setResult(null); setDecided({}); setSavedAt(null);
     try {
       const data = await runAndRecordPropertyCheck(async () => {
         const { data, error: fnError } = await supabase.functions.invoke("property-sync", {
@@ -52,6 +67,8 @@ export default function PropertySyncDialog({ caseId, properties, answerKeyText, 
         queryClient.invalidateQueries({ queryKey: ["clinical_cases"], exact: true });
       });
       setResult(data);
+      await saveRecommendation(caseId, "property_sync", data);
+      setSavedAt(new Date().toISOString());
     } catch (e) {
       setError(e instanceof Error ? e.message : "Pemeriksaan gagal.");
     } finally {
@@ -89,7 +106,7 @@ export default function PropertySyncDialog({ caseId, properties, answerKeyText, 
 
   return (
     <>
-      <Button type="button" variant="nboe" size="sm" onClick={run} disabled={!properties.some((p) => p.value?.trim())}>
+      <Button type="button" variant="nboe" size="sm" onClick={openSaved} disabled={!properties.some((p) => p.value?.trim())}>
         <Sparkles className="mr-1 h-4 w-4" />Sinkronkan properti dengan jawaban (AI)
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
@@ -98,6 +115,12 @@ export default function PropertySyncDialog({ caseId, properties, answerKeyText, 
             <DialogTitle>Sinkronisasi Properti Digital</DialogTitle>
             <DialogDescription>Caption properti dianggap benar. Saran yang diterima masuk ke form; klik Simpan untuk menyimpan. Poin dan critical tidak diubah.</DialogDescription>
           </DialogHeader>
+          {!loading && savedAt && (
+            <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border bg-muted/40 p-3 text-sm">
+              <span>Rekomendasi tersimpan · {new Date(savedAt).toLocaleString("id-ID")}</span>
+              <Button size="sm" variant="outline" onClick={run}><Sparkles className="mr-1 h-3 w-3" />Analisis ulang</Button>
+            </div>
+          )}
           {loading && <div className="flex items-center gap-2 py-8 text-sm text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" />AI sedang membandingkan…</div>}
           {error && <p className="text-sm text-destructive">{error}</p>}
           {result && (

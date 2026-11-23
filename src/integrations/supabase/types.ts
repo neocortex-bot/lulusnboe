@@ -14,6 +14,47 @@ export type Database = {
   }
   public: {
     Tables: {
+      case_ai_recommendations: {
+        Row: {
+          case_id: string
+          created_at: string
+          created_by: string | null
+          decisions: Json
+          id: string
+          kind: string
+          result: Json
+          updated_at: string
+        }
+        Insert: {
+          case_id: string
+          created_at?: string
+          created_by?: string | null
+          decisions?: Json
+          id?: string
+          kind: string
+          result?: Json
+          updated_at?: string
+        }
+        Update: {
+          case_id?: string
+          created_at?: string
+          created_by?: string | null
+          decisions?: Json
+          id?: string
+          kind?: string
+          result?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_ai_recommendations_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "clinical_cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       case_answer_keys: {
         Row: {
           answer_key_edited_at: string | null

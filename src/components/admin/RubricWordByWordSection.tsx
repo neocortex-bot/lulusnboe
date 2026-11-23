@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { loadRecommendation, saveRecommendation, saveDecisions } from "@/lib/aiRecommendations";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Json } from "@/integrations/supabase/types";
@@ -38,10 +39,34 @@ export default function RubricWordByWordSection({ caseId, items, canEdit, onAppl
   const [propSugs, setPropSugs] = useState<PropertySuggestion[]>([]);
   const [propDone, setPropDone] = useState<Record<string, "accept" | "skip">>({});
   const [decided, setDecided] = useState<Record<string, "accept" | "skip">>({});
+  const [savedAt, setSavedAt] = useState<string | null>(null);
   const missing = itemsMissingWordByWord(items);
+
+  type Saved = { suggestions: AlignmentSuggestion[]; last_edit: LastEditInfo | null; property_suggestions: PropertySuggestion[] };
+  useEffect(() => {
+    if (!open || savedAt === null) return;
+    void saveDecisions(caseId, "rubric_alignment", { ...decided, ...Object.fromEntries(Object.entries(propDone).map(([k, v]) => [`prop:${k}`, v])) });
+  }, [decided, propDone]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const openCheck = async () => {
+    setOpen(true);
+    setLoading(true);
+    setError(null);
+    const saved = await loadRecommendation<Saved>(caseId, "rubric_alignment");
+    if (!saved) return runCheck();
+    setSuggestions(saved.result.suggestions ?? []);
+    setLastEdit(saved.result.last_edit ?? null);
+    setPropSugs(saved.result.property_suggestions ?? []);
+    const d = saved.decisions ?? {};
+    setDecided(Object.fromEntries(Object.entries(d).filter(([k]) => !k.startsWith("prop:"))) as Record<string, "accept" | "skip">);
+    setPropDone(Object.fromEntries(Object.entries(d).filter(([k]) => k.startsWith("prop:")).map(([k, v]) => [k.slice(5), v])) as Record<string, "accept" | "skip">);
+    setSavedAt(saved.updated_at);
+    setLoading(false);
+  };
 
   const runCheck = async () => {
     setOpen(true);
+    setSavedAt(null);
     setLoading(true);
     setError(null);
     setSuggestions([]);
@@ -61,6 +86,9 @@ export default function RubricWordByWordSection({ caseId, items, canEdit, onAppl
       setSuggestions([...list].sort((a, b) => Number(!!b.recommended) - Number(!!a.recommended)));
       setLastEdit(data?.last_edit ?? null);
       setPropSugs(data?.property_suggestions ?? []);
+      const sorted = [...list].sort((a, b) => Number(!!b.recommended) - Number(!!a.recommended));
+      await saveRecommendation(caseId, "rubric_alignment", { suggestions: sorted, last_edit: data?.last_edit ?? null, property_suggestions: data?.property_suggestions ?? [] });
+      setSavedAt(new Date().toISOString());
     } catch (e) {
       setError(e instanceof Error ? e.message : "Pemeriksaan gagal.");
     } finally {
@@ -154,7 +182,7 @@ export default function RubricWordByWordSection({ caseId, items, canEdit, onAppl
           </ol>
         )}
         {canEdit && items.length > 0 && (
-          <Button onClick={runCheck} className="h-auto min-h-10 max-w-full whitespace-normal gap-2" variant="outline">
+          <Button onClick={openCheck} className="h-auto min-h-10 max-w-full whitespace-normal gap-2" variant="outline">
             <Sparkles className="h-4 w-4" /> Cek kesesuaian rubrik dan word by word
           </Button>
         )}
@@ -166,6 +194,12 @@ export default function RubricWordByWordSection({ caseId, items, canEdit, onAppl
             <DialogTitle>Kesesuaian Rubrik & Word by Word</DialogTitle>
             <DialogDescription>Saran hanya disimpan bila Anda menekan Terima. Poin dan status critical tidak diubah.</DialogDescription>
           </DialogHeader>
+          {!loading && savedAt && (
+            <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border bg-muted/40 p-3 text-sm">
+              <span>Rekomendasi tersimpan · {new Date(savedAt).toLocaleString("id-ID")}</span>
+              <Button size="sm" variant="outline" onClick={runCheck}><Sparkles className="mr-1 h-3 w-3" />Analisis ulang</Button>
+            </div>
+          )}
           {loading && <div className="flex items-center gap-2 py-8 justify-center text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> AI sedang memeriksa…</div>}
           {lastEditText && <div className="rounded-md border border-primary/40 bg-primary/5 p-3 text-sm">{lastEditText}</div>}
           {error && <p className="text-sm text-destructive">{error}</p>}
