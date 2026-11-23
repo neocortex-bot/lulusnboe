@@ -53,7 +53,7 @@ describe("pre-review private Word by Word", () => {
     const items = k.checklist_rubric.items.map((item, i) => ({ ...item, id: `rubric-${i}` }));
     mock.cases = [c]; mock.keys = [{ ...k, checklist_rubric: { ...k.checklist_rubric, items, digital_properties } }];
     mount(); await screen.findByText(c.title); fireEvent.click(screen.getByText(c.title));
-    fireEvent.click(screen.getByRole("button", { name: publish ? "Submit & Ingest" : "Simpan draft" }));
+    fireEvent.click(screen.getByRole("button", { name: publish ? "Lanjutkan pemeriksaan akhir" : "Simpan draft" }));
     await waitFor(() => expect(mock.writes).toHaveLength(2));
     expect(mock.writes[1].payload.checklist_rubric).toEqual({ ...k.checklist_rubric, items, digital_properties });
     expect(mock.writes[0].payload.checklist_rubric.items).toEqual(items.map(({ answer, ...rest }) => rest));
@@ -88,9 +88,9 @@ describe("pre-review private Word by Word", () => {
     await waitFor(() => expect(screen.getByDisplayValue(`Kalimat jawaban ${count}`)).toBeInTheDocument());
     const answers = screen.getAllByRole("textbox").filter(el => (el as HTMLTextAreaElement).value.startsWith("Kalimat jawaban"));
     expect(answers).toHaveLength(count);
-    fireEvent.click(screen.getByRole("button", { name: "Submit & Ingest" }));
+    fireEvent.click(screen.getByRole("button", { name: "Lanjutkan pemeriksaan akhir" }));
     await waitFor(() => expect(mock.writes).toHaveLength(2));
-    expect(mock.writes[0].payload.status).toBe("published");
+    expect(mock.writes[0].payload.status).toBe("prereview");
     expect(mock.writes[0].payload.checklist_rubric.items).toEqual(c.checklist_rubric.items);
     expect(mock.writes[0].payload.checklist_rubric.items.every((it: any) => !("answer" in it))).toBe(true);
     expect(mock.writes[1].payload.checklist_rubric).toEqual(k.checklist_rubric);
@@ -115,7 +115,7 @@ describe("pre-review private Word by Word", () => {
     mock.cases = [{ ...c, checklist_rubric: format === "array" ? items : { items } }];
     if (format === "empty-private") mock.keys = [{ case_id: c.id, checklist_rubric: { items: [] } }];
     mount(); await screen.findByText(c.title); fireEvent.click(screen.getByText(c.title));
-    fireEvent.click(screen.getByRole("button", { name: "Submit & Ingest" }));
+    fireEvent.click(screen.getByRole("button", { name: "Lanjutkan pemeriksaan akhir" }));
     await waitFor(() => expect(mock.writes).toHaveLength(2));
     expect(mock.writes[1].payload.checklist_rubric.items).toEqual(items);
     expect(mock.writes[0].payload.checklist_rubric.items).toEqual(c.checklist_rubric.items);
