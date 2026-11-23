@@ -8,6 +8,21 @@ export interface AlignmentSuggestion {
   reason: string;
   suggested_answer?: string;
   suggested_text?: string;
+  /** Butir tidak disentuh pada edit terakhir: dianjurkan diterima. */
+  recommended?: boolean;
+}
+
+export interface LastEditInfo {
+  kind: "answer_key" | "rubric" | "none";
+  at: string | null;
+  edited_item_ids: string[];
+}
+
+export interface PropertySuggestion {
+  label: string;
+  value: string;
+  needs_media: boolean;
+  reason: string;
 }
 
 export interface AcceptedChange {

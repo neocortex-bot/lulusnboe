@@ -169,3 +169,6 @@
 - [x] Deploy ingest-case dan case-admin ke Supabase asli sudah diselesaikan pada pekerjaan sebelumnya.
 - [x] /persiapan: station persiapan (48 kartu PIKiR PADi), mulai ujian persiapan, evaluasi sama dengan ujian penuh
 - [x] 48 kartu PIKiR PADi sudah di-backfill ke Supabase asli; tidak perlu klik impor.
+
+- [x] Cek AI: tandai perubahan terakhir (kunci jawaban/rubrik/word by word), anjurkan terima saran untuk bagian yang belum disentuh
+- [x] Cek AI: saran Properti Digital baru dari perubahan terakhir

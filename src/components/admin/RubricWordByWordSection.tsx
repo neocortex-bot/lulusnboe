@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Sparkles, Check, X } from "lucide-react";
 import parseRubricData, { type RubricItem } from "@/lib/rubricParser";
-import { mergeAlignmentChanges, itemsMissingWordByWord, type AlignmentSuggestion, type AcceptedChange } from "@/lib/rubricAlignment";
+import { mergeAlignmentChanges, itemsMissingWordByWord, type AlignmentSuggestion, type AcceptedChange, type LastEditInfo, type PropertySuggestion } from "@/lib/rubricAlignment";
 
 const STATUS_LABEL: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
   sesuai: { label: "Sesuai", variant: "default" },
@@ -34,6 +34,9 @@ export default function RubricWordByWordSection({ caseId, items, canEdit, onAppl
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [suggestions, setSuggestions] = useState<AlignmentSuggestion[]>([]);
+  const [lastEdit, setLastEdit] = useState<LastEditInfo | null>(null);
+  const [propSugs, setPropSugs] = useState<PropertySuggestion[]>([]);
+  const [propDone, setPropDone] = useState<Record<string, "accept" | "skip">>({});
   const [decided, setDecided] = useState<Record<string, "accept" | "skip">>({});
   const missing = itemsMissingWordByWord(items);
 
@@ -43,6 +46,9 @@ export default function RubricWordByWordSection({ caseId, items, canEdit, onAppl
     setError(null);
     setSuggestions([]);
     setDecided({});
+    setLastEdit(null);
+    setPropSugs([]);
+    setPropDone({});
     try {
       const { data, error: fnError } = await supabase.functions.invoke("rubric-alignment", { body: { case_id: caseId } });
       if (fnError) {
@@ -51,7 +57,10 @@ export default function RubricWordByWordSection({ caseId, items, canEdit, onAppl
         throw new Error(detail?.error ?? fnError.message);
       }
       if (data?.error) throw new Error(data.error);
-      setSuggestions(data?.suggestions ?? []);
+      const list: AlignmentSuggestion[] = data?.suggestions ?? [];
+      setSuggestions([...list].sort((a, b) => Number(!!b.recommended) - Number(!!a.recommended)));
+      setLastEdit(data?.last_edit ?? null);
+      setPropSugs(data?.property_suggestions ?? []);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Pemeriksaan gagal.");
     } finally {
@@ -89,6 +98,32 @@ export default function RubricWordByWordSection({ caseId, items, canEdit, onAppl
       setSaving(false);
     }
   };
+
+  const addProperty = async (p: PropertySuggestion) => {
+    setSaving(true);
+    try {
+      const { data: ak, error: readErr } = await supabase
+        .from("case_answer_keys").select("checklist_rubric").eq("case_id", caseId).maybeSingle();
+      if (readErr || !ak) throw new Error("Data soal terbaru gagal dimuat.");
+      const raw = (ak.checklist_rubric ?? {}) as Record<string, unknown>;
+      const list = Array.isArray(raw.digital_properties) ? raw.digital_properties : [];
+      const next = [...list, { label: p.label, value: p.value, media_url: null, media_type: null, needs_media: p.needs_media, show_caption: true }];
+      const { error } = await supabase.from("case_answer_keys")
+        .update({ checklist_rubric: { ...raw, digital_properties: next } as unknown as Json }).eq("case_id", caseId);
+      if (error) throw error;
+      queryClient.invalidateQueries({ queryKey: ["clinical_case_preview", caseId] });
+      setPropDone((d) => ({ ...d, [p.label]: "accept" }));
+      toast({ title: "Properti digital ditambahkan" });
+    } catch (e) {
+      toast({ title: "Gagal menambah properti", description: e instanceof Error ? e.message : String(e), variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const lastEditText = lastEdit && lastEdit.kind !== "none"
+    ? `${lastEdit.kind === "answer_key" ? "Kunci jawaban" : `Rubrik/word by word (${lastEdit.edited_item_ids.length} butir)`} terakhir diedit${lastEdit.at ? ` ${new Date(lastEdit.at).toLocaleString("id-ID")}` : ""}. Itu dianggap benar; butir lain yang belum disesuaikan ditandai "Dianjurkan diterima".`
+    : null;
 
   const toChange = (s: AlignmentSuggestion): AcceptedChange => ({ item_id: s.item_id, answer: s.suggested_answer, text: s.suggested_text });
   const pending = suggestions.filter((s) => (s.suggested_answer || s.suggested_text) && !decided[s.item_id]);
@@ -132,6 +167,7 @@ export default function RubricWordByWordSection({ caseId, items, canEdit, onAppl
             <DialogDescription>Saran hanya disimpan bila Anda menekan Terima. Poin dan status critical tidak diubah.</DialogDescription>
           </DialogHeader>
           {loading && <div className="flex items-center gap-2 py-8 justify-center text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> AI sedang memeriksa…</div>}
+          {lastEditText && <div className="rounded-md border border-primary/40 bg-primary/5 p-3 text-sm">{lastEditText}</div>}
           {error && <p className="text-sm text-destructive">{error}</p>}
           {!loading && !error && suggestions.length === 0 && <p className="text-sm text-muted-foreground">Tidak ada hasil.</p>}
           <div className="space-y-3">
@@ -142,6 +178,8 @@ export default function RubricWordByWordSection({ caseId, items, canEdit, onAppl
                 <div key={s.item_id} className="rounded-md border p-3 text-sm space-y-2">
                   <div className="flex flex-wrap items-center gap-2">
                     <Badge variant={st.variant}>{st.label}</Badge>
+                    {s.recommended && <Badge variant="nboe">Dianjurkan diterima</Badge>}
+                    {lastEdit?.edited_item_ids.includes(s.item_id) && <Badge variant="outline">Baru diedit</Badge>}
                     <span className="font-medium">{textOf(s.item_id)}</span>
                   </div>
                   {s.reason && <p className="text-muted-foreground">{s.reason}</p>}
@@ -161,7 +199,35 @@ export default function RubricWordByWordSection({ caseId, items, canEdit, onAppl
               );
             })}
           </div>
-          <DialogFooter>
+          {propSugs.length > 0 && (
+            <div className="space-y-2">
+              <h4 className="text-sm font-semibold">Saran Properti Digital baru</h4>
+              {propSugs.map((p) => (
+                <div key={p.label} className="rounded-md border p-3 text-sm space-y-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-medium">{p.label}</span>
+                    {p.needs_media && <Badge variant="outline">Butuh media</Badge>}
+                  </div>
+                  {p.value && <p>{p.value}</p>}
+                  {p.reason && <p className="text-muted-foreground">{p.reason}</p>}
+                  {propDone[p.label] ? (
+                    <p className="text-xs text-muted-foreground">{propDone[p.label] === "accept" ? "Ditambahkan" : "Diabaikan"}</p>
+                  ) : (
+                    <div className="flex gap-2">
+                      <Button size="sm" disabled={saving} onClick={() => addProperty(p)} className="gap-1"><Check className="h-3 w-3" /> Tambahkan</Button>
+                      <Button size="sm" variant="ghost" disabled={saving} onClick={() => setPropDone((d) => ({ ...d, [p.label]: "skip" }))} className="gap-1"><X className="h-3 w-3" /> Abaikan</Button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+          <DialogFooter className="gap-2">
+            {pending.some((s) => s.recommended) && (
+              <Button variant="outline" disabled={saving} onClick={() => applyChanges(pending.filter((s) => s.recommended).map(toChange))}>
+                Terima yang dianjurkan ({pending.filter((s) => s.recommended).length})
+              </Button>
+            )}
             {pending.length > 0 && (
               <Button disabled={saving} onClick={() => applyChanges(pending.map(toChange))}>
                 {saving && <Loader2 className="h-4 w-4 animate-spin mr-2" />} Terima semua ({pending.length})

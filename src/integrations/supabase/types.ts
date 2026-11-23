@@ -16,25 +16,37 @@ export type Database = {
     Tables: {
       case_answer_keys: {
         Row: {
+          answer_key_edited_at: string | null
           answer_key_text: string
           case_id: string
           checklist_rubric: Json
           created_at: string
           id: string
+          previous_answer_key_text: string | null
+          previous_rubric_items: Json | null
+          rubric_edited_at: string | null
         }
         Insert: {
+          answer_key_edited_at?: string | null
           answer_key_text?: string
           case_id: string
           checklist_rubric?: Json
           created_at?: string
           id?: string
+          previous_answer_key_text?: string | null
+          previous_rubric_items?: Json | null
+          rubric_edited_at?: string | null
         }
         Update: {
+          answer_key_edited_at?: string | null
           answer_key_text?: string
           case_id?: string
           checklist_rubric?: Json
           created_at?: string
           id?: string
+          previous_answer_key_text?: string | null
+          previous_rubric_items?: Json | null
+          rubric_edited_at?: string | null
         }
         Relationships: [
           {
@@ -616,6 +628,7 @@ export type Database = {
       }
       reset_window_open: { Args: { _station_token: string }; Returns: boolean }
       rubric_text_head: { Args: { _text: string }; Returns: string }
+      rubric_text_projection: { Args: { _rubric: Json }; Returns: Json }
       start_exam_timer: { Args: { _session_id: string }; Returns: string }
       start_preparation_practice: {
         Args: { _case_id: string }
