@@ -4,12 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { NBOE_PERIODS, matchesNboeFilter, nboeLabel } from "@/lib/nboePeriods";
 import { Search, Plus, ChevronUp, ChevronDown, X } from "lucide-react";
 
 interface CaseItem {
   id: string;
   title: string;
   is_nboe?: boolean;
+  nboe_period?: string | null;
 }
 
 interface CaseTransferListProps {
@@ -29,12 +32,13 @@ const CaseTransferList = ({
 }: CaseTransferListProps) => {
   const [search, setSearch] = useState("");
   const [nboeOnly, setNboeOnly] = useState(false);
+  const [nboePeriod, setNboePeriod] = useState("all");
   const nboeFilterId = useId();
 
   const availableCases = cases.filter(
     (c) =>
       !selectedCases.some((s) => s.id === c.id) &&
-      (!nboeOnly || c.is_nboe === true) &&
+      matchesNboeFilter(c, nboeOnly, nboePeriod) &&
       c.title.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -66,6 +70,14 @@ const CaseTransferList = ({
             <Label htmlFor={nboeFilterId} className="text-sm">Soal NBOE</Label>
           </div>
         </div>
+        {nboeOnly && <Select value={nboePeriod} onValueChange={setNboePeriod} disabled={disabled}>
+          <SelectTrigger aria-label="Filter periode NBOE"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Semua periode NBOE</SelectItem>
+            {NBOE_PERIODS.map(period => <SelectItem key={period.value} value={period.value}>{period.label}</SelectItem>)}
+            <SelectItem value="unset">Periode belum diisi</SelectItem>
+          </SelectContent>
+        </Select>}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -96,7 +108,7 @@ const CaseTransferList = ({
                 className="h-auto min-h-10 w-full justify-start rounded-none whitespace-normal px-3 py-2 text-sm text-left border-b border-border last:border-0"
               >
                 <Plus className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                <div className="min-w-0 break-words">{c.title}{c.is_nboe && <Badge variant="nboe" className="ml-2 text-xs">Soal NBOE</Badge>}</div>
+                <div className="min-w-0 break-words">{c.title}{c.is_nboe && <Badge variant="nboe" className="ml-2 text-xs">{nboeLabel(c.nboe_period)}</Badge>}</div>
               </Button>
             ))
           )}
@@ -123,7 +135,7 @@ const CaseTransferList = ({
                 className="flex items-center gap-1.5 px-3 py-2 text-sm border-b border-border last:border-0 bg-muted/30"
               >
                 <span className="font-mono text-xs text-muted-foreground w-5 shrink-0">{i + 1}.</span>
-                <div className="min-w-0 flex-1 break-words">{c.title}{(cases.find(item => item.id === c.id) ?? c).is_nboe && <Badge variant="nboe" className="ml-2 text-xs">Soal NBOE</Badge>}</div>
+                <div className="min-w-0 flex-1 break-words">{c.title}{(cases.find(item => item.id === c.id) ?? c).is_nboe && <Badge variant="nboe" className="ml-2 text-xs">{nboeLabel((cases.find(item => item.id === c.id) ?? c).nboe_period)}</Badge>}</div>
                 {selectedCases.length > 1 && (
                   <>
                     <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveCase(i, -1)} disabled={i === 0}>

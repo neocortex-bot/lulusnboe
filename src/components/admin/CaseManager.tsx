@@ -18,6 +18,7 @@ import AssetUploader from "./AssetUploader";
 import ExcelImporter from "./ExcelImporter";
 import { Link } from "react-router-dom";
 import CategoryFilter from "./CategoryFilter";
+import { nboeLabel } from "@/lib/nboePeriods";
 import { ALL, categoryBadgeClass, matchesCategory, toCategoryLabel, uniqueCategories } from "@/lib/caseCategory";
 
 interface ClinicalCase {
@@ -34,6 +35,7 @@ interface ClinicalCase {
   status?: string;
   category?: string | null;
   is_nboe?: boolean;
+  nboe_period?: string | null;
   property_sync_checked_at?: string | null;
   source?: string;
   rubric_mode?: string;
@@ -198,7 +200,7 @@ const CaseManager = () => {
                 <TableRow key={c.id}>
                   <TableCell className="min-w-60 font-medium">
                     {c.title}
-                    {c.is_nboe && <Badge variant="nboe" className="ml-2 text-xs">Soal NBOE</Badge>}
+                    {c.is_nboe && <Badge variant="nboe" className="ml-2 text-xs">{nboeLabel(c.nboe_period)}</Badge>}
                     {c.category && <Badge variant="outline" className={`ml-2 text-xs ${categoryBadgeClass(c.category)}`}>{toCategoryLabel(c.category)}</Badge>}
                   </TableCell>
                   <TableCell>

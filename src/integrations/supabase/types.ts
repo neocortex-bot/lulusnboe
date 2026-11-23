@@ -130,6 +130,7 @@ export type Database = {
           id: string
           initial_prompt: string
           is_nboe: boolean
+          nboe_period: string | null
           properties: string[]
           property_sync_checked_at: string | null
           questions_text: string
@@ -153,6 +154,7 @@ export type Database = {
           id?: string
           initial_prompt?: string
           is_nboe?: boolean
+          nboe_period?: string | null
           properties?: string[]
           property_sync_checked_at?: string | null
           questions_text?: string
@@ -176,6 +178,7 @@ export type Database = {
           id?: string
           initial_prompt?: string
           is_nboe?: boolean
+          nboe_period?: string | null
           properties?: string[]
           property_sync_checked_at?: string | null
           questions_text?: string

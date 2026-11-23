@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
-import { Checkbox } from "@/components/ui/checkbox";
+import NboeMarker, { type NboeValue } from "./NboeMarker";
 import { Monitor, Tag } from "lucide-react";
 import RubricBuilder, { type RubricData } from "./RubricBuilder";
 import sharedParseRubricData, { withRubricItemIds } from "@/lib/rubricParser";
@@ -51,7 +51,7 @@ const CaseForm = ({ existingCase, categories = [], onClose }: CaseFormProps) => 
   const [readingTimeSeconds, setReadingTimeSeconds] = useState(existingCase?.reading_time_seconds ?? 120);
   const [questionsText, setQuestionsText] = useState(existingCase?.questions_text ?? "");
   const [answerKeyText, setAnswerKeyText] = useState(existingCase?.answer_key_text ?? "");
-  const [isNboe, setIsNboe] = useState(false);
+  const [nboe, setNboe] = useState<NboeValue>({ is_nboe: false, nboe_period: null });
   const [digitalProps, setDigitalProps] = useState(() => parseDigitalProperties(existingCase?.checklist_rubric));
   const [showResultsToCandidate, setShowResultsToCandidate] = useState(
     existingCase?.show_results_to_candidate ?? false
@@ -99,7 +99,7 @@ const CaseForm = ({ existingCase, categories = [], onClose }: CaseFormProps) => 
         const { data: authData } = await supabase.auth.getUser();
         const { data, error } = await supabase
           .from("clinical_cases")
-          .insert({ ...casePayload, is_nboe: isNboe, created_by: authData.user?.id ?? null })
+          .insert({ ...casePayload, ...nboe, created_by: authData.user?.id ?? null })
           .select("id")
           .single();
         if (error) throw error;
@@ -149,10 +149,7 @@ const CaseForm = ({ existingCase, categories = [], onClose }: CaseFormProps) => 
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
         <span className="inline-flex items-center gap-2 text-sm font-medium"><Tag className="h-4 w-4 text-muted-foreground" /> Penanda soal</span>
         {existingCase ? <NboeCaseToggle caseId={existingCase.id} canEdit /> : (
-          <div className="flex items-center gap-2">
-            <Checkbox id="new-case-nboe" checked={isNboe} onCheckedChange={(checked) => setIsNboe(checked === true)} />
-            <Label htmlFor="new-case-nboe">Soal NBOE</Label>
-          </div>
+          <NboeMarker value={nboe} onChange={setNboe} />
         )}
       </div>
       <div className="space-y-2">

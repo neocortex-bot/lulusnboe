@@ -96,18 +96,26 @@ describe("case form private digital properties", () => {
     fireEvent.change(screen.getByLabelText("Judul Soal"), { target: { value: "Belum disimpan" } });
     await waitFor(() => expect(screen.getByRole("checkbox", { name: "Soal NBOE" })).toBeEnabled());
     fireEvent.click(screen.getByRole("checkbox", { name: "Soal NBOE" }));
-    await waitFor(() => expect(mock.writes).toEqual([{ table: "clinical_cases", payload: { is_nboe: true } }]));
+    fireEvent.click(screen.getByRole("button", { name: "Juni 2023" }));
+    fireEvent.click(screen.getByRole("button", { name: "Simpan periode" }));
+    await waitFor(() => expect(mock.writes).toEqual([{ table: "clinical_cases", payload: { is_nboe: true, nboe_period: "2023-06" } }]));
     expect(screen.getByLabelText("Judul Soal")).toHaveValue("Belum disimpan");
   });
   it.each([false, true])("creates a new case with NBOE=%s and digital properties", async checked => {
     mount(null);
     fireEvent.change(screen.getByLabelText("Judul Soal"), { target: { value: "Soal baru" } });
-    if (checked) fireEvent.click(screen.getByRole("checkbox", { name: "Soal NBOE" }));
+    if (checked) {
+      fireEvent.click(screen.getByRole("checkbox", { name: "Soal NBOE" }));
+      fireEvent.click(screen.getByRole("button", { name: "Juni 2023" }));
+      fireEvent.click(screen.getByRole("button", { name: "Simpan periode" }));
+      await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    }
     fireEvent.click(within(screen.getByRole("region", { name: "Properti Digital" })).getByRole("button", { name: /^Tambah$/ }));
     fireEvent.change(screen.getByPlaceholderText("Nama pemeriksaan, mis. Tekanan darah / EKG"), { target: { value: "EKG" } });
     fireEvent.click(screen.getByRole("button", { name: "Buat Soal" }));
     await waitFor(() => expect(mock.writes).toHaveLength(2));
     expect(mock.writes[0].payload.is_nboe).toBe(checked);
+    expect(mock.writes[0].payload.nboe_period).toBe(checked ? "2023-06" : null);
     expect(mock.writes[1].payload.checklist_rubric.digital_properties[0].label).toBe("EKG");
   });
   it("does not close as successful if private property saving fails", async () => {

@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+import NboeMarker, { type NboeValue } from "./NboeMarker";
 import { useToast } from "@/hooks/use-toast";
 
 export default function NboeCaseToggle({ caseId, canEdit }: { caseId: string; canEdit: boolean }) {
@@ -11,31 +10,30 @@ export default function NboeCaseToggle({ caseId, canEdit }: { caseId: string; ca
   const { data, isLoading, isError } = useQuery({
     queryKey: key,
     queryFn: async () => {
-      const { data, error } = await supabase.from("clinical_cases").select("is_nboe").eq("id", caseId).single();
+      const { data, error } = await supabase.from("clinical_cases").select("is_nboe, nboe_period").eq("id", caseId).single();
       if (error) throw error;
-      return data.is_nboe;
+      return data;
     },
   });
   const mutation = useMutation({
-    mutationFn: async (checked: boolean) => {
+    mutationFn: async (value: NboeValue) => {
       if (!canEdit) throw new Error("Anda tidak memiliki akses untuk mengubah soal ini.");
       const { data, error } = await supabase.from("clinical_cases")
-        .update({ is_nboe: checked }).eq("id", caseId).select("is_nboe").single();
+        .update(value).eq("id", caseId).select("is_nboe, nboe_period").single();
       if (error) throw error;
-      return data.is_nboe;
+      return data;
     },
-    onSuccess: (checked) => {
-      client.setQueryData(key, checked);
+    onSuccess: (value) => {
+      client.setQueryData(key, value);
       void client.invalidateQueries({ queryKey: ["clinical_cases"] });
-      toast({ title: checked ? "Soal ditandai sebagai Soal NBOE" : "Penanda Soal NBOE dihapus" });
+      toast({ title: value.is_nboe ? "Periode Soal NBOE disimpan" : "Penanda Soal NBOE dihapus" });
     },
     onError: (error: Error) => toast({ title: "Gagal menyimpan penanda", description: error.message, variant: "destructive" }),
   });
   return (
-    <div className="flex shrink-0 items-center gap-2">
-      <Checkbox id={`nboe-${caseId}`} checked={data === true} disabled={!canEdit || isLoading || isError || mutation.isPending}
-        onCheckedChange={(checked) => mutation.mutate(checked === true)} />
-      <Label htmlFor={`nboe-${caseId}`} className="text-sm">Soal NBOE</Label>
+    <div className="flex flex-wrap items-center gap-2">
+      <NboeMarker value={data ?? { is_nboe: false, nboe_period: null }} disabled={!canEdit || isLoading || isError || mutation.isPending}
+        onChange={async value => { await mutation.mutateAsync(value); }} />
       {isError && <span role="alert" className="text-xs text-destructive">Gagal memuat</span>}
     </div>
   );

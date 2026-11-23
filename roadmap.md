@@ -1,9 +1,10 @@
 # Roadmap
 
 ## Periode NBOE (23 Nov 2026)
-- [ ] Simpan periode NBOE tanpa mengubah rubrik atau menebak periode soal lama.
-- [ ] Modal pilihan periode, label periode, dan filter periode di pemilih deploy.
-- [ ] Tes aturan periode dan verifikasi tampilan/penyimpanan.
+- [x] Periode NBOE tersimpan terpisah; trigger memvalidasi 14 periode Juni 2023–September 2026 tanpa menebak periode soal lama atau mengubah izin/rubrik.
+- [x] Modal pilihan/ubah periode di detail dan formulir, label lime/black, filter periode di pemilih deploy termasuk periode belum diisi; pilihan ujian tetap dipertahankan.
+- [x] 21 tes lolos; browser data contoh 1110/390 px memverifikasi pilih/simpan/filter/tambah tanpa overflow/error; build OK, tidak ada peringatan keamanan baru (29 lama).
+- [ ] Simpan/baca ulang melalui akun admin asli belum terverifikasi: Supabase eksternal tidak menyediakan sesi pengujian.
 
 ## Media terunggah dan caption otomatis (22 Nov 2026)
 - [x] Media terunggah otomatis dianggap butuh media, termasuk data lama pada tabel soal; penanda tidak dapat dimatikan selama media masih ada.

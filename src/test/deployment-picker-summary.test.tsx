@@ -31,7 +31,7 @@ describe("deployment summary picker", () => {
     fireEvent.click(await screen.findByRole("button", { name: "Echo HOCM" }));
     await waitFor(() => expect(screen.getByRole("button", { name: "Deploy 1 Station Oral Board" })).toBeEnabled());
     expect(mock.reads.filter(r => r.table === "clinical_cases")).toEqual([
-      { table: "clinical_cases", columns: "id, title, exam_mode, category, is_nboe", filters: [["status", "published"], ["exam_mode", "oral_board"]] },
+      { table: "clinical_cases", columns: "id, title, exam_mode, category, is_nboe, nboe_period", filters: [["status", "published"], ["exam_mode", "oral_board"]] },
     ]);
     expect(mock.reads.some(r => r.table === "case_answer_keys")).toBe(false);
     expect(client.getQueryData(["clinical_cases", "deployment_picker", "oral_board"])).toEqual([{ id: "echo", title: "Echo HOCM", exam_mode: "oral_board", category: "echo" }]);
