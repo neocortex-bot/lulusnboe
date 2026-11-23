@@ -614,6 +614,10 @@ export type Database = {
       reset_window_open: { Args: { _station_token: string }; Returns: boolean }
       rubric_text_head: { Args: { _text: string }; Returns: string }
       start_exam_timer: { Args: { _session_id: string }; Returns: string }
+      start_preparation_practice: {
+        Args: { _case_id: string }
+        Returns: string
+      }
     }
     Enums: {
       app_role: "admin" | "candidate"
