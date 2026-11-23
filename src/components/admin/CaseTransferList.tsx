@@ -110,7 +110,7 @@ const CaseTransferList = ({
                 onClick={() => addCase(c)}
                 disabled={disabled || (requireFinalReview && finalReviewState(c.case_final_reviews) !== "passed")}
                 title={requireFinalReview ? finalReviewLabel(c.case_final_reviews) : undefined}
-                aria-label={c.title}
+                aria-label={requireFinalReview ? c.title : undefined}
                 className="h-auto min-h-10 w-full justify-start rounded-none whitespace-normal px-3 py-2 text-sm text-left border-b border-border last:border-0"
               >
                 <Plus className="h-3.5 w-3.5 text-muted-foreground shrink-0" />

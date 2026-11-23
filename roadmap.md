@@ -1,6 +1,7 @@
 # Roadmap
 
 ## Pemeriksaan akhir kebocoran soal (23 Nov 2026)
+- [ ] Periksa dan perbaiki kebocoran pada soal DUS carotis yang disebut pengguna, tanpa mengubah rubrik/kunci/Word by Word.
 - [ ] AI membandingkan vignette/pertanyaan dengan kunci, rubrik, Word by Word, dan properti; saran hanya mengubah teks peserta.
 - [ ] Rekomendasi akhir tersimpan; perubahan isi membatalkan kelulusan pemeriksaan; status emoji dan tombol di bawah pertanyaan.
 - [ ] Pengajuan/deployment ditolak server sebelum pemeriksaan terbaru lolos; ujian yang sudah berjalan tidak diganggu.
