@@ -4,25 +4,23 @@ import { describe, expect, it } from "vitest";
 
 const ingest = readFileSync(resolve(process.cwd(), "supabase/functions/ingest-case/index.ts"), "utf8");
 
-describe("ingest-case keeps rubrics flexible", () => {
-  it("accepts focused or detailed rubrics (min 3 items, no upper item gate)", () => {
-    expect(ingest).toMatch(/items\.length < 3/);
-    // The old 5-7 gate rejected both focused rubrics and atomic rubrics.
+describe("ingest-case quality review is non-blocking", () => {
+  it("does not contain minimum item-count or total-quality gates", () => {
+    expect(ingest).not.toMatch(/items\.length < 3/);
     expect(ingest).not.toMatch(/items\.length < 5/);
     expect(ingest).not.toMatch(/items\.length > 7/);
-    // The old >=15 gate is what forced the generator to duplicate lines.
     expect(ingest).not.toMatch(/items\.length < 15/);
     expect(ingest).not.toMatch(/items\.length >= 15/);
+    expect(ingest).toContain("review/publish dilakukan terpisah");
   });
 
-  it("rejects duplicated rubric lines", () => {
-    expect(ingest).toContain("butir duplikat");
-    expect(ingest).toMatch(/normalizedTexts\.indexOf\(t\) !== idx/);
+  it("does not reject duplicated rubric lines during ingest", () => {
+    expect(ingest).not.toMatch(/normalizedTexts\.indexOf\(t\) !== idx/);
+    expect(ingest).not.toContain("butir duplikat");
   });
 
-  it("documents the flexible rubric contract to callers", () => {
-    expect(ingest).toContain("minimal 3 butir");
-    expect(ingest).not.toContain("5-7 butir LUAS");
-    expect(ingest).not.toContain(">=15 items");
+  it("retains technical question-shape validation", () => {
+    expect(ingest).toContain("questions_text harus berisi pertanyaan bernomor");
+    expect(ingest).toContain("const RubricItem = z.object");
   });
 });
