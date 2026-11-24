@@ -111,6 +111,8 @@ const PreReview = () => {
         const akRaw = akMap.get(c.id)?.checklist_rubric;
         const raw = c.checklist_rubric;
         const ccItems = Array.isArray(raw?.items) ? raw.items : Array.isArray(raw) ? raw : [];
+        // Word-by-word disimpan di case_answer_keys; clinical_cases sengaja tanpa `answer`.
+        // Baca dari AK lebih dulu, fallback per butir ke clinical_cases untuk soal lama.
         const akItems = Array.isArray(akRaw?.items) ? akRaw.items : Array.isArray(akRaw) ? akRaw : [];
         const items = (akItems.length ? akItems : ccItems).map((it: any, idx: number) => ({
           ...(ccItems[idx] ?? {}),
