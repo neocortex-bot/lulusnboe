@@ -1,7 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { BookOpen } from "lucide-react";
 import AssetRenderer from "@/components/station/AssetRenderer";
+import { useExamClock } from "@/hooks/useExamClock";
+import { examSecondsLeft } from "@/lib/examClock";
+import { Button } from "@/components/ui/button";
 
 interface ReadingPhaseViewProps {
   sessionId: string;
@@ -10,7 +13,7 @@ interface ReadingPhaseViewProps {
     casePrompt: string;
     questionsText: string;
     timeLimitSeconds: number;
-  }) => void;
+  }) => Promise<boolean>;
 }
 
 const ReadingPhaseView = ({ sessionId, onReadingComplete }: ReadingPhaseViewProps) => {
@@ -23,18 +26,32 @@ const ReadingPhaseView = ({ sessionId, onReadingComplete }: ReadingPhaseViewProp
     case_id: string;
   } | null>(null);
   const [caseMedia, setCaseMedia] = useState<{ asset_url: string; asset_type: string }[]>([]);
-  const [remaining, setRemaining] = useState<number | null>(null);
-  const [startTime] = useState(Date.now());
+  const now = useExamClock();
+  const [timing, setTiming] = useState<{ reading_started_at: string | null; session_start_time: string | null } | null>(null);
+  const starting = useRef(false);
+  const [startFailed, setStartFailed] = useState(false);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [loadAttempt, setLoadAttempt] = useState(0);
+  const remaining = timing?.reading_started_at && caseData
+    ? examSecondsLeft(timing.reading_started_at, caseData.reading_time_seconds ?? 120, now)
+    : null;
 
   // Fetch case data + case_media assets
   useEffect(() => {
+    let disposed = false;
     const fetchData = async () => {
+      setLoadFailed(false);
+      const { error: timingError } = await supabase.rpc("start_exam_reading_timer", { _session_id: sessionId });
+      if (disposed) return;
+      if (timingError) { setLoadFailed(true); return; }
       const { data: session } = await supabase
         .from("exam_sessions")
-        .select("case_id")
+        .select("case_id, reading_started_at, session_start_time")
         .eq("id", sessionId)
         .single();
-      if (!session) return;
+      if (disposed) return;
+      if (!session) { setLoadFailed(true); return; }
+      setTiming(session);
 
       const [caseResult, mediaResult] = await Promise.all([
         supabase
@@ -48,45 +65,40 @@ const ReadingPhaseView = ({ sessionId, onReadingComplete }: ReadingPhaseViewProp
           .eq("case_id", session.case_id),
       ]);
 
+      if (disposed) return;
       if (caseResult.data) {
         setCaseData({ ...(caseResult.data as any), case_id: session.case_id });
-        setRemaining((caseResult.data as any).reading_time_seconds || 120);
-      }
+      } else { setLoadFailed(true); }
 
       const media = (mediaResult.data || []).filter((a: any) => a.category === "case_media");
       setCaseMedia(media);
     };
-    fetchData();
-  }, [sessionId]);
+    void fetchData().catch(() => { if (!disposed) setLoadFailed(true); });
+    return () => { disposed = true; };
+  }, [sessionId, loadAttempt]);
 
-  // Countdown
+  const completeReading = async () => {
+    if (!caseData || starting.current) return;
+    starting.current = true;
+    setStartFailed(false);
+    try {
+      const ok = await onReadingComplete({
+        caseTitle: caseData.title, casePrompt: caseData.initial_prompt,
+        questionsText: caseData.questions_text, timeLimitSeconds: caseData.time_limit_seconds,
+      });
+      if (!ok) { starting.current = false; setStartFailed(true); }
+    } catch { starting.current = false; setStartFailed(true); }
+  };
+
+  // Resume the persisted answering phase; never restart reading on reload.
   useEffect(() => {
-    if (!caseData) return;
-    const readingSeconds = caseData.reading_time_seconds || 120;
-    const endTime = startTime + readingSeconds * 1000;
-
-    const tick = () => {
-      const left = Math.max(0, Math.floor((endTime - Date.now()) / 1000));
-      setRemaining(left);
-      if (left <= 0) {
-        onReadingComplete({
-          caseTitle: caseData.title,
-          casePrompt: caseData.initial_prompt,
-          questionsText: caseData.questions_text,
-          timeLimitSeconds: caseData.time_limit_seconds,
-        });
-      }
-    };
-
-    tick();
-    const interval = setInterval(tick, 1000);
-    return () => clearInterval(interval);
-  }, [caseData, startTime, onReadingComplete]);
+    if (!startFailed && (timing?.session_start_time || remaining === 0)) void completeReading();
+  }, [caseData, timing, remaining, startFailed, onReadingComplete]);
 
   if (!caseData) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
-        <div className="animate-spin h-12 w-12 border-4 border-primary border-t-transparent rounded-full" />
+        {loadFailed ? <div role="alert" className="space-y-3 text-center"><p>Gagal memuat soal dan waktu ujian.</p><Button onClick={() => setLoadAttempt(value => value + 1)}>Coba lagi</Button></div> : <div className="animate-spin h-12 w-12 border-4 border-primary border-t-transparent rounded-full" />}
       </div>
     );
   }
@@ -102,7 +114,7 @@ const ReadingPhaseView = ({ sessionId, onReadingComplete }: ReadingPhaseViewProp
           <span className="font-semibold text-foreground">Waktu Membaca</span>
         </div>
         <div className={`font-mono text-2xl font-bold tabular-nums ${remaining !== null && remaining <= 10 ? "text-destructive animate-pulse" : "text-foreground"}`}>
-          {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
+          {remaining === null ? "--:--" : `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`}
         </div>
       </div>
 
@@ -131,6 +143,7 @@ const ReadingPhaseView = ({ sessionId, onReadingComplete }: ReadingPhaseViewProp
       </div>
 
       <div className="p-4 border-t border-border bg-muted/50">
+        {startFailed && <Button onClick={() => void completeReading()}>Coba mulai menjawab lagi</Button>}
         <p className="text-sm text-muted-foreground text-center">
           Baca kasus di atas dengan seksama. Ujian akan dimulai otomatis setelah waktu baca habis.
         </p>

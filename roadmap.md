@@ -1,5 +1,9 @@
 # Roadmap
 
+## Sinkronisasi waktu ujian (24 Nov 2026)
+- [ ] Satukan jam server dan awal membaca/menjawab untuk peserta, penguji, dan monitor; hilangkan penulisan ulang waktu dari perangkat.
+- [ ] Uji selisih jam ±2 menit, pemuatan ulang, dan transisi membaca/menjawab; verifikasi sesi nyata bila tersedia.
+
 ## Konfirmasi dan persetujuan manual (23 Nov 2026)
 - [x] Modal menawarkan analisis AI per soal atau “Tandai sudah sesuai”; tanpa AI otomatis/batch, termasuk setelah menerima perbaikan.
 - [x] Persetujuan manual admin tersimpan, membuka pengajuan/deployment, dan batal bila isi berubah; 16 tes terarah dan transaksi Supabase lolos, fixture dibatalkan tanpa panggilan AI. Akun admin asli di browser tetap tidak tersedia.

@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { useExamClock } from "@/hooks/useExamClock";
+import { examSecondsLeft } from "@/lib/examClock";
 
 interface CountdownTimerProps {
   sessionStartTime: string;
@@ -13,7 +15,9 @@ const CountdownTimer = ({
   onComplete,
   className = "",
 }: CountdownTimerProps) => {
-  const [remaining, setRemaining] = useState(timeLimitSeconds);
+  const now = useExamClock();
+  const remaining = examSecondsLeft(sessionStartTime, timeLimitSeconds, now);
+  const firedFor = useRef<string | null>(null);
   const onCompleteRef = useRef(onComplete);
 
   useEffect(() => {
@@ -21,28 +25,17 @@ const CountdownTimer = ({
   }, [onComplete]);
 
   useEffect(() => {
-    const endTime = new Date(sessionStartTime).getTime() + timeLimitSeconds * 1000;
-    let fired = false;
+    const key = `${sessionStartTime}:${timeLimitSeconds}`;
+    if (remaining === 0 && firedFor.current !== key) {
+      firedFor.current = key;
+      onCompleteRef.current();
+    }
+  }, [remaining, sessionStartTime, timeLimitSeconds]);
 
-    const tick = () => {
-      const now = Date.now();
-      const left = Math.max(0, Math.floor((endTime - now) / 1000));
-      setRemaining(left);
-      if (left <= 0 && !fired) {
-        fired = true;
-        onCompleteRef.current();
-      }
-    };
+  const minutes = Math.floor((remaining ?? 0) / 60);
+  const seconds = (remaining ?? 0) % 60;
 
-    tick();
-    const interval = setInterval(tick, 1000);
-    return () => clearInterval(interval);
-  }, [sessionStartTime, timeLimitSeconds]);
-
-  const minutes = Math.floor(remaining / 60);
-  const seconds = remaining % 60;
-
-  const isUrgent = remaining <= 30;
+  const isUrgent = remaining !== null && remaining <= 30;
 
   return (
     <div
@@ -51,7 +44,7 @@ const CountdownTimer = ({
       } ${className}`}
     >
       <span className="text-4xl sm:text-7xl font-bold tabular-nums">
-        {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
+        {remaining === null ? "--:--" : `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`}
       </span>
     </div>
   );

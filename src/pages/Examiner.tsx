@@ -9,6 +9,7 @@ import { ArrowLeft, Monitor, MonitorOff, AlertTriangle, CaptionsOff, Image, Vide
 import { parseDigitalProperties, PROPERTY_SHOW_EVENT, PROPERTY_ACK_EVENT, PROPERTY_SYNC_EVENT, isMediaPending, isCaptionVisible, withExaminerCaptionOverride, type DigitalProperty } from "@/lib/digitalProperties";
 import { pickActiveExaminerSessions, resolveSelectedSession, examinerPhase, type ExaminerSessionRow } from "@/lib/examinerSessions";
 import { createRealtimeFallback } from "@/lib/examPerformance";
+import { useExamClock } from "@/hooks/useExamClock";
 
 type Prop = string | { name?: string; label?: string; key?: string; value?: string };
 
@@ -18,16 +19,10 @@ const splitProp = (p: Prop) => {
   return i > 0 ? { name: p.slice(0, i).trim(), value: p.slice(i + 1).trim() } : { name: "", value: p };
 };
 
-function useNow() {
-  const [now, setNow] = useState(Date.now());
-  useEffect(() => { const t = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(t); }, []);
-  return now;
-}
-
 const Examiner = () => {
   const { user } = useAuth();
   const qc = useQueryClient();
-  const now = useNow();
+  const now = useExamClock();
   const [selected, setSelected] = useState<string | null>(null);
   const [shown, setShown] = useState<number | null>(null);
   const [choosing, setChoosing] = useState(false);
@@ -47,7 +42,7 @@ const Examiner = () => {
     queryFn: async () => {
       if (!user) return [];
       const q = supabase.from("exam_sessions")
-        .select("id, status, session_start_time, created_at, case_id, current_candidate_id, examiner_id, station_token")
+        .select("id, status, session_start_time, reading_started_at, created_at, case_id, current_candidate_id, examiner_id, station_token")
         .eq("status", "active")
         .eq("examiner_id", user.id)
         .not("current_candidate_id", "is", null);
@@ -110,7 +105,7 @@ const Examiner = () => {
     };
   }, [user, qc, refetch]);
 
-  const active = useMemo(() => user ? pickActiveExaminerSessions(rows, now, user.id) : [], [rows, now, user?.id]);
+  const active = useMemo(() => user ? pickActiveExaminerSessions(rows, now ?? Number.NEGATIVE_INFINITY, user.id) : [], [rows, now, user?.id]);
   const currentId = resolveSelectedSession(active, selected, previousRef.current, choosing);
   const current = active.find((s) => s.id === currentId);
   useEffect(() => {
@@ -214,6 +209,10 @@ const Examiner = () => {
   };
 
   const phase = (s: (typeof active)[number]) => {
+    if (now === null) return { label: "Sinkronisasi waktu", left: null };
+    if (!s.session_start_time && s.reading_started_at) {
+      return { label: "Membaca", left: Math.max(0, Date.parse(s.reading_started_at) + (s.case?.reading_time_seconds ?? 120) * 1000 - now) };
+    }
     return examinerPhase(s.session_start_time, s.case?.time_limit_seconds ?? 0, now);
   };
   const fmt = (ms: number | null) => { if (ms === null) return ""; const t = Math.ceil(ms / 1000); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`; };

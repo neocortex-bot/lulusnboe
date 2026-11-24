@@ -18,6 +18,8 @@ import AssetRenderer from "@/components/station/AssetRenderer";
 import { DigitalProperty, parseDigitalProperties, PROPERTY_SHOW_EVENT, PROPERTY_ACK_EVENT, PROPERTY_SYNC_EVENT } from "@/lib/digitalProperties";
 import PropertyDisplay from "@/components/station/PropertyDisplay";
 import CountdownTimer from "@/components/station/CountdownTimer";
+import { useExamClock } from "@/hooks/useExamClock";
+import { examSecondsLeft } from "@/lib/examClock";
 import StationReadyNextCandidate from "@/components/station/StationReadyNextCandidate";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -41,6 +43,7 @@ interface SessionData {
   case_id: string;
   status: string;
   session_start_time: string | null;
+  reading_started_at?: string | null;
   show_examiner_panel?: boolean | null;
   expires_at?: string | null;
 }
@@ -86,6 +89,18 @@ const StationDisplay = () => {
   const stationSubscriptionCleanupRef = useRef<(() => void) | null>(null);
   const displayedSessionRef = useRef<string | null>(null);
   const [currentToken, setCurrentToken] = useState(token);
+  // Token-authorized timing read also works on the unsigned station monitor.
+  useEffect(() => {
+    if (!session?.id || session.status !== "active") return;
+    let disposed = false;
+    const id = session.id;
+    void supabase.rpc("get_exam_timing", { _session_id: id, _token: currentToken })
+      .then(({ data }) => {
+        const timing = firstRpcRow(data);
+        if (!disposed && timing) setSession(prev => prev?.id === id ? { ...prev, ...timing } : prev);
+      });
+    return () => { disposed = true; };
+  }, [session?.id, session?.status, currentToken]);
   const regeneratingRef = useRef(false);
   const pendingAdvanceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const completedHandledRef = useRef<string | null>(null);
@@ -349,6 +364,7 @@ const StationDisplay = () => {
         ...prev,
         status: updated.status,
         session_start_time: updated.session_start_time,
+        reading_started_at: (updated as SessionData).reading_started_at ?? prev.reading_started_at,
         show_examiner_panel: updated.show_examiner_panel ?? prev.show_examiner_panel,
         expires_at: updated.expires_at ?? prev.expires_at,
       } : prev);
@@ -372,9 +388,13 @@ const StationDisplay = () => {
     };
     let disposed = false;
     const refreshSession = async () => {
-      const { data } = await supabase.rpc("get_session_by_token", { _token: currentToken });
+      const [{ data }, timingResult] = await Promise.all([
+        supabase.rpc("get_session_by_token", { _token: currentToken }),
+        supabase.rpc("get_exam_timing", { _session_id: displayedSessionId, _token: currentToken }),
+      ]);
       const row = firstRpcRow(data);
-      if (!disposed && row?.id === displayedSessionId) updateFromRow(row);
+      const timing = firstRpcRow(timingResult.data);
+      if (!disposed && row?.id === displayedSessionId) updateFromRow({ ...row, ...timing });
     };
 
     const fallback = createRealtimeFallback(refreshSession);
@@ -826,7 +846,7 @@ const StationDisplay = () => {
               </Badge>
             )}
             <span className="text-xl font-semibold text-muted-foreground">Waktu Membaca</span>
-            <ReadingCountdown key={session.id} seconds={caseData.reading_time_seconds || 120} />
+            <ReadingCountdown key={session.id} startTime={session.reading_started_at} seconds={caseData.reading_time_seconds ?? 120} />
           </div>
         </div>
       )}
@@ -928,18 +948,12 @@ const StationDisplay = () => {
   );
 };
 
-const ReadingCountdown = ({ seconds }: { seconds: number }) => {
-  const [start] = useState(() => Date.now());
-  const [left, setLeft] = useState(seconds);
-  useEffect(() => {
-    const tick = () => setLeft(Math.max(0, seconds - Math.floor((Date.now() - start) / 1000)));
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
-  }, [seconds, start]);
+const ReadingCountdown = ({ seconds, startTime }: { seconds: number; startTime?: string | null }) => {
+  const now = useExamClock();
+  const left = startTime ? examSecondsLeft(startTime, seconds, now) : null;
   return (
-    <span className={`font-mono text-5xl sm:text-7xl font-bold tabular-nums ${left <= 10 ? "text-destructive animate-pulse" : "text-foreground"}`}>
-      {String(Math.floor(left / 60)).padStart(2, "0")}:{String(left % 60).padStart(2, "0")}
+    <span className={`font-mono text-5xl sm:text-7xl font-bold tabular-nums ${left !== null && left <= 10 ? "text-destructive animate-pulse" : "text-foreground"}`}>
+      {left === null ? "--:--" : `${String(Math.floor(left / 60)).padStart(2, "0")}:${String(left % 60).padStart(2, "0")}`}
     </span>
   );
 };

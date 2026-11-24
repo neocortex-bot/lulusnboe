@@ -148,7 +148,7 @@ const ExamMobile = () => {
 
   const handleReadingComplete = useCallback(
     async (info: { caseTitle: string; casePrompt: string; questionsText: string; timeLimitSeconds: number }) => {
-      let now = new Date().toISOString();
+      if (!activeSessionId) return false;
       const rawTimeLimit = Number(info.timeLimitSeconds);
       const timeLimitSeconds = Number.isFinite(rawTimeLimit)
         ? Math.max(1, Math.floor(rawTimeLimit))
@@ -161,27 +161,13 @@ const ExamMobile = () => {
         });
       }
 
-      // Fix #2: Use server-side timer start to prevent clock manipulation
-      if (activeSessionId) {
-        const { data, error } = await supabase.rpc('start_exam_timer', {
-          _session_id: activeSessionId,
-        });
-        if (error) {
-          console.error("Failed to start exam timer:", error);
-        } else if (data) {
-          const serverStart = new Date(data as string).getTime();
-          const elapsed = (Date.now() - serverStart) / 1000;
-          // Guard against a stale start time (e.g. sequential stations) that would
-          // make the timer expire instantly.
-          if (Number.isFinite(serverStart) && elapsed >= 0 && elapsed < timeLimitSeconds) {
-            now = data as string;
-          } else {
-            await supabase
-              .from("exam_sessions")
-              .update({ session_start_time: now })
-              .eq("id", activeSessionId);
-          }
-        }
+      // Never reset a persisted start based on the device's wall clock.
+      const { data: serverStart, error } = await supabase.rpc('start_exam_timer', {
+        _session_id: activeSessionId,
+      });
+      if (error || !serverStart || !Number.isFinite(Date.parse(serverStart))) {
+        toast.error("Waktu ujian belum tersinkron. Periksa koneksi dan coba lagi.");
+        return false;
       }
 
       // Check audio stream health
@@ -195,7 +181,7 @@ const ExamMobile = () => {
           } catch (err) {
             console.error("Failed to re-acquire audio:", err);
             toast.error("Mikrofon tidak tersedia. Silakan izinkan akses mikrofon.");
-            return;
+            return false;
           }
         }
       }
@@ -206,11 +192,12 @@ const ExamMobile = () => {
         questionsText: info.questionsText,
       });
       setSessionData({
-        session_start_time: now,
+        session_start_time: serverStart,
         time_limit_seconds: timeLimitSeconds,
       });
       setStep("active");
       window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
+      return true;
     },
     [activeSessionId, audioStream]
   );

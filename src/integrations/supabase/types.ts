@@ -444,6 +444,7 @@ export type Database = {
           current_candidate_id: string | null
           examiner_id: string | null
           id: string
+          reading_started_at: string | null
           session_start_time: string | null
           show_examiner_panel: boolean
           show_results_to_candidate_override: boolean
@@ -456,6 +457,7 @@ export type Database = {
           current_candidate_id?: string | null
           examiner_id?: string | null
           id?: string
+          reading_started_at?: string | null
           session_start_time?: string | null
           show_examiner_panel?: boolean
           show_results_to_candidate_override?: boolean
@@ -468,6 +470,7 @@ export type Database = {
           current_candidate_id?: string | null
           examiner_id?: string | null
           id?: string
+          reading_started_at?: string | null
           session_start_time?: string | null
           show_examiner_panel?: boolean
           show_results_to_candidate_override?: boolean
@@ -640,6 +643,14 @@ export type Database = {
           title: string
         }[]
       }
+      get_exam_server_time: { Args: never; Returns: string }
+      get_exam_timing: {
+        Args: { _session_id: string; _token?: string }
+        Returns: {
+          reading_started_at: string
+          session_start_time: string
+        }[]
+      }
       get_final_case_input: { Args: { _case_id: string }; Returns: Json }
       get_session_by_token: {
         Args: { _token: string }
@@ -730,6 +741,10 @@ export type Database = {
       reset_window_open: { Args: { _station_token: string }; Returns: boolean }
       rubric_text_head: { Args: { _text: string }; Returns: string }
       rubric_text_projection: { Args: { _rubric: Json }; Returns: Json }
+      start_exam_reading_timer: {
+        Args: { _session_id: string }
+        Returns: string
+      }
       start_exam_timer: { Args: { _session_id: string }; Returns: string }
       start_preparation_practice: {
         Args: { _case_id: string }
