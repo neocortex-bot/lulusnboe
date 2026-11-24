@@ -452,22 +452,6 @@ const CasePreview = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Quality gates */}
-              <div className="space-y-2 text-sm">
-                {gates.map((g) => (
-                  <div key={g.label} className="flex items-start gap-2">
-                    {g.pass ? (
-                      <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
-                    ) : (
-                      <X className="h-4 w-4 text-red-500 mt-0.5 shrink-0" />
-                    )}
-                    <span className={g.pass ? "text-foreground" : "text-red-700 dark:text-red-300"}>
-                      {g.label}: <span className="font-mono text-xs">{g.value}</span>
-                    </span>
-                  </div>
-                ))}
-              </div>
-
               <Separator />
 
               <div className="flex flex-wrap gap-3 pt-1">
