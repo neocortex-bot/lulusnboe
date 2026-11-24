@@ -25,7 +25,7 @@ const MediaNote = z.object({
 const BodySchema = z.object({
   title: z.string().min(10).max(200),
   exam_mode: z.enum(["oral_board", "osce", "panel_exam"]).default("oral_board"),
-  // "prereview" (default) = masuk /prereview untuk diedit admin; "draft" = alur lama (gerbang ketat)
+  // "prereview" (default) = masuk /prereview untuk diedit admin; "draft" = status lama
   status: z.enum(["prereview", "draft"]).default("prereview"),
   reading_time_minutes: z.number().min(0.25).max(15).optional(),
   time_limit_minutes: z.number().min(0.5).max(30).optional(),
@@ -56,19 +56,18 @@ const SCHEMA_DOC = {
     reading_time_minutes: "number 0.25-15 (or reading_time_seconds 5-900)",
     time_limit_minutes: "number 0.5-30 (or time_limit_seconds 30-1800)",
     show_results_to_candidate: "boolean, default false",
-    initial_prompt: "string >=400 chars; must contain >=3 of RIWAYAT/PEMERIKSAAN/TUGAS/EKG/LAB",
-    questions_text: "string >=300 chars; >=5 numbered tasks; must NOT reveal rubric items",
-    answer_key_text: "string >=800 chars; expected candidate verbalisation, numbers, thresholds",
-    checklist_rubric: "{ items: [{ id? UUID, text, answer? string maks 4000 char (Word by Word admin-only), points 1-2 (skala 0-1-2), isCritical }] } — OPSIONAL dan FLEKSIBEL. Bila dikirim: minimal 3 butir (maks 100), >=1 critical, total points >=6 → rubric_mode='checklist'. Boleh rubrik fokus 3-4 butir maupun rubrik rinci puluhan butir atomik. Bila dikosongkan/tidak dikirim → rubric_mode='none' (tanpa daftar tilik, penilaian berbasis answer key)",
+    initial_prompt: "string >=50 chars; exam content is reviewed separately",
+    questions_text: "string >=20 chars; must contain at least one numbered question",
+    answer_key_text: "string >=100 chars; expected candidate verbalisation, numbers, thresholds",
+    checklist_rubric: "{ items: [{ id? UUID, text, answer? string maks 4000 char (Word by Word admin-only), points 1-2 (skala 0-1-2), isCritical }] } — OPSIONAL dan diteruskan bila struktur valid. Tidak ada ambang mutu saat ingest; review/publish dilakukan terpisah.",
     media_notes: "[{ description, category: case_media|examination|additional_info, trigger_keywords: [] }] — informational only, media uploaded manually",
     word_by_word: "Disimpan hanya di case_answer_keys.checklist_rubric.items[].answer; boleh kosong tanpa menghambat evaluasi. Fetch/edit melalui case-admin; cek AI read-only POST rubric-alignment {case_id} dengan X-Agent-Api-Key; saran diterima melalui PATCH case-admin rubric_ops. Tidak memengaruhi penilaian ujian.",
     created_by_email: "optional admin email to own the case",
   },
   quality_gates: [
-    "initial_prompt >= 400 chars and >=3 section markers",
-    "questions_text >= 300 chars and >=5 numbered tasks",
-    "answer_key_text >= 800 chars",
-    "checklist_rubric OPTIONAL & fleksibel: bila dikirim minimal 3 butir (maks 100, fokus maupun atomik sama-sama boleh), >=1 isCritical:true, total points >=6; bila kosong/tidak dikirim -> rubric_mode=none (tanpa daftar tilik)",
+    "Technical schema validation only; quality review is non-blocking and handled separately",
+    "questions_text must contain at least one numbered question",
+    "checklist_rubric is optional and passed through when structurally valid; no minimum quality threshold at ingest",
     "title must be unique (409 otherwise)",
     "inserted as status=draft (menunggu review admin); source=agent_api",
   ],
@@ -113,24 +112,8 @@ Deno.serve(async (req) => {
   const limitSeconds = data.time_limit_seconds ??
     (data.time_limit_minutes ? Math.round(data.time_limit_minutes * 60) : 600);
 
-  // Quality gates — gerbang ketat hanya untuk status "draft" (alur lama).
-  // Status "prereview" memakai standar soal ringkas + daftar tilik atomik (0–2 poin),
-  // karena admin akan mereview & mengedit di /prereview sebelum publish.
-  const strict = data.status === "draft";
-  const promptUpper = data.initial_prompt.toUpperCase();
-  const markers = ["RIWAYAT", "PEMERIKSAAN", "TUGAS", "EKG", "LAB"];
-  const hits = markers.filter((m) => promptUpper.includes(m)).length;
-  if (strict && hits < 3) {
-    return json(400, {
-      error: "initial_prompt must include at least 3 of: RIWAYAT, PEMERIKSAAN, TUGAS, EKG, Lab",
-    });
-  }
-
   const numberedTasks = (data.questions_text.match(/(^|\n)\s*\d+\./g) || []).length;
-  if (strict && numberedTasks < 5) {
-    return json(400, { error: "questions_text must contain at least 5 numbered tasks (1., 2., ...)" });
-  }
-  if (!strict && numberedTasks < 1) {
+  if (numberedTasks < 1) {
     return json(400, { error: "questions_text harus berisi pertanyaan bernomor (1., 2., ...)" });
   }
 
@@ -139,33 +122,8 @@ Deno.serve(async (req) => {
   const criticalCount = items.filter((i) => i.isCritical).length;
   const totalPoints = items.reduce((s, i) => s + i.points, 0);
 
-  // Reject a rubric that repeats the same line. Padding to reach a minimum item
-  // count by duplicating points penalises the same answer twice and distorts the
-  // score, so the duplicate is treated as a generation error.
-  const normalizedTexts = items.map((i) => (i.text ?? "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim());
-  const duplicates = normalizedTexts.filter((t, idx) => t && normalizedTexts.indexOf(t) !== idx);
-  if (duplicates.length > 0) {
-    return json(400, {
-      error: `Rubrik mengandung ${duplicates.length} butir duplikat (contoh: "${duplicates[0].slice(0, 60)}"). Setiap butir harus unik.`,
-    });
-  }
-
-  // Rubrik FLEKSIBEL: boleh rubrik fokus (3-4 butir) maupun rubrik rinci
-  // (puluhan butir atomik 0-2 poin). Yang dijaga hanya kualitas minimum:
-  // minimal 3 butir, minimal 1 butir kritis, total poin >= 6, tanpa duplikat.
-  if (strict && items.length > 0) {
-    if (items.length < 3) {
-      return json(400, {
-        error: `Rubrik minimal 3 butir (got ${items.length}). Tambahkan butir penilaian; atau kosongkan untuk penilaian tanpa daftar tilik (rubric_mode=none).`,
-      });
-    }
-    if (criticalCount < 1) {
-      return json(400, { error: "Minimal 1 butir rubrik harus isCritical:true" });
-    }
-    if (totalPoints < 6) {
-      return json(400, { error: `Total poin rubrik harus >= 6 (got ${totalPoints})` });
-    }
-  }
+  // Ingest tidak memblokir mutu rubrik. Rubrik boleh fokus, rinci, kosong,
+  // atau masih memerlukan perbaikan; review/publish dilakukan terpisah.
 
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,
