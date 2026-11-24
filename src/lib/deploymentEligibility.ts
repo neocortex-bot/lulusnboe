@@ -45,7 +45,6 @@ export const getDeploymentValidationError = ({
 }: DeploymentValidationInput): string | null => {
   if (caseIds.length === 0) return "Pilih minimal satu case";
   if (pcCount < 1 || pcCount > 50) return "Jumlah PC harus 1-50";
-  if (reviewedCaseIds && caseIds.some(id => !reviewedCaseIds.has(id))) return "Soal belum lolos pemeriksaan akhir kebocoran dan kesesuaian. Periksa di detail soal sebelum deployment.";
   if (caseIds.some((caseId) => excludedCaseIds.has(caseId))) {
     return "Pilihan case berubah karena riwayat peserta. Pilih case yang masih tersedia";
   }

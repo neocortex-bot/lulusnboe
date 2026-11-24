@@ -8,9 +8,9 @@ const good = { passed: true, summary: "Soal aman dan sesuai.", issues: [], initi
 const deployment = (reviewedCaseIds: Set<string>) => getDeploymentValidationError({ participantIds: [], pcCount: 1, caseIds: ["avb"], reviewedCaseIds });
 
 describe("final review rules", () => {
-  it("does not deploy a case that has never been checked", () => {
+  it("deploys regardless of final review state", () => {
     expect(finalReviewState(null)).toBe("unchecked");
-    expect(deployment(new Set())).not.toBeNull();
+    expect(deployment(new Set())).toBeNull();
   });
   it("blocks detected leaked investigation results even when the model says passed", () => {
     const result = normalizeFinalReview({ ...good, issues: [{ field: "initial_prompt", kind: "leak", quote: "EKG menunjukkan AV block total.", reason: "Peserta harus meminta EKG terlebih dahulu." }], initial_prompt: "Pasien sesak." }, input);

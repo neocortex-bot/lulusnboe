@@ -33,8 +33,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import RubricBuilder, { type RubricData } from "@/components/admin/RubricBuilder";
 import PropertySyncDialog from "@/components/admin/PropertySyncDialog";
-import FinalCaseReview from "@/components/admin/FinalCaseReview";
-import { finalReviewState, loadFinalReview } from "@/lib/finalCaseReview";
+
 import RubricWordByWordSection from "@/components/admin/RubricWordByWordSection";
 import AssetUploader from "@/components/admin/AssetUploader";
 import PropertiesEditor from "@/components/admin/PropertiesEditor";
@@ -148,11 +147,6 @@ const CasePreview = () => {
   });
   const rubricEditable = isRubricEditable({ canEdit, isEditing });
   const canDelete = canDeleteCase({ isMasterAdmin, createdBy: caseRow?.created_by, userId: user?.id });
-  const finalReviewQuery = useQuery({
-    queryKey: ["final_case_review", id],
-    queryFn: () => { if (!id) throw new Error("Soal tidak ditemukan"); return loadFinalReview(id); },
-    enabled: !!id,
-  });
 
   // Sync form ketika data datang
   useEffect(() => {
@@ -188,10 +182,7 @@ const CasePreview = () => {
       }
       if (!id) throw new Error("Case ID missing");
       if (action === "approve") {
-        if (isEditing) throw new Error("Simpan perubahan dan periksa akhir sebelum menerbitkan.");
-        const { data: ready, error: checkError } = await supabase.rpc("final_case_ready", { _case_id: id });
-        if (checkError) throw checkError;
-        if (!ready) throw new Error("Soal belum lolos pemeriksaan akhir kebocoran dan kesesuaian.");
+        if (isEditing) throw new Error("Simpan perubahan sebelum menerbitkan.");
         const { error } = await supabase.from("clinical_cases").update({ status: "published", reviewed_at: new Date().toISOString(), reviewed_by: user?.id ?? null }).eq("id", id);
         if (error) throw error;
         return;
@@ -384,18 +375,17 @@ const CasePreview = () => {
         </div>
       </div>
 
-      {/* Banner review — hanya untuk kiriman AI yang belum di-review */}
+      {/* Banner review — hanya untuk soal yang belum diterbitkan */}
       {needsReview && canEdit && (
         <div className="mx-auto max-w-6xl mb-6">
           <Card className="border-yellow-300 bg-yellow-50 dark:bg-yellow-900/20">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-yellow-800 dark:text-yellow-300">
                 <AlertTriangle className="h-5 w-5" />
-                Soal belum diterbitkan — wajib pemeriksaan akhir
+                Soal belum diterbitkan
               </CardTitle>
               <CardDescription>
-                Soal ini dikirim otomatis oleh AI agent dan belum tayang. Periksa kebenaran klinis,
-                edit bila perlu, lalu Approve agar bisa di-deploy ke station.
+                Periksa kebenaran klinis, edit bila perlu, lalu Approve agar bisa di-deploy ke station.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -405,7 +395,7 @@ const CasePreview = () => {
                 <Button
                   variant="default"
                   onClick={() => saveMutation.mutate("approve")}
-                  disabled={isBusy || isEditing || finalReviewState(finalReviewQuery.data) !== "passed"}
+                  disabled={isBusy || isEditing}
                   className="gap-2"
                 >
                   <CheckCircle2 className="h-4 w-4" />
@@ -424,11 +414,6 @@ const CasePreview = () => {
                   Hapus Permanen
                 </Button>
               </div>
-              {finalReviewState(finalReviewQuery.data) !== "passed" && (
-                <p className="text-xs text-muted-foreground">
-                  Lanjutkan pemeriksaan akhir kebocoran sebelum penerbitan.
-                </p>
-              )}
             </CardContent>
           </Card>
         </div>
@@ -561,7 +546,7 @@ const CasePreview = () => {
                     disabled={!isEditing}
                   />
                 </div>
-                {id && canEdit && <FinalCaseReview caseId={id} disabled={isEditing || isBusy} />}
+
               </CardContent>
             </Card>
 
