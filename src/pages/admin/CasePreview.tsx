@@ -180,59 +180,6 @@ const CasePreview = () => {
     [rubricData]
   );
 
-  // ---- Validation ringan (gates yang sama dengan endpoint) ----
-  const gates = useMemo(() => {
-    const numberedTasks = (questionsText.match(/(^|\n)\s*\d+\./g) || []).length;
-    const criticalCount = rubricData.items.filter((i) => i.isCritical).length;
-    const totalPoints = rubricData.items.reduce((s, i) => s + i.points, 0);
-    return [
-      {
-        // Panel murni tanya-jawab tidak punya vignette — kosong itu sah.
-        label: examMode === "panel_exam" || examMode === "preparation"
-          ? `Vignette (initial_prompt) opsional untuk panel — ≥ 20 karakter bila diisi`
-          : `Vignette (initial_prompt) ≥ 400 karakter`,
-        pass: examMode === "panel_exam" || examMode === "preparation"
-          ? initialPrompt.trim().length === 0 || initialPrompt.trim().length >= 20
-          : initialPrompt.trim().length >= 400,
-        value: `${initialPrompt.trim().length}`,
-      },
-      {
-        // Panel memakai satu pertanyaan inti; nomor ≥5 hanya wajib untuk mode kasus.
-        label: examMode === "panel_exam" || examMode === "preparation"
-          ? `Soal (questions_text) ≥ 20 karakter`
-          : `Tugas (questions_text) ≥ 300 karakter & ≥ 5 nomor`,
-        pass: examMode === "panel_exam" || examMode === "preparation"
-          ? questionsText.trim().length >= 20
-          : questionsText.trim().length >= 300 && numberedTasks >= 5,
-        value: examMode === "panel_exam" || examMode === "preparation"
-          ? `${questionsText.trim().length} chr`
-          : `${questionsText.trim().length} chr / ${numberedTasks} tugas`,
-      },
-      {
-        label: `Kunci jawaban (answer_key_text) ≥ 800 karakter`,
-        pass: answerKeyText.trim().length >= 800,
-        value: `${answerKeyText.trim().length}`,
-      },
-      {
-        label: `Rubrik aktif: 3–100 butir`,
-        pass: rubricMode === "none" || (rubricData.items.length >= 3 && rubricData.items.length <= 100),
-        value: rubricMode === "none" ? "nonaktif" : `${rubricData.items.length}`,
-      },
-      {
-        label: `Rubrik aktif: ≥ 1 butir kritis`,
-        pass: rubricMode === "none" || criticalCount >= 1,
-        value: rubricMode === "none" ? "nonaktif" : `${criticalCount}`,
-      },
-      {
-        label: `Rubrik aktif: total poin ≥ 6`,
-        pass: rubricMode === "none" || totalPoints >= 6,
-        value: rubricMode === "none" ? "nonaktif" : `${totalPoints}`,
-      },
-    ];
-  }, [initialPrompt, questionsText, answerKeyText, rubricData, rubricMode]);
-
-  const allGatesPass = gates.every((g) => g.pass);
-
   // ---- Mutations ----
   const saveMutation = useMutation({
     mutationFn: async (action: "save" | "approve" | "reject") => {
@@ -458,7 +405,7 @@ const CasePreview = () => {
                 <Button
                   variant="default"
                   onClick={() => saveMutation.mutate("approve")}
-                  disabled={isBusy || isEditing || !allGatesPass || finalReviewState(finalReviewQuery.data) !== "passed"}
+                  disabled={isBusy || isEditing || finalReviewState(finalReviewQuery.data) !== "passed"}
                   className="gap-2"
                 >
                   <CheckCircle2 className="h-4 w-4" />
@@ -477,9 +424,9 @@ const CasePreview = () => {
                   Hapus Permanen
                 </Button>
               </div>
-              {(!allGatesPass || finalReviewState(finalReviewQuery.data) !== "passed") && (
+              {finalReviewState(finalReviewQuery.data) !== "passed" && (
                 <p className="text-xs text-muted-foreground">
-                  Penerbitan terkunci sampai gerbang mutu dan pemeriksaan akhir kebocoran lolos.
+                  Lanjutkan pemeriksaan akhir kebocoran sebelum penerbitan.
                 </p>
               )}
             </CardContent>
