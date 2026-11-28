@@ -33,7 +33,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import RubricBuilder, { type RubricData } from "@/components/admin/RubricBuilder";
 import PropertySyncDialog from "@/components/admin/PropertySyncDialog";
-
+import FinalCaseReview from "@/components/admin/FinalCaseReview";
 import RubricWordByWordSection from "@/components/admin/RubricWordByWordSection";
 import AssetUploader from "@/components/admin/AssetUploader";
 import PropertiesEditor from "@/components/admin/PropertiesEditor";
@@ -546,7 +546,7 @@ const CasePreview = () => {
                     disabled={!isEditing}
                   />
                 </div>
-
+                {id && canEdit && <FinalCaseReview caseId={id} disabled={isEditing || isBusy} />}
               </CardContent>
             </Card>
 
